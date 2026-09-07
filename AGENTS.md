@@ -134,8 +134,11 @@ Cities") whose legislative life runs on real local infrastructure.
 
 ## Dev
 
-- venv at `.venv/`; install editable: `pip install -e .` (deps: typer, httpx,
-  pydantic, rich).
+- **Always use uv for development and testing** — never pip, python -m venv,
+  or ad-hoc installs. `uv lock` resolves `pyproject.toml` into `uv.lock`
+  (committed); `uv sync` creates/updates `.venv`; add/remove dependencies
+  with `uv add` / `uv remove`. Run everything through uv: `uv run polis …`,
+  `uv run python …` (or activate `.venv`). Deps: typer, httpx, pydantic, rich.
 - Verify: `scripts/infra/smoke.sh` (containers + API keys), `polis health`
   (subsystem checks), `tests/e2e-gogs.sh` (full live flow: `e2e`-prefixed
   users/repo, throwaway `POLIS_MATTERS_FILE`, matter-status and
