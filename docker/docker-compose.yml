@@ -1,0 +1,101 @@
+# The local apparatus of the git-law federation simulation.
+#
+# Works with `docker compose` and with podman (via podman-compose, or
+# `docker compose` pointed at the podman socket). Secrets come from ../.env
+# (copy ../.env.example). Persistent data lives in ../data/services/*.
+#
+# The compose project name ("polis") prefixes containers: polis-gogs-1 etc.
+# The network is named gogs-local to stay compatible with the polis CLI
+# defaults and the earlier hand-run containers.
+name: polis
+
+networks:
+  gogs-local:
+    name: gogs-local
+
+services:
+  postgres:
+    build: ./postgres
+    container_name: postgres-gogs
+    networks: [gogs-local]
+    volumes:
+      - ../data/services/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: gogs
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: gogs
+    restart: unless-stopped
+
+  gogs:
+    build: ./gogs
+    container_name: gogs
+    networks: [gogs-local]
+    ports:
+      - "10022:2222"   # ssh
+      - "10880:3000"   # http
+    volumes:
+      - ../data/services/gogs:/data
+    restart: unless-stopped
+
+  gitea:
+    build: ./gitea
+    container_name: gitea
+    networks: [gogs-local]
+    ports:
+      - "3001:3000"    # http
+      - "2222:22"      # ssh
+    volumes:
+      - ../data/services/gitea:/data
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__database__DB_TYPE: postgres
+      GITEA__database__HOST: postgres-gogs:5432
+      GITEA__database__NAME: gitea
+      GITEA__database__USER: gitea
+      GITEA__database__PASSWD: gitea
+    depends_on: [postgres]
+    restart: unless-stopped
+
+  woodpecker-server:
+    build: ./woodpecker
+    container_name: woodpecker-server
+    networks: [gogs-local]
+    ports:
+      - "10890:8000"   # http
+    volumes:
+      - ../data/services/woodpecker/server:/var/lib/woodpecker
+    environment:
+      WOODPECKER_OPEN: "true"
+      WOODPECKER_HOST: http://localhost:10890
+      WOODPECKER_AGENT_SECRET: w00000d
+      WOODPECKER_ADMIN: agros
+      WOODPECKER_GITEA: "true"
+      WOODPECKER_GITEA_URL: http://gitea:3000
+      WOODPECKER_DEV_GITEA_OAUTH_URL: http://localhost:3001
+      WOODPECKER_EXPERT_FORGE_OAUTH_HOST: http://localhost:3001
+      WOODPECKER_GITEA_CLIENT: ${WOODPECKER_GITEA_CLIENT}
+      WOODPECKER_GITEA_SECRET: ${WOODPECKER_GITEA_SECRET}
+    depends_on: [gitea]
+    restart: unless-stopped
+
+  woodpecker-agent:
+    build: ./woodpecker-agent
+    container_name: woodpecker-agent
+    networks: [gogs-local]
+    # podman-machine on macOS: container root maps to the VM's core user
+    # (owner of the podman socket); label=disable or CoreOS SELinux denies
+    # access to the mounted socket. See docs/services/woodpecker.md.
+    user: "0:0"
+    security_opt:
+      - label=disable
+    volumes:
+      - ../data/services/woodpecker/agent/01:/etc/woodpecker
+      - /run/user/501/podman/podman.sock:/var/run/docker.sock
+    environment:
+      DOCKER_HOST: unix:///var/run/docker.sock
+      WOODPECKER_SERVER: woodpecker-server:9000
+      WOODPECKER_AGENT_SECRET: w00000d
+      WOODPECKER_BACKEND_DOCKER_NETWORK: gogs-local
+    depends_on: [woodpecker-server]
+    restart: unless-stopped

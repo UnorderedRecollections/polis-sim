@@ -1,0 +1,17 @@
+# Secrets — never commit (template is .env.example)
+.env
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Mutable simulation state — generated at runtime; contains generated
+# credentials (world.json) and container persistent data
+data/
+
+# OS / editor cruft
+.DS_Store

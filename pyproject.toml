@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polis"
+version = "0.1.0"
+description = "Operator's tool for the git-law federation simulation"
+requires-python = ">=3.10"
+dependencies = [
+    "typer>=0.12",
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "rich>=13",
+]
+
+[project.scripts]
+polis = "polis.cli.main:app"
+
+[tool.setuptools.packages.find]
+include = ["polis*"]
+
+[tool.setuptools.package-data]
+"polis.legislation" = ["templates/*.md"]
