@@ -132,6 +132,27 @@ Cities") whose legislative life runs on real local infrastructure.
   dual id schemes (PET-#### vs issue numbers) and divergent state models
   noted; phase-2 institutional mapping is an open decision.
 
+## Task workflow (mandatory)
+
+Every task gets a description file **before work starts**:
+`docs/tasks/NNNN-snake-case-task-title.md` (NNNN = next sequential number,
+zero-padded; template: `docs/tasks/0000-task-template.md`). Metadata:
+
+- **created:** ISO-8601 timestamp
+- **type:** one of `[simulation]`, `[infrastructure]`, `[tests]`,
+  `[refactoring]`, `[bugfix]`
+- **depends-on:** task numbers of prerequisites, if any
+- **status:** open → in-progress → done
+
+When the task is complete:
+
+1. Commit the changes (this workflow is the standing authorization for
+  task-scoped commits; one task = one commit, message referencing the task
+  number, e.g. `task 0007: scaffold treaty template`).
+2. Fill the task file's **Completion** section: `**finished:**` timestamp and
+  `**commit:**` the commit's treeish; set status to `done`; commit that
+  update too (may be amended into the task commit).
+
 ## Dev
 
 - **Always use uv for development and testing** — never pip, python -m venv,
