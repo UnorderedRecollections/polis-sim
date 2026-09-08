@@ -471,6 +471,28 @@ def legal_validate() -> None:
     console.print("[green]the foundational legal state is consistent[/green]")
 
 
+@legal_app.command(name="audit")
+def legal_audit(
+    slug: Optional[str] = typer.Argument(None, help="Jurisdiction to audit (all if omitted)."),
+) -> None:
+    """Run the new-jurisdiction checklist (extensibility-api.md §1)."""
+    from ..sim.extensibility import audit_all, audit_jurisdiction
+
+    audits = {slug: audit_jurisdiction(slug)} if slug else audit_all()
+    if slug and slug not in load_jurisdictions():
+        die(f"unknown jurisdiction '{slug}'")
+    failed = False
+    for name, steps in audits.items():
+        console.print(f"[bold]{name}[/bold]")
+        for s in steps:
+            mark = "[green]ok[/green]" if s.ok else "[red]MISSING[/red]"
+            if not s.ok:
+                failed = True
+            console.print(f"  {mark:18} {s.step}" + (f" — {s.detail}" if s.detail else ""))
+    if failed:
+        raise typer.Exit(code=1)
+
+
 # --- event candidates -------------------------------------------------------------
 
 @events_app.command(name="candidates")

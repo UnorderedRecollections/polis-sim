@@ -37,6 +37,8 @@ Cities") whose legislative life runs on real local infrastructure.
     `polis/sim/ontology.py`, `polis/sim/norms.py`, `polis/sim/resources.py`;
     event synthesis: `polis/sim/events.py` (friction derivation, charged
     candidates — `polis world events candidates --jurisdiction <slug>`);
+    extensibility audit: `polis/sim/extensibility.py` (`polis world legal
+    audit [slug]` — the new-jurisdiction checklist as code);
     rationale: `docs/design/story-data-model.md`.
 - `.state/` — container persistent data (gogs/gitea/woodpecker/postgres),
   gitignored. All other runtime state under `data/` is gitignored except
