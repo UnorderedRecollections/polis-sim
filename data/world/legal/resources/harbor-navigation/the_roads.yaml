@@ -1,0 +1,17 @@
+resource: the_roads
+jurisdiction: harbor-navigation
+label: The Roads
+object_type: resource
+
+properties:
+  berth: open anchorage, no berths assigned
+  dues: none by custom
+  right_of_way: first come, first anchored
+  pilotage: optional
+
+customary_use:
+  - vessels of any city may anchor in the Roads without dues or leave
+
+narrative: >-
+  The open anchorage outside the mole; free water, and therefore always
+  the first thing a harbor master covets.

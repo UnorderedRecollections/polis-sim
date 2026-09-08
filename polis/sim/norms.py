@@ -207,7 +207,11 @@ def validate_norm_set(norm_set: NormSet, jurisdiction_slug: str) -> list[str]:
             problems.append(
                 f"{n.id}: object type '{n.object.type}' not admitted by "
                 f"{jurisdiction_slug}'s paradigm(s) {sorted(j.paradigms)}")
-        if (n.object.type == "resource" and j.resources
-                and n.object.kind not in j.resources):
-            problems.append(f"{n.id}: unknown resource '{n.object.kind}' in {jurisdiction_slug}")
+        if n.object.type == "resource":
+            # files are the source of truth; the index is the fallback
+            from .resources import load_resources
+            on_disk = load_resources().get(jurisdiction_slug, {})
+            known = set(on_disk) or set(j.resources)
+            if known and n.object.kind not in known:
+                problems.append(f"{n.id}: unknown resource '{n.object.kind}' in {jurisdiction_slug}")
     return problems

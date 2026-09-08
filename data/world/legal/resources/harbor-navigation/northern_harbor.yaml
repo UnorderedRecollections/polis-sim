@@ -1,0 +1,17 @@
+resource: northern_harbor
+jurisdiction: harbor-navigation
+label: The Northern Harbor
+object_type: resource
+
+properties:
+  berth: forty berths inside the mole
+  dues: two pence per ton by custom
+  right_of_way: sail before steam, laden before light
+  pilotage: compulsory inside the heads
+
+customary_use:
+  - Cogswich keeps the mole and collects the dues by ancient grant
+
+narrative: >-
+  The deep-water harbor of the north; whoever holds the mole holds the
+  trade of three cities.

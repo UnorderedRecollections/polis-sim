@@ -1,0 +1,13 @@
+resource: chain_bridge
+jurisdiction: roads-carriage
+label: The Chain Bridge
+object_type: resource
+
+properties:
+  route: the crossing over the Brine
+  toll_rate: a penny a cart by weight
+  maintenance_duty: the bridge warden from the tolls
+  bridge: the only bridge for thirty miles
+
+customary_use:
+  - the bridge farm pays for its own keeping out of the toll

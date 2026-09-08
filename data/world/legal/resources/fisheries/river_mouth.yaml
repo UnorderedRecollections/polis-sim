@@ -1,0 +1,17 @@
+resource: river_mouth
+jurisdiction: fisheries
+label: The River Mouth
+object_type: resource
+
+properties:
+  location: where the Brine meets the sea
+  season: [winter]
+  species: [salmon, eel]
+  access_right: open
+
+customary_use:
+  - the salmon run is closed by custom while the ice is on the river
+
+narrative: >-
+  Brackish water under the weir; the salmon run that feeds three cities
+  and quarrels two more.

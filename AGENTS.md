@@ -29,9 +29,12 @@ Cities") whose legislative life runs on real local infrastructure.
   - `world/legal/` — the legal-design YAML (story data, **tracked in git**):
     `jurisdictions/*.yaml` (15), `ontology/*.yaml` (actors/objects/relations/
     events/paradigms/norm-kinds), `norms/*.yaml` (seed norms — **snapshot
-    principle: seed and evolved state share one format/loader**), `moves.yaml`,
-    `templates/*.yaml`. Loaders: `polis/sim/legaldata.py`, `polis/sim/ontology.py`,
-    `polis/sim/norms.py`; rationale: `docs/design/story-data-model.md`.
+    principle: seed and evolved state share one format/loader**),
+    `resources/<jurisdiction>/*.yaml` (concrete resources — files are the
+    source of truth; jurisdiction `resources:` list is a cross-checked index),
+    `moves.yaml`, `templates/*.yaml`. Loaders: `polis/sim/legaldata.py`,
+    `polis/sim/ontology.py`, `polis/sim/norms.py`, `polis/sim/resources.py`;
+    rationale: `docs/design/story-data-model.md`.
 - `.state/` — container persistent data (gogs/gitea/woodpecker/postgres),
   gitignored. All other runtime state under `data/` is gitignored except
   `data/world/legal/` (source YAML).

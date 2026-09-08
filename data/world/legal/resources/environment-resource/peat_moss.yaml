@@ -1,0 +1,13 @@
+resource: peat_moss
+jurisdiction: environment-resource
+label: The Peat Moss
+object_type: resource
+
+properties:
+  stock: deep banks of cutting peat
+  regeneration: a finger's width a year
+  extraction_method: hand cutting
+  season: cut in summer, dried by autumn
+
+customary_use:
+  - every hearth may cut for its own burning, none may sell

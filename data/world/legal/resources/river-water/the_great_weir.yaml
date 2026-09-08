@@ -1,0 +1,13 @@
+resource: the_great_weir
+jurisdiction: river-water
+label: The Great Weir
+object_type: resource
+
+properties:
+  flow: the whole river above the falls
+  diversion_point: the weir head
+  season: open water except in flood
+  quality: clear above the mills
+
+customary_use:
+  - the weir has diverted water to the mills since before the Concord

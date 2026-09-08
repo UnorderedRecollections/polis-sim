@@ -1,0 +1,13 @@
+resource: tin_workings
+jurisdiction: environment-resource
+label: The Tin Workings
+object_type: resource
+
+properties:
+  stock: thin veins, easily spoiled
+  regeneration: none
+  extraction_method: streaming and shallow shafts
+  season: worked year-round
+
+customary_use:
+  - the workings are leased by lot each year to small companies

@@ -1,0 +1,13 @@
+resource: the_great_market
+jurisdiction: trade-markets
+label: The Great Market
+object_type: resource
+
+properties:
+  stall: two hundred stalls under the guild's custom
+  tariff_rate: guild members free, strangers pay the stranger's rate
+  standard_measure: the guild's bushel rules
+  license: by the guild
+
+customary_use:
+  - the guild has kept the Great Market since before the Concord

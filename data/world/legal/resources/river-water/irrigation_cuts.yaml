@@ -1,0 +1,13 @@
+resource: irrigation_cuts
+jurisdiction: river-water
+label: The Irrigation Cuts
+object_type: resource
+
+properties:
+  flow: a third of the summer flow by custom
+  diversion_point: below the weir
+  season: summer watering only
+  quality: silting in dry years
+
+customary_use:
+  - downstream farmers water by stint from the cuts in summer

@@ -1,0 +1,13 @@
+resource: the_great_forest
+jurisdiction: environment-resource
+label: The Great Forest
+object_type: resource
+
+properties:
+  stock: standing timber beyond count
+  regeneration: slow — a felled oak outlives its feller
+  extraction_method: axe and saw only
+  season: no felling in nesting season
+
+customary_use:
+  - felling is by lease of the commons wardens, never in spring

@@ -1,0 +1,17 @@
+resource: western_commons
+jurisdiction: land-commons
+label: The Western Commons
+object_type: resource
+
+properties:
+  parcel: undivided pasture west of Brasshaven
+  grazing_capacity: four hundred head by the old stint
+  enclosure: open, unfenced
+  tenure: common of pasture
+
+customary_use:
+  - Brasshaven has traditionally grazed cattle here without let or payment
+
+narrative: >-
+  Wide, wet pasture between two cities; everyone's land and no one's,
+  which is exactly the problem.

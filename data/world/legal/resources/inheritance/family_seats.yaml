@@ -1,0 +1,13 @@
+resource: family_seats
+jurisdiction: inheritance
+label: The Family Seats
+object_type: resource
+
+properties:
+  share: the seat passes whole by custom
+  legitim: the eldest holds the seat, the rest take portions
+  will: a seat may not be willed away from the blood
+  debts: the seat answers for the family's debts
+
+customary_use:
+  - the great seats pass to the eldest; portions to the rest

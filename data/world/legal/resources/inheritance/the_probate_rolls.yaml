@@ -1,0 +1,13 @@
+resource: the_probate_rolls
+jurisdiction: inheritance
+label: The Probate Rolls
+object_type: resource
+
+properties:
+  share: recorded shares of each estate
+  legitim: a child's forced portion by custom
+  will: written wills proved before the judge
+  debts: debts of the estate paid before shares
+
+customary_use:
+  - no estate is divided until the judge enters it on the rolls

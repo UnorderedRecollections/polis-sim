@@ -1,0 +1,17 @@
+resource: pilot_cut
+jurisdiction: harbor-navigation
+label: The Pilot Cut
+object_type: resource
+
+properties:
+  berth: narrow channel, single file
+  dues: included in pilot's fee
+  right_of_way: inward vessels hold the cut
+  pilotage: compulsory
+
+customary_use:
+  - the pilots' guild has worked the Cut since the first charts
+
+narrative: >-
+  The only safe channel through the bar; a ship enters the Northern
+  Harbor through the Cut or not at all.

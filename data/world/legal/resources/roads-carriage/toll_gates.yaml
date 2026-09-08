@@ -1,0 +1,13 @@
+resource: toll_gates
+jurisdiction: roads-carriage
+label: The Toll Gates
+object_type: resource
+
+properties:
+  route: the high road east
+  toll_rate: varies by gate and by load
+  maintenance_duty: the toll farmers
+  bridge: none
+
+customary_use:
+  - the high-road gates are farmed by auction each Candlemas

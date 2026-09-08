@@ -10,6 +10,7 @@ from ..genesis import build_world
 from ..sim import ontology
 from ..sim.legaldata import load_jurisdictions, load_moves, load_templates
 from ..sim.norms import load_seed_norms, load_norm_file, validate_norm_set
+from ..sim.resources import load_resources, find_resource
 from .common import console, die, get_world, status_table
 
 app = typer.Typer(no_args_is_help=True, help="Genesis and inspection of the federation.")
@@ -22,6 +23,7 @@ procedural_events_app = typer.Typer(no_args_is_help=True, help="Procedural event
 relations_app = typer.Typer(no_args_is_help=True, help="Legal relations of the legal DSL.")
 paradigms_app = typer.Typer(no_args_is_help=True, help="Jurisdiction paradigms (structural kinds).")
 norms_app = typer.Typer(no_args_is_help=True, help="Norms — the rules in force (seed or snapshot).")
+resources_app = typer.Typer(no_args_is_help=True, help="Concrete resources stories revolve around.")
 app.add_typer(jurisdictions_app, name="jurisdictions")
 app.add_typer(moves_app, name="moves")
 app.add_typer(templates_app, name="templates")
@@ -31,6 +33,7 @@ app.add_typer(procedural_events_app, name="procedural-events")
 app.add_typer(relations_app, name="relations")
 app.add_typer(paradigms_app, name="paradigms")
 app.add_typer(norms_app, name="norms")
+app.add_typer(resources_app, name="resources")
 
 
 @app.command()
@@ -361,3 +364,52 @@ def norms_show(
                         console.print(f"    - {p}")
                 return
     die(f"unknown norm '{norm_id}'")
+
+
+# --- resources ------------------------------------------------------------------
+
+@resources_app.command(name="list")
+def resources_list(
+    jurisdiction: Optional[str] = typer.Option(None, "--jurisdiction", help="Only this jurisdiction."),
+) -> None:
+    """List the concrete resources (per-jurisdiction YAML files)."""
+    from ..sim.resources import validate_resources
+    files = load_resources()
+    if jurisdiction:
+        if jurisdiction not in files:
+            die(f"no resources for jurisdiction '{jurisdiction}'")
+        files = {jurisdiction: files[jurisdiction]}
+    table = status_table("Resources", ["kind", "jurisdiction", "label", "properties", "customary uses"])
+    for slug, resources in files.items():
+        for r in resources.values():
+            table.add_row(r.resource, slug, r.label,
+                          str(len(r.properties)), str(len(r.customary_use)))
+    console.print(table)
+    problems = validate_resources()
+    if problems:
+        console.print("[yellow]validation problems:[/yellow]")
+        for p in problems:
+            console.print(f"  - {p}")
+
+
+@resources_app.command(name="show")
+def resources_show(
+    kind: str = typer.Argument(..., help="Resource slug, e.g. northern_banks."),
+    jurisdiction: Optional[str] = typer.Option(None, "--jurisdiction", help="Scope the lookup."),
+) -> None:
+    """Show one resource in full."""
+    try:
+        r = find_resource(kind, jurisdiction)
+    except KeyError as e:
+        die(e.args[0])
+    console.print(f"[bold]{r.label or r.resource}[/bold] ({r.resource}, {r.jurisdiction})")
+    if r.properties:
+        console.print("  properties:")
+        for k, v in r.properties.items():
+            console.print(f"    {k}: {v}")
+    if r.customary_use:
+        console.print("  customary use:")
+        for u in r.customary_use:
+            console.print(f"    - {u}")
+    if r.narrative:
+        console.print(f"  narrative: {r.narrative}")

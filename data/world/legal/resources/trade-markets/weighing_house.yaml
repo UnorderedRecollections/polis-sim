@@ -1,0 +1,13 @@
+resource: weighing_house
+jurisdiction: trade-markets
+label: The Weighing House
+object_type: resource
+
+properties:
+  stall: the public beam for all bulk goods
+  tariff_rate: a fee per weighing
+  standard_measure: the federal standard weights are kept here
+  license: the warden's license to weigh
+
+customary_use:
+  - all bulk goods are weighed on the public beam for a fee

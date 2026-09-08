@@ -1,0 +1,13 @@
+resource: market_square
+jurisdiction: trade-markets
+label: The Market Square
+object_type: resource
+
+properties:
+  stall: open ground for country sellers
+  tariff_rate: free for growers selling their own
+  standard_measure: buyer beware
+  license: none needed for country produce
+
+customary_use:
+  - country folk sell their own produce free in the square

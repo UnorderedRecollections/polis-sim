@@ -1,0 +1,17 @@
+resource: stubble_fields
+jurisdiction: land-commons
+label: The Stubble Fields
+object_type: resource
+
+properties:
+  parcel: the open fields after harvest
+  grazing_capacity: stubble grazing until ploughing
+  enclosure: temporarily open after harvest
+  tenure: stinted common
+
+customary_use:
+  - after harvest the fields open to all stints until the ploughs go out
+
+narrative: >-
+  Golden stubble for six weeks a year; the most contested weeks in the
+  farming calendar.

@@ -1,0 +1,17 @@
+resource: old_forest
+jurisdiction: land-commons
+label: The Old Forest
+object_type: resource
+
+properties:
+  parcel: the great wood on the federal marches
+  grazing_capacity: pannage for swine in autumn
+  enclosure: reserved by custom
+  tenure: forest reserve
+
+customary_use:
+  - wood-gathering is by hook and crook only; no felling of standing timber
+
+narrative: >-
+  Timber older than any city charter; every city wants it, no city may
+  touch it, and the wardens grow old watching it.

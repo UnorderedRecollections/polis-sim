@@ -1,0 +1,16 @@
+resource: northern_banks
+jurisdiction: fisheries
+label: The Northern Banks
+object_type: resource
+
+properties:
+  location: the northern waters
+  season: [spring, autumn]
+  species: [herring, cod]
+  access_right: open
+
+customary_use:
+  - fishers of Cogswich and Brasshaven have fished these banks since before the Concord
+
+narrative: >-
+  Cold, treacherous banks; the richest herring grounds of the Nine Cities.

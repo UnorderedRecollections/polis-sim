@@ -1,0 +1,13 @@
+resource: the_causeway
+jurisdiction: roads-carriage
+label: The Causeway
+object_type: resource
+
+properties:
+  route: the low road between Cogswich and Thornwick
+  toll_rate: free by custom
+  maintenance_duty: the two cities, turn and turn about
+  bridge: the culvert at mid-fen
+
+customary_use:
+  - carriers pass free on the causeway, maintaining it in alternate years

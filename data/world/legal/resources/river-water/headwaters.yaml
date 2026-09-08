@@ -1,0 +1,13 @@
+resource: headwaters
+jurisdiction: river-water
+label: The Headwaters
+object_type: resource
+
+properties:
+  flow: the source streams in the hills
+  diversion_point: none — the river is whole here
+  season: year-round
+  quality: pure
+
+customary_use:
+  - no city may dam the headwaters, by old agreement

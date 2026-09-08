@@ -1,0 +1,13 @@
+resource: entailments
+jurisdiction: inheritance
+label: The Entailments
+object_type: resource
+
+properties:
+  share: entailed land descends entire
+  legitim: no forced portion against an entail
+  will: entails override wills
+  debts: entailed land is beyond most creditors
+
+customary_use:
+  - the old entails bind land to the male line for three lives

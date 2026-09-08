@@ -1,0 +1,17 @@
+resource: eastern_shoals
+jurisdiction: fisheries
+label: The Eastern Shoals
+object_type: resource
+
+properties:
+  location: the eastern shallows
+  season: [summer]
+  species: [sprat, mackerel]
+  access_right: open
+
+customary_use:
+  - small-boat fishers work the shoals in summer when the banks are rough
+
+narrative: >-
+  Shallow, shifting sands where the small boats go; poor men's fishing,
+  closely watched by the wardens for juvenile stock.
