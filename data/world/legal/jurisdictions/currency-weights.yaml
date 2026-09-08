@@ -1,7 +1,7 @@
 jurisdiction: currency-weights
 name: Currency & Weights
 corpus_dir: null
-paradigm: C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [conduct-status]   # see ontology/paradigms.yaml
 
 resources:
   - the_mint

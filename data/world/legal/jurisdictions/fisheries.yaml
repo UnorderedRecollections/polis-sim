@@ -1,7 +1,7 @@
 jurisdiction: fisheries
 name: Fisheries
 corpus_dir: null            # not yet backed by a corpus directory
-paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [resource]   # see ontology/paradigms.yaml
 
 resources:                  # concrete resources stories can be about
   - northern_banks

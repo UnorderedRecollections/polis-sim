@@ -1,7 +1,7 @@
 jurisdiction: citizenship
 name: Citizenship
 corpus_dir: civic
-paradigm: C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [conduct-status]   # see ontology/paradigms.yaml
 
 resources:
   - the_freedom_rolls

@@ -1,7 +1,7 @@
 jurisdiction: military-defense
 name: Military/Defense
 corpus_dir: null
-paradigm: P            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [political-burden]   # see ontology/paradigms.yaml
 
 resources:
   - the_watch_towers

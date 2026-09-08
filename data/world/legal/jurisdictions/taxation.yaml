@@ -1,7 +1,7 @@
 jurisdiction: taxation
 name: Taxation
 corpus_dir: taxation
-paradigm: C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [conduct-status]   # see ontology/paradigms.yaml
 
 resources:
   - customs_house

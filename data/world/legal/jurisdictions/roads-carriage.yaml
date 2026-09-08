@@ -1,7 +1,7 @@
 jurisdiction: roads-carriage
 name: Roads & Carriage
 corpus_dir: null
-paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [resource]   # see ontology/paradigms.yaml
 
 resources:
   - the_causeway

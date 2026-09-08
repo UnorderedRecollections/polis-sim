@@ -1,7 +1,7 @@
 jurisdiction: land-commons
 name: Land & Commons
 corpus_dir: null
-paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [resource]   # see ontology/paradigms.yaml
 
 resources:
   - western_commons

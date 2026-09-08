@@ -1,7 +1,7 @@
 jurisdiction: foreign-relations
 name: Foreign Relations
 corpus_dir: null
-paradigm: P            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [political-burden]   # see ontology/paradigms.yaml
 
 resources:
   - the_border_stones

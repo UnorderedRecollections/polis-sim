@@ -68,8 +68,18 @@ class ProceduralEvent:
     matter_event: Optional[str] = None
 
 
+class Paradigm:
+    """Base class of jurisdiction paradigms (see ontology/paradigms.yaml)."""
+    kind: str = ""
+    label: str = ""
+    description: str = ""
+    holding_object_types: list[str] = []
+    impact_kinds: list[str] = []
+
+
 _BASES = {"Actor": Actor, "LegalObject": LegalObject,
-          "LegalRelation": LegalRelation, "ProceduralEvent": ProceduralEvent}
+          "LegalRelation": LegalRelation, "ProceduralEvent": ProceduralEvent,
+          "Paradigm": Paradigm}
 
 
 def _build_types(filename: str) -> dict[str, type]:
@@ -100,6 +110,7 @@ ACTORS: dict[str, type[Actor]] = _build_types("actors.yaml")
 LEGAL_OBJECTS: dict[str, type[LegalObject]] = _build_types("legal_objects.yaml")
 LEGAL_RELATIONS: dict[str, type[LegalRelation]] = _build_types("legal_relations.yaml")
 PROCEDURAL_EVENTS: dict[str, type[ProceduralEvent]] = _build_types("procedural_events.yaml")
+PARADIGMS: dict[str, type[Paradigm]] = _build_types("paradigms.yaml")
 
 #: convenient handles on the dynamic classes
 ActorPerson = ACTORS["person"]
@@ -163,6 +174,7 @@ class Jurisdiction:
     slug: str
     name: str
     corpus_dir: Optional[str]
+    paradigms: tuple[str, ...]            # kinds from ontology/paradigms.yaml
     resources: tuple[str, ...]
     actors: tuple[str, ...]               # actor kind slugs
     activities: tuple[str, ...]
@@ -189,6 +201,7 @@ def jurisdiction_factory(metadata) -> Jurisdiction:
         slug=metadata.jurisdiction,
         name=metadata.name,
         corpus_dir=metadata.corpus_dir,
+        paradigms=tuple(metadata.paradigms),
         resources=tuple(metadata.resources),
         actors=tuple(metadata.actors),
         activities=tuple(metadata.activities),

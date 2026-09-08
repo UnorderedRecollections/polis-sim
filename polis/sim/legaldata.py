@@ -20,11 +20,19 @@ JURISDICTIONS_DIR = LEGAL_DIR / "jurisdictions"
 TEMPLATES_DIR = LEGAL_DIR / "templates"
 
 
+class ParadigmData(BaseModel):
+    kind: str                             # resource | conduct-status | political-burden
+    label: str
+    description: str = ""
+    holding_object_types: list[str] = []
+    impact_kinds: list[str] = []
+
+
 class JurisdictionData(BaseModel):
     jurisdiction: str                     # slug, matches the filename
     name: str
     corpus_dir: Optional[str] = None
-    paradigm: str = "R"                   # R=resource, C=conduct/status, P=political/burden
+    paradigms: list[str] = []             # kinds from ontology/paradigms.yaml
     resources: list[str]
     actors: list[str]                     # derive from JurisdictionalActor
     activities: list[str]                 # domain verbs (NOT legal moves)
@@ -49,12 +57,25 @@ def _load_yaml(path: Path) -> dict:
         return yaml.safe_load(f) or {}
 
 
+def load_paradigms() -> dict[str, ParadigmData]:
+    spec = _load_yaml(LEGAL_DIR / "ontology" / "paradigms.yaml")
+    return {
+        k["kind"]: ParadigmData.model_validate(k)
+        for k in spec.get("kinds", [])
+    }
+
+
 def load_jurisdictions() -> dict[str, JurisdictionData]:
+    known = load_paradigms()
     out: dict[str, JurisdictionData] = {}
     for path in sorted(JURISDICTIONS_DIR.glob("*.yaml")):
         data = JurisdictionData.model_validate(_load_yaml(path))
         if data.jurisdiction != path.stem:
             raise ValueError(f"{path.name}: jurisdiction '{data.jurisdiction}' != filename slug")
+        unknown = set(data.paradigms) - set(known)
+        if unknown:
+            raise ValueError(f"{path.name}: unknown paradigm(s) {sorted(unknown)} "
+                             f"(known: {sorted(known)})")
         out[data.jurisdiction] = data
     return out
 

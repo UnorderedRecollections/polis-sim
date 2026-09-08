@@ -1,7 +1,7 @@
 jurisdiction: harbor-navigation
 name: Harbor & Navigation
 corpus_dir: maritime
-paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [resource]   # see ontology/paradigms.yaml
 
 resources:
   - northern_harbor

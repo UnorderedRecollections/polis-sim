@@ -19,6 +19,7 @@ actors_app = typer.Typer(no_args_is_help=True, help="Actor kinds of the legal DS
 legal_objects_app = typer.Typer(no_args_is_help=True, help="Legal object kinds of the legal DSL.")
 procedural_events_app = typer.Typer(no_args_is_help=True, help="Procedural events of the legal DSL.")
 relations_app = typer.Typer(no_args_is_help=True, help="Legal relations of the legal DSL.")
+paradigms_app = typer.Typer(no_args_is_help=True, help="Jurisdiction paradigms (structural kinds).")
 app.add_typer(jurisdictions_app, name="jurisdictions")
 app.add_typer(moves_app, name="moves")
 app.add_typer(templates_app, name="templates")
@@ -26,6 +27,7 @@ app.add_typer(actors_app, name="actors")
 app.add_typer(legal_objects_app, name="legal-objects")
 app.add_typer(procedural_events_app, name="procedural-events")
 app.add_typer(relations_app, name="relations")
+app.add_typer(paradigms_app, name="paradigms")
 
 
 @app.command()
@@ -103,11 +105,12 @@ def jurisdictions_list() -> None:
     """List the fifteen jurisdictions."""
     table = status_table(
         "Jurisdictions",
-        ["slug", "name", "corpus dir", "resources", "actors", "rule forms", "disputes"],
+        ["slug", "name", "corpus dir", "paradigms", "resources", "actors", "rule forms", "disputes"],
     )
     for j in load_jurisdictions().values():
         table.add_row(
             j.jurisdiction, j.name, j.corpus_dir or "[dim]—[/dim]",
+            ", ".join(j.paradigms) or "[dim]—[/dim]",
             str(len(j.resources)), str(len(j.actors)),
             str(len(j.rule_forms)), str(len(j.disputes)),
         )
@@ -122,6 +125,7 @@ def jurisdictions_show(slug: str = typer.Argument(..., help="Jurisdiction slug, 
         die(f"unknown jurisdiction '{slug}' (see `polis world jurisdictions list`)")
     console.print(f"[bold]{j.name}[/bold] ({j.jurisdiction})")
     console.print(f"  corpus dir: {j.corpus_dir or '— (not yet enacted)'}")
+    console.print(f"  paradigms:  {', '.join(j.paradigms) or '—'}")
     for label, items in [
         ("resources", j.resources),
         ("actors", j.actors),
@@ -265,3 +269,27 @@ def relations_list() -> None:
     for t in ontology.LEGAL_RELATIONS.values():
         table.add_row(t.kind)
     console.print(table)
+
+
+@paradigms_app.command(name="list")
+def paradigms_list() -> None:
+    """List the jurisdiction paradigms (structural kinds)."""
+    table = status_table("Paradigms", ["kind", "label", "holding object types", "impact kinds"])
+    for t in ontology.PARADIGMS.values():
+        table.add_row(t.kind, t.label,
+                      ", ".join(t.holding_object_types), ", ".join(t.impact_kinds))
+    console.print(table)
+
+
+@paradigms_app.command(name="show")
+def paradigms_show(kind: str = typer.Argument(..., help="Paradigm kind, e.g. resource.")) -> None:
+    """Show one paradigm in full."""
+    t = ontology.PARADIGMS.get(kind)
+    if t is None:
+        die(f"unknown paradigm '{kind}' (see `polis world paradigms list`)")
+    console.print(f"[bold]{t.label}[/bold] ({t.kind})")
+    console.print(f"  {t.description}")
+    console.print(f"  holding object types: {', '.join(t.holding_object_types) or '—'}")
+    console.print(f"  impact kinds:         {', '.join(t.impact_kinds) or '—'}")
+    members = [j.slug for j in ontology.JURISDICTIONS.values() if kind in j.paradigms]
+    console.print(f"  jurisdictions:        {', '.join(members) or '—'}")

@@ -8,9 +8,11 @@ each jurisdiction actually need — and in particular, does the concept of
 
 Reading the fifteen jurisdictions against the story-generation model
 (norms, holdings, activity signatures, incompatibilities), they fall into
-three paradigms:
+three paradigms — declared in `data/world/legal/ontology/paradigms.yaml` and
+referenced by human-readable `kind` in each jurisdiction file
+(`paradigms: [resource]` etc.):
 
-### R — Resource jurisdictions
+### resource — Resource jurisdictions
 
 Norms govern a **contestable resource**; holdings are control/use of it;
 activity impacts are physical (depletes, blocks, pollutes, occupies);
@@ -20,7 +22,7 @@ fisheries · harbor-navigation · river-water · land-commons ·
 environment-resource · inheritance (the estate as resource) ·
 roads-carriage (infrastructure as resource)
 
-### C — Conduct/status jurisdictions
+### conduct-status — Conduct/status jurisdictions
 
 Norms govern **acts and statuses**, not things. There is nothing to deplete;
 "facts on the ground" are statuses, rights and relationships, not control
@@ -29,7 +31,7 @@ confers status).
 
 criminal · citizenship · contract · taxation · currency-weights
 
-### P — Political/burden jurisdictions
+### political-burden — Political/burden jurisdictions
 
 Norms allocate **burdens and govern relations between polities**. The
 actors are mostly *collectives* (cities, the federation, neighboring
@@ -40,19 +42,19 @@ military-defense · foreign-relations
 
 ## 2. Do holdings apply to all? — Only if generalized
 
-As *control/use of a resource*, holdings apply only to paradigm R. But a
+As *control/use of a resource*, holdings apply only to paradigms of kind `resource`. But a
 natural generalization covers the rest:
 
 > **A Holding is a durable legal fact linking an actor to an object under a
-> norm.** The object's `object_type` varies: `resource` (paradigm R),
-> `status`, `right`, or `relationship` (paradigm C and P).
+> norm.** The object's `object_type` varies: `resource` (resource paradigm),
+> `status`, `right`, or `relationship` (conduct-status and political-burden paradigms).
 
 | object_type | paradigm | examples |
 |---|---|---|
-| `resource` | R | A's fishers fish the northern banks under open_access |
-| `status` | C | X holds the freedom of Cogswich under naturalization_by_residence; the accused holds sanctuary |
-| `right` | C/P | the guild holds an exemption charter; Thornwick holds a toll farm |
-| `relationship` | C/P | creditor–debtor bond on the rolls; a treaty obligation between the federation and a neighbor |
+| `resource` | resource | A's fishers fish the northern banks under open_access |
+| `status` | conduct-status | X holds the freedom of Cogswich under naturalization_by_residence; the accused holds sanctuary |
+| `right` | conduct-status, political-burden | the guild holds an exemption charter; Thornwick holds a toll farm |
+| `relationship` | conduct-status, political-burden | creditor–debtor bond on the rolls; a treaty obligation between the federation and a neighbor |
 
 So: **keep Holding, but parameterized by `object_type`.** Jurisdictions
 where "holding" means nothing concrete (none, in fact — every paradigm has
@@ -66,21 +68,21 @@ event-synthesis engine needs.
 
 | Jurisdiction | Paradigm | Holdings (sense) | Facts on the ground (seed) | Natural incompatibilities |
 |---|---|---|---|---|
-| fisheries | R | fishing rights over grounds | who fishes where, customary access | open_access ⊥ exclusive_access, ⊥ licensing |
-| harbor-navigation | R | berthing/pilotage rights | dues schedule, pilots' custom | open_port ⊥ harbor_dues; free pilotage ⊥ compulsory_pilotage |
-| river-water | R | diversion rights (flow externality!) | upstream diversions, mill rights | prior_appropriation ⊥ riparian_sharing |
-| land-commons | R | grazing stints, tenure | customary stints, enclosures | open_commons ⊥ enclosure_grant |
-| environment-resource | R | extraction leases | current workings, leases | sustained_yield ⊥ free extraction |
-| inheritance | R (estate) | heir positions, entails | current entails, wills on the rolls | primogeniture ⊥ partible_inheritance; testamentary_freedom ⊥ forced_share |
-| roads-carriage | R (infra) | toll farms, maintenance duties | toll gates and who farms them | free_passage ⊥ toll_by_weight |
-| trade-markets | R/C mixed | stalls, licenses (resource-like) | guild's market custom, current tariffs | free_entry ⊥ guild_monopoly |
-| taxation | C | exemption charters (right) | levy schedule, exemptions granted | uniform_levy ⊥ exemption_charter |
-| currency-weights | C | exchange-office licenses (right) | the current standard, fineness | fixed_standard ⊥ free_coinage |
-| citizenship | C | statuses (freedom, guest) | freedom rolls, guest registers | jus_soli ⊥ jus_sanguinis; open naturalization ⊥ freedom_by_purchase |
-| criminal | C | sanctuary, outlawry (status) | watch rolls, pending cases | city_venue ⊥ federal_venue; punishment ⊥ composition |
-| contract | C | bonds (relationship) | bond rolls, guild arbitration custom | usury_cap ⊥ free interest; guild_arbitration ⊥ court enforcement |
-| military-defense | P | exemptions, command rights | muster rolls, fortification state | levy_by_population ⊥ levy_by_wealth; federal_command ⊥ city_command |
-| foreign-relations | P | treaty rights (relationship) | treaties in force, border posts | open_border ⊥ treaty_boundary; most_favored_nation ⊥ exclusivity |
+| fisheries | resource | fishing rights over grounds | who fishes where, customary access | open_access ⊥ exclusive_access, ⊥ licensing |
+| harbor-navigation | resource | berthing/pilotage rights | dues schedule, pilots' custom | open_port ⊥ harbor_dues; free pilotage ⊥ compulsory_pilotage |
+| river-water | resource | diversion rights (flow externality!) | upstream diversions, mill rights | prior_appropriation ⊥ riparian_sharing |
+| land-commons | resource | grazing stints, tenure | customary stints, enclosures | open_commons ⊥ enclosure_grant |
+| environment-resource | resource | extraction leases | current workings, leases | sustained_yield ⊥ free extraction |
+| inheritance | resource (estate) | heir positions, entails | current entails, wills on the rolls | primogeniture ⊥ partible_inheritance; testamentary_freedom ⊥ forced_share |
+| roads-carriage | resource (infra) | toll farms, maintenance duties | toll gates and who farms them | free_passage ⊥ toll_by_weight |
+| trade-markets | resource + conduct-status | stalls, licenses (resource-like) | guild's market custom, current tariffs | free_entry ⊥ guild_monopoly |
+| taxation | conduct-status | exemption charters (right) | levy schedule, exemptions granted | uniform_levy ⊥ exemption_charter |
+| currency-weights | conduct-status | exchange-office licenses (right) | the current standard, fineness | fixed_standard ⊥ free_coinage |
+| citizenship | conduct-status | statuses (freedom, guest) | freedom rolls, guest registers | jus_soli ⊥ jus_sanguinis; open naturalization ⊥ freedom_by_purchase |
+| criminal | conduct-status | sanctuary, outlawry (status) | watch rolls, pending cases | city_venue ⊥ federal_venue; punishment ⊥ composition |
+| contract | conduct-status | bonds (relationship) | bond rolls, guild arbitration custom | usury_cap ⊥ free interest; guild_arbitration ⊥ court enforcement |
+| military-defense | political-burden | exemptions, command rights | muster rolls, fortification state | levy_by_population ⊥ levy_by_wealth; federal_command ⊥ city_command |
+| foreign-relations | political-burden | treaty rights (relationship) | treaties in force, border posts | open_border ⊥ treaty_boundary; most_favored_nation ⊥ exclusivity |
 
 Notes on the odd cases:
 
@@ -103,6 +105,7 @@ Notes on the odd cases:
    penalizes, confers-status), not only physical ones (task 0012).
 4. **Incompatibilities** are natural everywhere — no jurisdiction lacks
    contestable rule pairs (task 0013 has material in all fifteen).
-5. No jurisdiction is forced into the fisheries shape; paradigm tags
-   (`R | C | P`, or `R/C` mixed) should be added to each jurisdiction YAML
-   so the generator knows which machinery to use.
+5. No jurisdiction is forced into the fisheries shape; each jurisdiction
+   YAML now declares `paradigms:` (referencing `ontology/paradigms.yaml` by
+   human-readable kind) so the generator knows which machinery to use —
+   e.g. `paradigms: [resource, conduct-status]` for trade-markets.

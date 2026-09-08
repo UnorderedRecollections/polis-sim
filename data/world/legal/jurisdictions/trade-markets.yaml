@@ -1,7 +1,7 @@
 jurisdiction: trade-markets
 name: Trade & Markets
 corpus_dir: commerce
-paradigm: R/C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [resource, conduct-status]   # see ontology/paradigms.yaml
 
 resources:
   - the_great_market

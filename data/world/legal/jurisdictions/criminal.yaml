@@ -1,7 +1,7 @@
 jurisdiction: criminal
 name: Criminal Law
 corpus_dir: criminal
-paradigm: C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+paradigms: [conduct-status]   # see ontology/paradigms.yaml
 
 resources:
   - the_high_tribunal

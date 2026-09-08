@@ -1,0 +1,28 @@
+# Paradigms — the structural kinds of jurisdiction (task 0009 taxonomy).
+# Jurisdictions reference these by their human-readable `kind`.
+base: Paradigm
+kinds:
+  - kind: resource
+    label: Resource jurisdiction
+    description: >-
+      Norms govern a contestable resource. Holdings are control/use of the
+      resource; activity impacts are physical (depletes, blocks, pollutes,
+      occupies); incompatibilities are natural and concrete.
+    holding_object_types: [resource]
+    impact_kinds: [depletes, blocks, pollutes, occupies, enriches]
+  - kind: conduct-status
+    label: Conduct/status jurisdiction
+    description: >-
+      Norms govern acts and statuses, not things. Facts on the ground are
+      statuses, rights and relationships; impacts are normative (prohibits,
+      requires, penalizes, confers status).
+    holding_object_types: [status, right, relationship]
+    impact_kinds: [prohibits, requires, penalizes, confers-status]
+  - kind: political-burden
+    label: Political/burden jurisdiction
+    description: >-
+      Norms allocate burdens and govern relations between polities. The
+      actors are mostly collectives (cities, the federation, neighboring
+      states), not persons.
+    holding_object_types: [right, relationship]
+    impact_kinds: [allocates, burdens, obliges]
