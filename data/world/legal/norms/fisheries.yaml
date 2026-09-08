@@ -1,0 +1,27 @@
+# Foundational seed — rules in force in Fisheries at genesis (customary).
+jurisdiction: fisheries
+norms:
+  - id: N-0001
+    rule_form: open_access
+    object: {kind: northern_banks, type: resource}
+    aspect: access_right
+    subjects: []
+    beneficiaries: [fisher]
+    source: custom
+    status: in_force
+  - id: N-0002
+    rule_form: seasonal_closure
+    object: {kind: river_mouth, type: resource}
+    aspect: season
+    subjects: [fisher]
+    beneficiaries: []
+    source: custom
+    status: in_force
+  - id: N-0003
+    rule_form: conservation_requirement
+    object: {kind: eastern_shoals, type: resource}
+    aspect: species
+    subjects: [fisher]
+    beneficiaries: []
+    source: custom
+    status: in_force

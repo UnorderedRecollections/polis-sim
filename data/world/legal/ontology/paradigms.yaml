@@ -16,7 +16,7 @@ kinds:
       Norms govern acts and statuses, not things. Facts on the ground are
       statuses, rights and relationships; impacts are normative (prohibits,
       requires, penalizes, confers status).
-    holding_object_types: [status, right, relationship]
+    holding_object_types: [status, right, relationship, conduct, flow]
     impact_kinds: [prohibits, requires, penalizes, confers-status]
   - kind: political-burden
     label: Political/burden jurisdiction

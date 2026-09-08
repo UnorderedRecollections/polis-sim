@@ -1,0 +1,27 @@
+# Foundational seed — rules in force in Land & Commons at genesis.
+jurisdiction: land-commons
+norms:
+  - id: N-0021
+    rule_form: open_commons
+    object: {kind: western_commons, type: resource}
+    aspect: grazing_capacity
+    subjects: []
+    beneficiaries: [farmer, shepherd]
+    source: custom
+    status: in_force
+  - id: N-0022
+    rule_form: stinting
+    object: {kind: stubble_fields, type: resource}
+    aspect: grazing_capacity
+    subjects: [farmer]
+    beneficiaries: []
+    source: custom
+    status: in_force
+  - id: N-0023
+    rule_form: forest_reserve
+    object: {kind: old_forest, type: resource}
+    aspect: enclosure
+    subjects: [farmer, shepherd]
+    beneficiaries: [village_reeve]
+    source: custom
+    status: in_force

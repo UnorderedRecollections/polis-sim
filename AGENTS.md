@@ -28,8 +28,10 @@ Cities") whose legislative life runs on real local infrastructure.
     + `matters.json`. Regenerate world with `polis world genesis --force`.
   - `world/legal/` — the legal-design YAML (story data, **tracked in git**):
     `jurisdictions/*.yaml` (15), `ontology/*.yaml` (actors/objects/relations/
-    events), `moves.yaml`, `templates/*.yaml`. Loaders: `polis/sim/legaldata.py`,
-    `polis/sim/ontology.py`; rationale: `docs/design/story-data-model.md`.
+    events/paradigms/norm-kinds), `norms/*.yaml` (seed norms — **snapshot
+    principle: seed and evolved state share one format/loader**), `moves.yaml`,
+    `templates/*.yaml`. Loaders: `polis/sim/legaldata.py`, `polis/sim/ontology.py`,
+    `polis/sim/norms.py`; rationale: `docs/design/story-data-model.md`.
 - `.state/` — container persistent data (gogs/gitea/woodpecker/postgres),
   gitignored. All other runtime state under `data/` is gitignored except
   `data/world/legal/` (source YAML).

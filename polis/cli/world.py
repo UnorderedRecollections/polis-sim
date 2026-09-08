@@ -9,6 +9,7 @@ from .. import config, store
 from ..genesis import build_world
 from ..sim import ontology
 from ..sim.legaldata import load_jurisdictions, load_moves, load_templates
+from ..sim.norms import load_seed_norms, load_norm_file, validate_norm_set
 from .common import console, die, get_world, status_table
 
 app = typer.Typer(no_args_is_help=True, help="Genesis and inspection of the federation.")
@@ -20,6 +21,7 @@ legal_objects_app = typer.Typer(no_args_is_help=True, help="Legal object kinds o
 procedural_events_app = typer.Typer(no_args_is_help=True, help="Procedural events of the legal DSL.")
 relations_app = typer.Typer(no_args_is_help=True, help="Legal relations of the legal DSL.")
 paradigms_app = typer.Typer(no_args_is_help=True, help="Jurisdiction paradigms (structural kinds).")
+norms_app = typer.Typer(no_args_is_help=True, help="Norms — the rules in force (seed or snapshot).")
 app.add_typer(jurisdictions_app, name="jurisdictions")
 app.add_typer(moves_app, name="moves")
 app.add_typer(templates_app, name="templates")
@@ -28,6 +30,7 @@ app.add_typer(legal_objects_app, name="legal-objects")
 app.add_typer(procedural_events_app, name="procedural-events")
 app.add_typer(relations_app, name="relations")
 app.add_typer(paradigms_app, name="paradigms")
+app.add_typer(norms_app, name="norms")
 
 
 @app.command()
@@ -293,3 +296,68 @@ def paradigms_show(kind: str = typer.Argument(..., help="Paradigm kind, e.g. res
     console.print(f"  impact kinds:         {', '.join(t.impact_kinds) or '—'}")
     members = [j.slug for j in ontology.JURISDICTIONS.values() if kind in j.paradigms]
     console.print(f"  jurisdictions:        {', '.join(members) or '—'}")
+
+
+# --- norms (rules in force) ----------------------------------------------------
+
+def _load_norm_set(file: Optional[str]) -> dict[str, "object"]:
+    """Load seed norms, or one snapshot file (seed and snapshot: one format)."""
+    from pathlib import Path
+    if file:
+        ns = load_norm_file(Path(file))
+        return {Path(file).stem: ns}
+    return load_seed_norms()
+
+
+@norms_app.command(name="list")
+def norms_list(
+    jurisdiction: Optional[str] = typer.Option(None, "--jurisdiction", help="Only this jurisdiction."),
+    in_force: bool = typer.Option(False, "--in-force", help="Only norms currently in force."),
+    file: Optional[str] = typer.Option(None, "--file", help="A snapshot/seed YAML instead of the seeds."),
+) -> None:
+    """List norms (rules in force) from the seeds or a snapshot."""
+    sets = _load_norm_set(file)
+    if jurisdiction:
+        if jurisdiction not in sets:
+            die(f"no norms for jurisdiction '{jurisdiction}'")
+        sets = {jurisdiction: sets[jurisdiction]}
+    table = status_table(
+        "Norms",
+        ["id", "jurisdiction", "rule form", "object", "aspect", "source", "status"],
+    )
+    for slug, ns in sets.items():
+        norms = ns.in_force() if in_force else ns.norms
+        for n in norms:
+            src = n.source + (f" ({n.source_ref})" if n.source_ref else "")
+            table.add_row(n.id, slug, n.rule_form,
+                          f"{n.object.kind} ({n.object.type})", n.aspect, src, n.status)
+    console.print(table)
+
+
+@norms_app.command(name="show")
+def norms_show(
+    norm_id: str = typer.Argument(..., help="Norm id, e.g. N-0001."),
+    file: Optional[str] = typer.Option(None, "--file", help="A snapshot/seed YAML instead of the seeds."),
+) -> None:
+    """Show one norm in full."""
+    sets = _load_norm_set(file)
+    for slug, ns in sets.items():
+        for n in ns.norms:
+            if n.id == norm_id:
+                console.print(f"[bold]{n.id}[/bold] — {n.rule_form}  (jurisdiction: {slug})")
+                console.print(f"  object:        {n.object.kind} ({n.object.type})")
+                console.print(f"  aspect:        {n.aspect}")
+                console.print(f"  subjects:      {', '.join(n.subjects) or '—'}")
+                console.print(f"  beneficiaries: {', '.join(n.beneficiaries) or '—'}")
+                console.print(f"  source:        {n.source}" + (f" ({n.source_ref})" if n.source_ref else ""))
+                console.print(f"  status:        {n.status}")
+                contested = ns.contested(n.id)
+                if contested:
+                    console.print("  contested by:  " + ", ".join(c.id for c in contested))
+                problems = validate_norm_set(ns, slug)
+                if problems:
+                    console.print("  [yellow]validation problems:[/yellow]")
+                    for p in problems:
+                        console.print(f"    - {p}")
+                return
+    die(f"unknown norm '{norm_id}'")

@@ -1,0 +1,27 @@
+# Foundational seed — rules in force in Harbor & Navigation at genesis.
+jurisdiction: harbor-navigation
+norms:
+  - id: N-0011
+    rule_form: open_port
+    object: {kind: northern_harbor, type: resource}
+    aspect: right_of_way
+    subjects: []
+    beneficiaries: [merchant, shipowner]
+    source: custom
+    status: in_force
+  - id: N-0012
+    rule_form: harbor_dues
+    object: {kind: northern_harbor, type: resource}
+    aspect: dues
+    subjects: [shipowner]
+    beneficiaries: [harbor_master]
+    source: custom
+    status: in_force
+  - id: N-0013
+    rule_form: compulsory_pilotage
+    object: {kind: pilot_cut, type: resource}
+    aspect: pilotage
+    subjects: [shipowner]
+    beneficiaries: [pilot]
+    source: custom
+    status: in_force

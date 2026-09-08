@@ -1,0 +1,37 @@
+# Norm kinds — the vocabulary of rules in force (task 0015).
+sources:
+  - kind: custom
+    label: Custom
+    requires_source_ref: false
+    note: unwritten long usage; the foundational layer of normativity
+  - kind: statute
+    label: Statute
+    requires_source_ref: true
+    note: enacted through the bill flow (Act or Amendment)
+  - kind: treaty
+    label: Treaty
+    requires_source_ref: true
+    note: inter-polity agreement (Treaty)
+  - kind: charter
+    label: Charter
+    requires_source_ref: true
+    note: a grant to a specific holder (exemptions, toll farms, entails)
+
+object_types:
+  - kind: resource
+    note: a contestable, depletable or occupiable thing
+  - kind: conduct
+    note: a category of act (lending, coinage)
+  - kind: status
+    note: a legal condition (citizenship, sanctuary)
+  - kind: flow
+    note: a stream of taxable or regulatable events
+  - kind: burden
+    note: a distributable obligation (defense levy)
+  - kind: relationship
+    note: a legal relation between parties (bond, treaty regime)
+
+statuses:
+  - kind: in_force
+  - kind: superseded
+  - kind: repealed

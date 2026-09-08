@@ -1,0 +1,20 @@
+# Foundational seed — rules in force in Taxation at genesis.
+jurisdiction: taxation
+norms:
+  - id: N-0031
+    rule_form: uniform_levy
+    object: {kind: the_levy_rolls, type: flow}
+    aspect: rate
+    subjects: [merchant]
+    beneficiaries: [treasurer]
+    source: custom
+    status: in_force
+  - id: N-0032
+    rule_form: exemption_charter
+    object: {kind: exemption_charters, type: relationship}
+    aspect: exemption
+    subjects: []
+    beneficiaries: [merchant]
+    source: charter
+    source_ref: CHTR-0001
+    status: in_force
