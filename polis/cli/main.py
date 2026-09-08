@@ -15,6 +15,7 @@ from . import (
     health,
     office,
     person,
+    sim,
     woodpecker,
     world,
 )
@@ -39,6 +40,9 @@ app.add_typer(assign.app, name="assign")
 app.add_typer(docket.app, name="docket")
 app.add_typer(bill.app, name="bill")
 app.add_typer(archive.app, name="archive")
+
+# simulation runs — the journal and (later) replay
+app.add_typer(sim.app, name="sim")
 
 # component commands — the technical subsystems
 app.add_typer(gogs.app, name="gogs")

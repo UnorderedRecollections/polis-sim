@@ -39,6 +39,11 @@ Cities") whose legislative life runs on real local infrastructure.
     candidates — `polis world events candidates --jurisdiction <slug>`);
     extensibility audit: `polis/sim/extensibility.py` (`polis world legal
     audit [slug]` — the new-jurisdiction checklist as code);
+    runtime: `polis/sim/journal.py` (append-only JSONL with anchors,
+    `data/sims/<run>/`), `polis/sim/runtime.py` (**enact() transaction facade
+    — one call = one legal act = one journal entry; the sim never touches git
+    stepwise**; situation write-back on ratify/repeal), CLI `polis sim
+    new|list|present|runtime`; demo: `tests/sim-runtime-demo.sh` (**passing**);
     rationale: `docs/design/story-data-model.md`.
 - `.state/` — container persistent data (gogs/gitea/woodpecker/postgres),
   gitignored. All other runtime state under `data/` is gitignored except
