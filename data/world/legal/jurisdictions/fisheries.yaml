@@ -58,3 +58,20 @@ disputes:                   # typical dispute shapes
   - access
   - taxation
   - licensing
+
+incompatibilities:
+  - between: [open_access, exclusive_access]
+    over: access_right
+    kind: strict
+    note: free entry and exclusion cannot both govern access
+  - between: [open_access, territorial_boundary]
+    kind: strict
+    note: a boundary abolishes open access beyond it
+  - between: [open_access, quota]
+    over: access_right
+    kind: tension
+    note: a quota restrains what open access grants
+  - between: [open_access, licensing]
+    over: access_right
+    kind: tension
+    note: licensing gates what open access frees

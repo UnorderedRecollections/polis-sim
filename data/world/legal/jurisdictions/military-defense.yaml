@@ -53,3 +53,17 @@ disputes:
   - command_disputes
   - unequal_burdens
   - mercenary_contracts
+
+incompatibilities:
+  - between: [levy_by_population, levy_by_wealth]
+    over: cost_share
+    kind: strict
+    note: count heads or count purses, not both
+  - between: [federal_command, city_command]
+    over: command
+    kind: strict
+    note: one army, one commander
+  - between: [substitution_by_payment, levy_by_population]
+    over: contingent_size
+    kind: tension
+    note: buying out of what is counted in heads

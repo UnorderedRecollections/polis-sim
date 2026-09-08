@@ -53,3 +53,13 @@ disputes:
   - treaty_interpretation
   - smuggling
   - fugitives
+
+incompatibilities:
+  - between: [open_border, treaty_boundary]
+    over: boundary_line
+    kind: strict
+    note: the border is either free or treaty-bound
+  - between: [most_favored_nation, neutral_zone]
+    over: tariff_regime
+    kind: tension
+    note: favoring one against favoring none

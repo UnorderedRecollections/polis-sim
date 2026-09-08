@@ -53,3 +53,13 @@ disputes:
   - debasement
   - exchange_rates
   - false_weights
+
+incompatibilities:
+  - between: [fixed_standard, free_coinage]
+    over: fineness
+    kind: strict
+    note: one standard against anyone's coin
+  - between: [legal_tender, free_coinage]
+    over: denomination
+    kind: tension
+    note: forced acceptance alongside free minting

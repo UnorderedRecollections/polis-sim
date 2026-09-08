@@ -53,3 +53,13 @@ disputes:
   - blood_feuds
   - disproportionate_punishment
   - sanctuary
+
+incompatibilities:
+  - between: [city_venue, federal_venue]
+    over: venue
+    kind: strict
+    note: an offense has one judge, not two
+  - between: [proportional_penalty, composition_instead_of_punishment]
+    over: penalty
+    kind: tension
+    note: pay the debt or pay the price

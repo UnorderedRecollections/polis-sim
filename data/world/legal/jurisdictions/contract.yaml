@@ -53,3 +53,13 @@ disputes:
   - usury
   - broken_partnerships
   - contested_bonds
+
+incompatibilities:
+  - between: [usury_cap, debtor_prison_abolished]
+    over: security
+    kind: strict
+    note: capping interest while jailing debtors is no regime at all
+  - between: [guild_arbitration, specific_performance]
+    over: form
+    kind: tension
+    note: the guild's award against the court's decree

@@ -53,3 +53,13 @@ disputes:
   - enclosure
   - wood_gathering
   - boundary
+
+incompatibilities:
+  - between: [open_commons, enclosure_grant]
+    over: enclosure
+    kind: strict
+    note: enclosure ends the commons
+  - between: [stinting, open_commons]
+    over: grazing_capacity
+    kind: tension
+    note: stints ration the open field

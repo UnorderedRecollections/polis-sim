@@ -53,3 +53,13 @@ disputes:
   - foreign_merchants
   - guild_exclusion
   - tariff_evasion
+
+incompatibilities:
+  - between: [free_entry, guild_monopoly]
+    over: license
+    kind: strict
+    note: the guild's monopoly excludes free entry
+  - between: [standard_weights, guild_monopoly]
+    over: standard_measure
+    kind: tension
+    note: the guild's bushel against the federal standard

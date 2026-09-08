@@ -53,3 +53,13 @@ disputes:
   - exemption_abuse
   - retaliatory_tariffs
   - collection_point
+
+incompatibilities:
+  - between: [uniform_levy, retaliatory_tariff]
+    over: rate
+    kind: strict
+    note: one rate for all against rates aimed at one
+  - between: [uniform_levy, exemption_charter]
+    over: exemption
+    kind: tension
+    note: exemptions pierce uniformity but are granted

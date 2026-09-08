@@ -53,3 +53,13 @@ disputes:
   - unlicensed_workings
   - replanting_duties
   - royalty_evasion
+
+incompatibilities:
+  - between: [sustained_yield, extraction_lease]
+    over: stock
+    kind: strict
+    note: a lease to take cannot bind to keep
+  - between: [closed_season, extraction_lease]
+    over: season
+    kind: tension
+    note: a year-round lease against a closed season

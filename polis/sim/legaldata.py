@@ -47,6 +47,15 @@ class ParadigmData(BaseModel):
     impact_kinds: list[str] = []
 
 
+class IncompatibilityRule(BaseModel):
+    """A declared incompatibility between two rule_forms
+    (docs/design/rule-incompatibility.md)."""
+    between: tuple[str, str]
+    over: Optional[str] = None            # aspect scope; None = any shared aspect
+    kind: str = "strict"                  # strict | tension
+    note: str = ""
+
+
 class JurisdictionData(BaseModel):
     jurisdiction: str                     # slug, matches the filename
     name: str
@@ -58,6 +67,7 @@ class JurisdictionData(BaseModel):
     resource_properties: list[str]
     rule_forms: list[str]
     disputes: list[str]
+    incompatibilities: list[IncompatibilityRule] = []
 
     def activity_verbs(self) -> list[str]:
         return [a.verb for a in self.activities]
@@ -98,6 +108,14 @@ def load_jurisdictions() -> dict[str, JurisdictionData]:
         if unknown:
             raise ValueError(f"{path.name}: unknown paradigm(s) {sorted(unknown)} "
                              f"(known: {sorted(known)})")
+        for rule in data.incompatibilities:
+            missing = [rf for rf in rule.between if rf not in data.rule_forms]
+            if missing:
+                raise ValueError(f"{path.name}: incompatibility names unknown "
+                                 f"rule_form(s) {missing}")
+            if rule.kind not in ("strict", "tension"):
+                raise ValueError(f"{path.name}: incompatibility kind must be "
+                                 f"strict|tension, got '{rule.kind}'")
         out[data.jurisdiction] = data
     return out
 

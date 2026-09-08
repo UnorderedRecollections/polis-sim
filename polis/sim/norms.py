@@ -164,20 +164,38 @@ class NormSet(BaseModel):
             and n.object == norm.object and n.aspect == norm.aspect
         ]
 
-    def conflicts(self, incompatible: list[tuple[str, str]] | None = None) -> list[tuple[Norm, Norm]]:
+    def conflicts(
+        self,
+        incompatibilities: list | None = None,
+        kinds: tuple[str, ...] = ("strict",),
+    ) -> list[tuple[Norm, Norm]]:
         """Pairs of in-force norms over the same object+aspect whose rule
-        forms are incompatible. The incompatibility relation itself lands
-        with task 0013; pass pairs as (rule_form_a, rule_form_b)."""
+        forms are incompatible (docs/design/rule-incompatibility.md).
+
+        `incompatibilities`: IncompatibilityRule objects (with .between/
+        .over/.kind) or plain (a, b) tuples (treated as strict, any aspect).
+        `kinds`: which degrees to report ("strict", "tension").
+        In a healthy situation this returns empty for kinds=("strict",).
+        """
         pairs: list[tuple[Norm, Norm]] = []
-        if not incompatible:
+        if not incompatibilities:
             return pairs
-        bad = {frozenset(p) for p in incompatible}
+        rules = []
+        for r in incompatibilities:
+            if isinstance(r, tuple):
+                rules.append((frozenset(r), None, "strict"))
+            else:
+                rules.append((frozenset(r.between), r.over, r.kind))
+        rules = [r for r in rules if r[2] in kinds]
         live = self.in_force()
         for i, a in enumerate(live):
             for b in live[i + 1:]:
-                if (a.object == b.object and a.aspect == b.aspect
-                        and frozenset((a.rule_form, b.rule_form)) in bad):
-                    pairs.append((a, b))
+                if a.object != b.object or a.aspect != b.aspect:
+                    continue
+                for forms, over, _kind in rules:
+                    if frozenset((a.rule_form, b.rule_form)) == forms and (
+                            over is None or over == a.aspect):
+                        pairs.append((a, b))
         return pairs
 
 

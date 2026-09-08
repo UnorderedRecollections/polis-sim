@@ -56,3 +56,16 @@ disputes:
   - pilotage
   - quarantine
   - right_of_way
+
+incompatibilities:
+  - between: [open_port, priority_berthing]
+    over: berth
+    kind: strict
+    note: priority abolishes the open berth
+  - between: [open_port, harbor_dues]
+    over: dues
+    kind: tension
+    note: dues on an open port grate but hold
+  - between: [compulsory_pilotage, tonnage_exemption]
+    kind: tension
+    note: exempting some from what is compulsory for all

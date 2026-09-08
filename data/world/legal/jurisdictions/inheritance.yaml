@@ -53,3 +53,17 @@ disputes:
   - disinherited_heirs
   - cross_city_succession
   - escheats
+
+incompatibilities:
+  - between: [primogeniture, partible_inheritance]
+    over: share
+    kind: strict
+    note: one heir or all heirs, not both
+  - between: [testamentary_freedom, forced_share]
+    over: legitim
+    kind: strict
+    note: freedom to disinherit against a forced portion
+  - between: [primogeniture, forced_share]
+    over: share
+    kind: tension
+    note: the eldest takes the seat, the rest must take something

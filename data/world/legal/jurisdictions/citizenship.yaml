@@ -52,3 +52,13 @@ disputes:
   - newcomers_rights
   - dual_allegiance
   - expulsion
+
+incompatibilities:
+  - between: [naturalization_by_residence, guest_status]
+    over: residence_duration
+    kind: strict
+    note: residence either earns the freedom or keeps the guest
+  - between: [jus_soli, jus_sanguinis]
+    over: parentage
+    kind: tension
+    note: soil and blood both claim the newborn

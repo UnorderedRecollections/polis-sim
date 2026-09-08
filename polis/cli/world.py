@@ -210,9 +210,17 @@ def jurisdictions_inspect(
     j = load_jurisdictions().get(slug)
     if j is None:
         die(f"unknown jurisdiction '{slug}' (see `polis world jurisdictions list`)")
+    if component == "incompatibilities":
+        console.print(f"[bold]{j.name}[/bold] — incompatibilities:")
+        for r in j.incompatibilities:
+            over = f" over {r.over}" if r.over else ""
+            console.print(f"  - {r.between[0]} ⊥ {r.between[1]} ({r.kind}{over})")
+            if r.note:
+                console.print(f"    [dim]{r.note}[/dim]")
+        return
     attr = _JURISDICTION_COMPONENTS.get(component)
     if attr is None:
-        die(f"unknown component '{component}' (choose from: {', '.join(_JURISDICTION_COMPONENTS)})")
+        die(f"unknown component '{component}' (choose from: {', '.join(_JURISDICTION_COMPONENTS)}, incompatibilities)")
     console.print(f"[bold]{j.name}[/bold] — {component}:")
     for item in getattr(j, attr):
         console.print(f"  - {item}")
@@ -438,6 +446,15 @@ def legal_validate() -> None:
             problems.append(f"{slug}: no norm seed file")
     for slug, ns in seeds.items():
         problems += validate_norm_set(ns, slug)
+
+    # the seed must contain no active strict conflicts of laws
+    jurisdictions = load_jurisdictions()
+    for slug, ns in seeds.items():
+        for a, b in ns.conflicts(jurisdictions[slug].incompatibilities):
+            problems.append(
+                f"{slug}: active conflict of laws in the seed: "
+                f"{a.id} ({a.rule_form}) ⊥ {b.id} ({b.rule_form}) "
+                f"over {a.object.kind}/{a.aspect}")
 
     n_norms = sum(len(ns.norms) for ns in seeds.values())
     n_holdings = sum(len(ns.holdings) for ns in seeds.values())

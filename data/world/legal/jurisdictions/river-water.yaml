@@ -56,3 +56,13 @@ disputes:
   - drought_sharing
   - pollution
   - mill_rights
+
+incompatibilities:
+  - between: [prior_appropriation, riparian_sharing]
+    over: flow
+    kind: strict
+    note: first-in-time and share-alike cannot both allocate flow
+  - between: [minimum_flow, diversion_permit]
+    over: flow
+    kind: tension
+    note: permits eat at the guaranteed flow
