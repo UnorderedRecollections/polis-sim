@@ -11,13 +11,32 @@ from pathlib import Path
 from typing import Optional
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from .. import config
 
 LEGAL_DIR = config.WORLD_DIR / "legal"
 JURISDICTIONS_DIR = LEGAL_DIR / "jurisdictions"
 TEMPLATES_DIR = LEGAL_DIR / "templates"
+
+
+class ActivitySignature(BaseModel):
+    """An activity with structure (docs/design/activity-signatures.md).
+    A bare string in the YAML coerces to a signature with only a verb."""
+    verb: str
+    actors: list[str] = []                # actor kinds that may perform it
+    target: str = ""                      # resource | object | norm
+    affects: list[str] = []               # aspects touched (norm/holding vocabulary)
+    impact: str = ""                      # an impact kind of the paradigm
+    preconditions: dict = {}
+    direction: Optional[str] = None       # river-water: upstream | downstream
+
+    @model_validator(mode="before")
+    @classmethod
+    def _coerce_string(cls, v):
+        if isinstance(v, str):
+            return {"verb": v}
+        return v
 
 
 class ParadigmData(BaseModel):
@@ -35,10 +54,13 @@ class JurisdictionData(BaseModel):
     paradigms: list[str] = []             # kinds from ontology/paradigms.yaml
     resources: list[str]
     actors: list[str]                     # derive from JurisdictionalActor
-    activities: list[str]                 # domain verbs (NOT legal moves)
+    activities: list[ActivitySignature]   # domain activities (signatures; bare verbs coerce)
     resource_properties: list[str]
     rule_forms: list[str]
     disputes: list[str]
+
+    def activity_verbs(self) -> list[str]:
+        return [a.verb for a in self.activities]
 
 
 class MovesData(BaseModel):

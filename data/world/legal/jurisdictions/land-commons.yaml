@@ -14,10 +14,26 @@ actors:
   - village_reeve
 
 activities:
-  - graze
-  - gather_wood
-  - enclose
-  - plough
+  - verb: graze
+    actors: [farmer, shepherd]
+    target: resource
+    affects: [grazing_capacity]
+    impact: depletes
+  - verb: gather_wood
+    actors: [farmer]
+    target: resource
+    affects: [stock]
+    impact: depletes
+  - verb: enclose
+    actors: [village_reeve, farmer]
+    target: resource
+    affects: [enclosure, tenure]
+    impact: blocks
+  - verb: plough
+    actors: [farmer]
+    target: resource
+    affects: [parcel]
+    impact: occupies
 
 resource_properties:
   - parcel

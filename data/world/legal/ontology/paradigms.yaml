@@ -9,7 +9,7 @@ kinds:
       resource; activity impacts are physical (depletes, blocks, pollutes,
       occupies); incompatibilities are natural and concrete.
     holding_object_types: [resource]
-    impact_kinds: [depletes, blocks, pollutes, occupies, enriches]
+    impact_kinds: [depletes, blocks, pollutes, occupies, enriches, burdens]
   - kind: conduct-status
     label: Conduct/status jurisdiction
     description: >-
@@ -17,7 +17,7 @@ kinds:
       statuses, rights and relationships; impacts are normative (prohibits,
       requires, penalizes, confers status).
     holding_object_types: [status, right, relationship, conduct, flow]
-    impact_kinds: [prohibits, requires, penalizes, confers-status]
+    impact_kinds: [prohibits, requires, penalizes, confers-status, enriches, burdens]
   - kind: political-burden
     label: Political/burden jurisdiction
     description: >-

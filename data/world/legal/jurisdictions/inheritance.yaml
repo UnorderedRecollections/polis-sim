@@ -14,10 +14,26 @@ actors:
   - probate_judge
 
 activities:
-  - bequeath
-  - inherit
-  - contest_will
-  - partition
+  - verb: bequeath
+    actors: [testator]
+    target: object
+    affects: [will, share]
+    impact: enriches
+  - verb: inherit
+    actors: [heir]
+    target: resource
+    affects: [share]
+    impact: occupies
+  - verb: contest_will
+    actors: [heir]
+    target: object
+    affects: [will, legitim]
+    impact: blocks
+  - verb: partition
+    actors: [heir, probate_judge]
+    target: resource
+    affects: [share]
+    impact: depletes
 
 resource_properties:
   - share

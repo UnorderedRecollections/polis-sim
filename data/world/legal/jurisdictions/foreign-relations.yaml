@@ -14,10 +14,26 @@ actors:
   - neighboring_state
 
 activities:
-  - negotiate
-  - ratify_treaty
-  - patrol_border
-  - extradite
+  - verb: negotiate
+    actors: [envoy]
+    target: norm
+    affects: [tariff_regime]
+    impact: allocates
+  - verb: ratify_treaty
+    actors: [envoy]
+    target: norm
+    affects: [boundary_line]
+    impact: obliges
+  - verb: patrol_border
+    actors: [border_warden]
+    target: resource
+    affects: [crossing_points]
+    impact: obliges
+  - verb: extradite
+    actors: [border_warden, envoy]
+    target: object
+    affects: [extradition]
+    impact: obliges
 
 resource_properties:
   - boundary_line

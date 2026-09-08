@@ -14,10 +14,26 @@ actors:
   - assayer
 
 activities:
-  - mint
-  - exchange
-  - assay
-  - clip
+  - verb: mint
+    actors: [treasurer]
+    target: norm
+    affects: [fineness, seigniorage]
+    impact: requires
+  - verb: exchange
+    actors: [money_changer]
+    target: object
+    affects: [exchange_rate]
+    impact: enriches
+  - verb: assay
+    actors: [assayer]
+    target: object
+    affects: [fineness]
+    impact: requires
+  - verb: clip
+    actors: [money_changer]
+    target: object
+    affects: [fineness]
+    impact: penalizes
 
 resource_properties:
   - fineness

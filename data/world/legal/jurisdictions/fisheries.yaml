@@ -13,11 +13,29 @@ actors:                     # jurisdiction actor kinds (derive from Jurisdiction
   - fishing_guild
   - harbor_authority
 
-activities:                 # what actors DO with the resource (domain verbs)
-  - fish
-  - land_catch
-  - inspect
-  - dry_nets
+activities:
+  - verb: fish
+    actors: [fisher]
+    target: resource
+    affects: [stock, access_right]
+    impact: depletes
+    preconditions:
+      norm_in_force: open_access
+  - verb: land_catch
+    actors: [fisher]
+    target: resource
+    affects: [stock]
+    impact: enriches
+  - verb: inspect
+    actors: [harbor_authority, fishing_guild]
+    target: object
+    affects: [species, access_right]
+    impact: blocks
+  - verb: dry_nets
+    actors: [fisher]
+    target: resource
+    affects: []
+    impact: enriches
 
 resource_properties:        # aspects of the resource that rules attach to
   - location

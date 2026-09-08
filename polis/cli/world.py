@@ -24,6 +24,7 @@ relations_app = typer.Typer(no_args_is_help=True, help="Legal relations of the l
 paradigms_app = typer.Typer(no_args_is_help=True, help="Jurisdiction paradigms (structural kinds).")
 norms_app = typer.Typer(no_args_is_help=True, help="Norms — the rules in force (seed or snapshot).")
 resources_app = typer.Typer(no_args_is_help=True, help="Concrete resources stories revolve around.")
+events_app = typer.Typer(no_args_is_help=True, help="Event candidates (friction-derived story seeds).")
 app.add_typer(jurisdictions_app, name="jurisdictions")
 app.add_typer(moves_app, name="moves")
 app.add_typer(templates_app, name="templates")
@@ -36,6 +37,7 @@ app.add_typer(relations_app, name="relations")
 app.add_typer(paradigms_app, name="paradigms")
 app.add_typer(norms_app, name="norms")
 app.add_typer(resources_app, name="resources")
+app.add_typer(events_app, name="events")
 
 
 @app.command()
@@ -137,7 +139,7 @@ def jurisdictions_show(slug: str = typer.Argument(..., help="Jurisdiction slug, 
     for label, items in [
         ("resources", j.resources),
         ("actors", j.actors),
-        ("activities", j.activities),
+        ("activities", j.activity_verbs()),
         ("resource properties", j.resource_properties),
         ("rule forms", j.rule_forms),
         ("disputes", j.disputes),
@@ -423,10 +425,12 @@ def resources_show(
 def legal_validate() -> None:
     """Validate the foundational legal state (bootstrap step 2):
     jurisdictions, resources, norms and holdings as one consistent seed."""
+    from ..sim.events import validate_signatures
     from ..sim.resources import validate_resources
 
     problems: list[str] = []
     problems += validate_resources()
+    problems += validate_signatures()
 
     seeds = load_seed_norms()
     for slug in load_jurisdictions():
@@ -448,3 +452,41 @@ def legal_validate() -> None:
             console.print(f"  - {p}")
         raise typer.Exit(code=1)
     console.print("[green]the foundational legal state is consistent[/green]")
+
+
+# --- event candidates -------------------------------------------------------------
+
+@events_app.command(name="candidates")
+def events_candidates(
+    jurisdiction: str = typer.Option(..., "--jurisdiction", help="Jurisdiction slug."),
+    show_all: bool = typer.Option(False, "--all", help="Include uncharged candidates."),
+) -> None:
+    """Compute event candidates (story seeds) against the seed situation."""
+    from ..sim.events import charged_candidates
+
+    jurisdictions = load_jurisdictions()
+    j = jurisdictions.get(jurisdiction)
+    if j is None:
+        die(f"unknown jurisdiction '{jurisdiction}'")
+    ns = load_seed_norms().get(jurisdiction)
+    if ns is None:
+        die(f"no seed norms for '{jurisdiction}'")
+    cands = charged_candidates(j, ns)
+    if not show_all:
+        cands = [c for c in cands if c.charged]
+    if not cands:
+        console.print(f"[dim]no {'charged ' if not show_all else ''}candidates in {jurisdiction}[/dim]")
+        return
+    table = status_table(
+        f"event candidates — {jurisdiction}",
+        ["actor", "activity", "object", "impact", "harms", "norms in question"],
+    )
+    for c in cands:
+        harms = ", ".join(
+            f"{h.holding.id} ({h.holding.holder.actor_kind}"
+            + (f" of {h.holding.holder.city}" if h.holding.holder.city else "") + ")"
+            for h in c.harmed
+        ) or "[dim]—[/dim]"
+        norms = ", ".join(sorted({n for h in c.harmed for n in h.norms_in_question})) or "[dim]—[/dim]"
+        table.add_row(c.actor.label(), c.verb, c.object_kind, c.impact, harms, norms)
+    console.print(table)

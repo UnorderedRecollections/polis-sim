@@ -13,10 +13,26 @@ actors:
   - city_clerk
 
 activities:
-  - reside
-  - swear_oath
-  - enroll
-  - sponsor
+  - verb: reside
+    actors: [newcomer]
+    target: object
+    affects: [residence_duration]
+    impact: requires
+  - verb: swear_oath
+    actors: [newcomer]
+    target: object
+    affects: [oath]
+    impact: confers-status
+  - verb: enroll
+    actors: [city_clerk]
+    target: norm
+    affects: [oath, residence_duration]
+    impact: confers-status
+  - verb: sponsor
+    actors: [citizen]
+    target: object
+    affects: [residence_duration]
+    impact: confers-status
 
 resource_properties:
   - residence_duration

@@ -14,10 +14,26 @@ actors:
   - surety
 
 activities:
-  - lend
-  - sell_on_credit
-  - stand_surety
-  - enforce_bond
+  - verb: lend
+    actors: [creditor]
+    target: object
+    affects: [sum, term]
+    impact: enriches
+  - verb: sell_on_credit
+    actors: [merchant, creditor]
+    target: object
+    affects: [sum]
+    impact: enriches
+  - verb: stand_surety
+    actors: [surety]
+    target: object
+    affects: [security]
+    impact: burdens
+  - verb: enforce_bond
+    actors: [creditor]
+    target: object
+    affects: [rate, security]
+    impact: penalizes
 
 resource_properties:
   - sum

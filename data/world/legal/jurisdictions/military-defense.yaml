@@ -14,10 +14,26 @@ actors:
   - city_marshal
 
 activities:
-  - muster
-  - garrison
-  - drill
-  - fortify
+  - verb: muster
+    actors: [levy_master, city_marshal]
+    target: resource
+    affects: [contingent_size]
+    impact: obliges
+  - verb: garrison
+    actors: [captain]
+    target: resource
+    affects: [cost_share]
+    impact: burdens
+  - verb: drill
+    actors: [captain]
+    target: resource
+    affects: [contingent_size]
+    impact: burdens
+  - verb: fortify
+    actors: [city_marshal]
+    target: resource
+    affects: [fortification, cost_share]
+    impact: allocates
 
 resource_properties:
   - contingent_size

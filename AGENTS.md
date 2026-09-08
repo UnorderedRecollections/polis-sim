@@ -35,6 +35,8 @@ Cities") whose legislative life runs on real local infrastructure.
     source of truth; jurisdiction `resources:` list is a cross-checked index),
     `moves.yaml`, `templates/*.yaml`. Loaders: `polis/sim/legaldata.py`,
     `polis/sim/ontology.py`, `polis/sim/norms.py`, `polis/sim/resources.py`;
+    event synthesis: `polis/sim/events.py` (friction derivation, charged
+    candidates — `polis world events candidates --jurisdiction <slug>`);
     rationale: `docs/design/story-data-model.md`.
 - `.state/` — container persistent data (gogs/gitea/woodpecker/postgres),
   gitignored. All other runtime state under `data/` is gitignored except

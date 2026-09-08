@@ -14,10 +14,26 @@ actors:
   - market_warden
 
 activities:
-  - sell
-  - weigh
-  - license_stall
-  - inspect_goods
+  - verb: sell
+    actors: [merchant]
+    target: resource
+    affects: [stall]
+    impact: occupies
+  - verb: weigh
+    actors: [market_warden]
+    target: resource
+    affects: [standard_measure]
+    impact: blocks
+  - verb: license_stall
+    actors: [guild, market_warden]
+    target: norm
+    affects: [license]
+    impact: blocks
+  - verb: inspect_goods
+    actors: [market_warden]
+    target: resource
+    affects: [standard_measure]
+    impact: blocks
 
 resource_properties:
   - stall

@@ -177,7 +177,7 @@ class Jurisdiction:
     paradigms: tuple[str, ...]            # kinds from ontology/paradigms.yaml
     resources: tuple[str, ...]
     actors: tuple[str, ...]               # actor kind slugs
-    activities: tuple[str, ...]
+    activities: tuple                     # ActivitySignature objects
     resource_properties: tuple[str, ...]
     rule_forms: tuple[str, ...]
     disputes: tuple[str, ...]

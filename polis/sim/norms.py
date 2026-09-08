@@ -246,7 +246,7 @@ def validate_norm_set(norm_set: NormSet, jurisdiction_slug: str) -> list[str]:
     for h in norm_set.holdings:
         if h.under not in norm_ids:
             problems.append(f"{h.id}: cites unknown norm '{h.under}'")
-        if h.activity and j.activities and h.activity not in j.activities:
+        if h.activity and j.activities and h.activity not in j.activity_verbs():
             problems.append(f"{h.id}: activity '{h.activity}' not in {jurisdiction_slug}'s activities")
         try:
             if h.holder.actor_kind:

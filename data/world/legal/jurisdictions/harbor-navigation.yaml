@@ -15,10 +15,26 @@ actors:
   - pilot
 
 activities:
-  - berth
-  - load_cargo
-  - pilot_in
-  - levy_dues
+  - verb: berth
+    actors: [shipowner, merchant]
+    target: resource
+    affects: [berth]
+    impact: occupies
+  - verb: load_cargo
+    actors: [merchant]
+    target: resource
+    affects: [berth]
+    impact: occupies
+  - verb: pilot_in
+    actors: [pilot]
+    target: resource
+    affects: [pilotage]
+    impact: enriches
+  - verb: levy_dues
+    actors: [harbor_master]
+    target: norm
+    affects: [dues]
+    impact: burdens
 
 resource_properties:
   - berth

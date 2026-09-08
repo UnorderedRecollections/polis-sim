@@ -14,10 +14,26 @@ actors:
   - accused
 
 activities:
-  - accuse
-  - arrest
-  - try
-  - punish
+  - verb: accuse
+    actors: [accuser]
+    target: object
+    affects: [act, venue]
+    impact: penalizes
+  - verb: arrest
+    actors: [magistrate]
+    target: object
+    affects: [act]
+    impact: penalizes
+  - verb: try
+    actors: [magistrate]
+    target: object
+    affects: [venue, penalty]
+    impact: requires
+  - verb: punish
+    actors: [magistrate]
+    target: object
+    affects: [penalty]
+    impact: penalizes
 
 resource_properties:
   - act

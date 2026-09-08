@@ -14,10 +14,29 @@ actors:
   - city_waterwarden
 
 activities:
-  - divert
-  - irrigate
-  - mill
-  - dam
+  - verb: divert
+    actors: [farmer, miller]
+    target: resource
+    affects: [flow]
+    impact: depletes
+    direction: upstream
+  - verb: irrigate
+    actors: [farmer]
+    target: resource
+    affects: [flow, quality]
+    impact: depletes
+    direction: downstream
+  - verb: mill
+    actors: [miller]
+    target: resource
+    affects: [flow]
+    impact: occupies
+  - verb: dam
+    actors: [city_waterwarden]
+    target: resource
+    affects: [flow]
+    impact: blocks
+    direction: upstream
 
 resource_properties:
   - flow

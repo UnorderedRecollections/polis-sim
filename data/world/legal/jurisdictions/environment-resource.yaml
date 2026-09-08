@@ -14,10 +14,26 @@ actors:
   - commons_warden
 
 activities:
-  - fell
-  - dig
-  - burn_off
-  - replant
+  - verb: fell
+    actors: [extractor]
+    target: resource
+    affects: [stock, regeneration]
+    impact: depletes
+  - verb: dig
+    actors: [extractor]
+    target: resource
+    affects: [stock]
+    impact: depletes
+  - verb: burn_off
+    actors: [extractor, forester]
+    target: resource
+    affects: [regeneration]
+    impact: pollutes
+  - verb: replant
+    actors: [forester]
+    target: resource
+    affects: [regeneration]
+    impact: enriches
 
 resource_properties:
   - stock

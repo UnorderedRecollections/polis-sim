@@ -14,10 +14,26 @@ actors:
   - merchant
 
 activities:
-  - levy
-  - collect
-  - assess
-  - exempt
+  - verb: levy
+    actors: [treasurer]
+    target: norm
+    affects: [rate, base]
+    impact: burdens
+  - verb: collect
+    actors: [tax_farmer]
+    target: object
+    affects: [point_of_collection]
+    impact: burdens
+  - verb: assess
+    actors: [treasurer, tax_farmer]
+    target: object
+    affects: [base]
+    impact: penalizes
+  - verb: exempt
+    actors: [treasurer]
+    target: norm
+    affects: [exemption]
+    impact: confers-status
 
 resource_properties:
   - rate

@@ -14,10 +14,26 @@ actors:
   - road_warden
 
 activities:
-  - carry
-  - collect_toll
-  - repair
-  - weigh_loads
+  - verb: carry
+    actors: [carrier]
+    target: resource
+    affects: [route]
+    impact: occupies
+  - verb: collect_toll
+    actors: [toll_farmer]
+    target: norm
+    affects: [toll_rate]
+    impact: blocks
+  - verb: repair
+    actors: [road_warden]
+    target: resource
+    affects: [maintenance_duty]
+    impact: enriches
+  - verb: weigh_loads
+    actors: [toll_farmer, road_warden]
+    target: resource
+    affects: [toll_rate]
+    impact: occupies
 
 resource_properties:
   - route
