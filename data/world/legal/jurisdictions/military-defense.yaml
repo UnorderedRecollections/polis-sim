@@ -1,0 +1,39 @@
+jurisdiction: military-defense
+name: Military/Defense
+corpus_dir: null
+paradigm: P            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_watch_towers
+  - muster_rolls
+  - city_walls
+
+actors:
+  - captain
+  - levy_master
+  - city_marshal
+
+activities:
+  - muster
+  - garrison
+  - drill
+  - fortify
+
+resource_properties:
+  - contingent_size
+  - fortification
+  - cost_share
+  - command
+
+rule_forms:
+  - levy_by_population
+  - levy_by_wealth
+  - federal_command
+  - city_command
+  - substitution_by_payment
+
+disputes:
+  - unpaid_levies
+  - command_disputes
+  - unequal_burdens
+  - mercenary_contracts

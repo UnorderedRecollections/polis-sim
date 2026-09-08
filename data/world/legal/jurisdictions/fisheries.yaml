@@ -1,0 +1,42 @@
+jurisdiction: fisheries
+name: Fisheries
+corpus_dir: null            # not yet backed by a corpus directory
+paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:                  # concrete resources stories can be about
+  - northern_banks
+  - eastern_shoals
+  - river_mouth
+
+actors:                     # jurisdiction actor kinds (derive from JurisdictionalActor)
+  - fisher
+  - fishing_guild
+  - harbor_authority
+
+activities:                 # what actors DO with the resource (domain verbs)
+  - fish
+  - land_catch
+  - inspect
+  - dry_nets
+
+resource_properties:        # aspects of the resource that rules attach to
+  - location
+  - season
+  - species
+  - access_right
+
+rule_forms:                 # the kinds of rules that can be enacted or contested
+  - open_access
+  - exclusive_access
+  - quota
+  - seasonal_closure
+  - licensing
+  - territorial_boundary
+  - conservation_requirement
+
+disputes:                   # typical dispute shapes
+  - boundary
+  - overfishing
+  - access
+  - taxation
+  - licensing

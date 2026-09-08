@@ -1,0 +1,1931 @@
+{
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "archive_org": "the-archive",
+    "repo": "common-law",
+    "domains": [
+      "taxation",
+      "maritime",
+      "criminal",
+      "commerce",
+      "civic",
+      "succession"
+    ],
+    "phase": 1
+  },
+  "cities": [
+    {
+      "id": "cogswich",
+      "display_name": "Cogswich",
+      "created_at": "2026-09-06T15:51:18.372500Z"
+    },
+    {
+      "id": "brasshaven",
+      "display_name": "Brasshaven",
+      "created_at": "2026-09-06T15:51:18.372729Z"
+    },
+    {
+      "id": "aetherquay",
+      "display_name": "Aetherquay",
+      "created_at": "2026-09-06T15:51:18.372731Z"
+    },
+    {
+      "id": "thornwick",
+      "display_name": "Thornwick",
+      "created_at": "2026-09-06T15:51:18.372732Z"
+    },
+    {
+      "id": "cindercog",
+      "display_name": "Cindercog",
+      "created_at": "2026-09-06T15:51:18.372733Z"
+    },
+    {
+      "id": "gloamingate",
+      "display_name": "Gloamingate",
+      "created_at": "2026-09-06T15:51:18.372735Z"
+    },
+    {
+      "id": "hushpoole",
+      "display_name": "Hushpoole",
+      "created_at": "2026-09-06T15:51:18.372735Z"
+    },
+    {
+      "id": "chimefall",
+      "display_name": "Chimefall",
+      "created_at": "2026-09-06T15:51:18.372736Z"
+    },
+    {
+      "id": "vapourmouth",
+      "display_name": "Vapourmouth",
+      "created_at": "2026-09-06T15:51:18.372737Z"
+    }
+  ],
+  "offices": [
+    {
+      "id": "local-archivist-cogswich",
+      "title": "Archivist of Cogswich",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:cogswich",
+      "powers": [
+        "merge:municipal/cogswich/**",
+        "maintain:city-archive:cogswich"
+      ],
+      "occupant": "e.vexley",
+      "created_at": "2026-09-06T15:51:18.372904Z"
+    },
+    {
+      "id": "local-archivist-brasshaven",
+      "title": "Archivist of Brasshaven",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:brasshaven",
+      "powers": [
+        "merge:municipal/brasshaven/**",
+        "maintain:city-archive:brasshaven"
+      ],
+      "occupant": "e.fallowfield",
+      "created_at": "2026-09-06T15:51:18.372960Z"
+    },
+    {
+      "id": "local-archivist-aetherquay",
+      "title": "Archivist of Aetherquay",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:aetherquay",
+      "powers": [
+        "merge:municipal/aetherquay/**",
+        "maintain:city-archive:aetherquay"
+      ],
+      "occupant": "s.crankshaw",
+      "created_at": "2026-09-06T15:51:18.373017Z"
+    },
+    {
+      "id": "local-archivist-thornwick",
+      "title": "Archivist of Thornwick",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:thornwick",
+      "powers": [
+        "merge:municipal/thornwick/**",
+        "maintain:city-archive:thornwick"
+      ],
+      "occupant": "j.starling",
+      "created_at": "2026-09-06T15:51:18.373072Z"
+    },
+    {
+      "id": "local-archivist-cindercog",
+      "title": "Archivist of Cindercog",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:cindercog",
+      "powers": [
+        "merge:municipal/cindercog/**",
+        "maintain:city-archive:cindercog"
+      ],
+      "occupant": "b.marlborough",
+      "created_at": "2026-09-06T15:51:18.373121Z"
+    },
+    {
+      "id": "local-archivist-gloamingate",
+      "title": "Archivist of Gloamingate",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:gloamingate",
+      "powers": [
+        "merge:municipal/gloamingate/**",
+        "maintain:city-archive:gloamingate"
+      ],
+      "occupant": "s.halloway",
+      "created_at": "2026-09-06T15:51:18.373168Z"
+    },
+    {
+      "id": "local-archivist-hushpoole",
+      "title": "Archivist of Hushpoole",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:hushpoole",
+      "powers": [
+        "merge:municipal/hushpoole/**",
+        "maintain:city-archive:hushpoole"
+      ],
+      "occupant": "c.quill",
+      "created_at": "2026-09-06T15:51:18.373218Z"
+    },
+    {
+      "id": "local-archivist-chimefall",
+      "title": "Archivist of Chimefall",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:chimefall",
+      "powers": [
+        "merge:municipal/chimefall/**",
+        "maintain:city-archive:chimefall"
+      ],
+      "occupant": "s.tallow",
+      "created_at": "2026-09-06T15:51:18.373265Z"
+    },
+    {
+      "id": "local-archivist-vapourmouth",
+      "title": "Archivist of Vapourmouth",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:vapourmouth",
+      "powers": [
+        "merge:municipal/vapourmouth/**",
+        "maintain:city-archive:vapourmouth"
+      ],
+      "occupant": "l.vane",
+      "created_at": "2026-09-06T15:51:18.373315Z"
+    },
+    {
+      "id": "expert-taxation",
+      "title": "Jurisdictional Expert of Taxation",
+      "body": "domain:taxation",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "review:taxation/**",
+        "jurisdiction:taxation"
+      ],
+      "occupant": "m.underhill",
+      "created_at": "2026-09-06T15:51:18.373334Z"
+    },
+    {
+      "id": "expert-maritime",
+      "title": "Jurisdictional Expert of Maritime",
+      "body": "domain:maritime",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "review:maritime/**",
+        "jurisdiction:maritime"
+      ],
+      "occupant": "v.quill",
+      "created_at": "2026-09-06T15:51:18.373345Z"
+    },
+    {
+      "id": "expert-criminal",
+      "title": "Jurisdictional Expert of Criminal",
+      "body": "domain:criminal",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "review:criminal/**",
+        "jurisdiction:criminal"
+      ],
+      "occupant": "e.munderby",
+      "created_at": "2026-09-06T15:51:18.373357Z"
+    },
+    {
+      "id": "expert-commerce",
+      "title": "Jurisdictional Expert of Commerce",
+      "body": "domain:commerce",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "review:commerce/**",
+        "jurisdiction:commerce"
+      ],
+      "occupant": "p.marlborough",
+      "created_at": "2026-09-06T15:51:18.373367Z"
+    },
+    {
+      "id": "expert-civic",
+      "title": "Jurisdictional Expert of Civic",
+      "body": "domain:civic",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "review:civic/**",
+        "jurisdiction:civic"
+      ],
+      "occupant": "l.starling",
+      "created_at": "2026-09-06T15:51:18.373376Z"
+    },
+    {
+      "id": "expert-succession",
+      "title": "Jurisdictional Expert of Succession",
+      "body": "domain:succession",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "review:succession/**",
+        "jurisdiction:succession"
+      ],
+      "occupant": "p.lovelace",
+      "created_at": "2026-09-06T15:51:18.373385Z"
+    },
+    {
+      "id": "council-jurist-1",
+      "title": "Jurist of the Constitutional Council, Seat 1",
+      "body": "constitutional-council",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "review:required",
+        "veto:incompatibility"
+      ],
+      "occupant": "b.grimsbane",
+      "created_at": "2026-09-06T15:51:18.373397Z"
+    },
+    {
+      "id": "council-jurist-2",
+      "title": "Jurist of the Constitutional Council, Seat 2",
+      "body": "constitutional-council",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "review:required",
+        "veto:incompatibility"
+      ],
+      "occupant": "a.yarborough",
+      "created_at": "2026-09-06T15:51:18.373408Z"
+    },
+    {
+      "id": "council-jurist-3",
+      "title": "Jurist of the Constitutional Council, Seat 3",
+      "body": "constitutional-council",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "review:required",
+        "veto:incompatibility"
+      ],
+      "occupant": "m.featherstone",
+      "created_at": "2026-09-06T15:51:18.373418Z"
+    },
+    {
+      "id": "federal-archivist",
+      "title": "Keeper of the Federal Rolls",
+      "body": "federal-archive",
+      "kind": "juridical",
+      "scope": "federal",
+      "powers": [
+        "merge:main",
+        "revert:main",
+        "tag:create",
+        "branch:manage"
+      ],
+      "occupant": "e.vexley",
+      "created_at": "2026-09-06T15:51:18.373422Z"
+    },
+    {
+      "id": "mechanical-magistrate",
+      "title": "The Mechanical Magistrate",
+      "body": "federal-magistracy",
+      "kind": "mechanical",
+      "scope": "federal",
+      "powers": [
+        "execute:formal-checks",
+        "report:commit-status"
+      ],
+      "occupant": "mechanical-magistrate",
+      "created_at": "2026-09-06T15:51:18.373456Z"
+    }
+  ],
+  "persons": [
+    {
+      "username": "m.grimsbane",
+      "display_name": "Maximilian Grimsbane",
+      "email": "m.grimsbane@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Maximilian Grimsbane",
+        "author_email": "m.grimsbane@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "brnTP3fAbnFbmOHnKY",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372837Z"
+    },
+    {
+      "username": "a.kettleblack",
+      "display_name": "Ambrose Kettleblack",
+      "email": "a.kettleblack@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ambrose Kettleblack",
+        "author_email": "a.kettleblack@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "Rvj7uff0LYTH8xIZM1",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372856Z"
+    },
+    {
+      "username": "b.nightingale",
+      "display_name": "Barnaby Nightingale",
+      "email": "b.nightingale@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Barnaby Nightingale",
+        "author_email": "b.nightingale@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "RcoreogrNwwmq6OLkT",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372867Z"
+    },
+    {
+      "username": "e.rookwood",
+      "display_name": "Ezekiel Rookwood",
+      "email": "e.rookwood@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ezekiel Rookwood",
+        "author_email": "e.rookwood@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "x9NIQ0Wobtqn62tOy4",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372876Z"
+    },
+    {
+      "username": "e.marrowbone",
+      "display_name": "Evadne Marrowbone",
+      "email": "e.marrowbone@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Evadne Marrowbone",
+        "author_email": "e.marrowbone@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "qpIqK3yn9FfcgMXAdx",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372884Z"
+    },
+    {
+      "username": "e.vexley",
+      "display_name": "Evadne Vexley",
+      "email": "e.vexley@cogswich.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-cogswich",
+        "federal-archivist"
+      ],
+      "git": {
+        "author_name": "Evadne Vexley",
+        "author_email": "e.vexley@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "pI6Qh2UVvsjaSS8VFg",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372898Z"
+    },
+    {
+      "username": "m.grimshaw",
+      "display_name": "Maximilian Grimshaw",
+      "email": "m.grimshaw@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Maximilian Grimshaw",
+        "author_email": "m.grimshaw@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "0Fmxk754LEgw9YooJe",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372915Z"
+    },
+    {
+      "username": "e.tallow",
+      "display_name": "Ebenezer Tallow",
+      "email": "e.tallow@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ebenezer Tallow",
+        "author_email": "e.tallow@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "Y8HhO6kGL75UQSyPx3",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372923Z"
+    },
+    {
+      "username": "j.grimsbane",
+      "display_name": "Josiah Grimsbane",
+      "email": "j.grimsbane@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Josiah Grimsbane",
+        "author_email": "j.grimsbane@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "pdbIKaRdebuFrEHS2J",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372930Z"
+    },
+    {
+      "username": "d.sable",
+      "display_name": "Drusilla Sable",
+      "email": "d.sable@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Drusilla Sable",
+        "author_email": "d.sable@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "YlgAACTP9gyv1plBAr",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372940Z"
+    },
+    {
+      "username": "d.quill",
+      "display_name": "Drusilla Quill",
+      "email": "d.quill@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Drusilla Quill",
+        "author_email": "d.quill@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "B1Id9Z850kEnydx9qW",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372948Z"
+    },
+    {
+      "username": "e.fallowfield",
+      "display_name": "Evadne Fallowfield",
+      "email": "e.fallowfield@brasshaven.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-brasshaven"
+      ],
+      "git": {
+        "author_name": "Evadne Fallowfield",
+        "author_email": "e.fallowfield@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "A79ISjs8JHUdKF0j7e",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372956Z"
+    },
+    {
+      "username": "h.quill",
+      "display_name": "Honoria Quill",
+      "email": "h.quill@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Honoria Quill",
+        "author_email": "h.quill@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "KPoh3pKMzKG5mSoyPs",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372968Z"
+    },
+    {
+      "username": "g.quill",
+      "display_name": "Gideon Quill",
+      "email": "g.quill@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Gideon Quill",
+        "author_email": "g.quill@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "aMIgHFiveprBHs8YGP",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372976Z"
+    },
+    {
+      "username": "o.grimshaw",
+      "display_name": "Ophelia Grimshaw",
+      "email": "o.grimshaw@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ophelia Grimshaw",
+        "author_email": "o.grimshaw@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "5g2q3UjrnvQ0Fp4dNZ",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372983Z"
+    },
+    {
+      "username": "t.vane",
+      "display_name": "Thaddeus Vane",
+      "email": "t.vane@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Thaddeus Vane",
+        "author_email": "t.vane@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "ui8kBRIg6QjcwIAcw5",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372991Z"
+    },
+    {
+      "username": "t.jackdaw",
+      "display_name": "Thaddeus Jackdaw",
+      "email": "t.jackdaw@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Thaddeus Jackdaw",
+        "author_email": "t.jackdaw@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "npgW2zMj518Y2bTu5X",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372999Z"
+    },
+    {
+      "username": "s.crankshaw",
+      "display_name": "Sophronia Crankshaw",
+      "email": "s.crankshaw@aetherquay.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-aetherquay"
+      ],
+      "git": {
+        "author_name": "Sophronia Crankshaw",
+        "author_email": "s.crankshaw@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "qWg21nYCsXoblu17rN",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373015Z"
+    },
+    {
+      "username": "w.dreever",
+      "display_name": "Wilhelmina Dreever",
+      "email": "w.dreever@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Wilhelmina Dreever",
+        "author_email": "w.dreever@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "8H6h8l7qgATtLFxJpR",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373026Z"
+    },
+    {
+      "username": "a.vexley",
+      "display_name": "Ambrose Vexley",
+      "email": "a.vexley@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ambrose Vexley",
+        "author_email": "a.vexley@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "5HSUPwePut0Sstzysh",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373034Z"
+    },
+    {
+      "username": "c.marlborough",
+      "display_name": "Cornelius Marlborough",
+      "email": "c.marlborough@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Cornelius Marlborough",
+        "author_email": "c.marlborough@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "6P3MsHarAJOCBnD3Xk",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373047Z"
+    },
+    {
+      "username": "o.fallowfield",
+      "display_name": "Odile Fallowfield",
+      "email": "o.fallowfield@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Odile Fallowfield",
+        "author_email": "o.fallowfield@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "FNuYUPnmbpD0ezNmRE",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373055Z"
+    },
+    {
+      "username": "d.marrowbone",
+      "display_name": "Drusilla Marrowbone",
+      "email": "d.marrowbone@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Drusilla Marrowbone",
+        "author_email": "d.marrowbone@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "OaUVgAk7Gdp0CXP9K6",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373062Z"
+    },
+    {
+      "username": "j.starling",
+      "display_name": "Josiah Starling",
+      "email": "j.starling@thornwick.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-thornwick"
+      ],
+      "git": {
+        "author_name": "Josiah Starling",
+        "author_email": "j.starling@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "Y3A4Bj1BU0rWEoBSou",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373070Z"
+    },
+    {
+      "username": "e.featherstone",
+      "display_name": "Eustace Featherstone",
+      "email": "e.featherstone@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Eustace Featherstone",
+        "author_email": "e.featherstone@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "ioRRdzHzmA4KR1Vxav",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373080Z"
+    },
+    {
+      "username": "a.lovelace",
+      "display_name": "Archibald Lovelace",
+      "email": "a.lovelace@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Archibald Lovelace",
+        "author_email": "a.lovelace@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "07zUHLnnBbuQzkChMb",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373088Z"
+    },
+    {
+      "username": "w.thackery",
+      "display_name": "Wilhelmina Thackery",
+      "email": "w.thackery@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Wilhelmina Thackery",
+        "author_email": "w.thackery@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "IbNiCdxnuVxUZpfbH9",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373097Z"
+    },
+    {
+      "username": "p.bellwether",
+      "display_name": "Phineas Bellwether",
+      "email": "p.bellwether@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Phineas Bellwether",
+        "author_email": "p.bellwether@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "OWOU6mbjhPInRVkLUh",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373104Z"
+    },
+    {
+      "username": "e.grimshaw",
+      "display_name": "Ezekiel Grimshaw",
+      "email": "e.grimshaw@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ezekiel Grimshaw",
+        "author_email": "e.grimshaw@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "gbtP7ySeQMgV0Lh8Wv",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373112Z"
+    },
+    {
+      "username": "b.marlborough",
+      "display_name": "Beatrice Marlborough",
+      "email": "b.marlborough@cindercog.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-cindercog"
+      ],
+      "git": {
+        "author_name": "Beatrice Marlborough",
+        "author_email": "b.marlborough@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "wFv0Yg7NZRBT7qYHDB",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373119Z"
+    },
+    {
+      "username": "e.thackery",
+      "display_name": "Ebenezer Thackery",
+      "email": "e.thackery@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ebenezer Thackery",
+        "author_email": "e.thackery@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "q0Zf2pCLxb0lnXv2Rr",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373129Z"
+    },
+    {
+      "username": "s.featherstone",
+      "display_name": "Silas Featherstone",
+      "email": "s.featherstone@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Silas Featherstone",
+        "author_email": "s.featherstone@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "ozIoDSBbszpPwIv9Iv",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373137Z"
+    },
+    {
+      "username": "e.emberly",
+      "display_name": "Evadne Emberly",
+      "email": "e.emberly@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Evadne Emberly",
+        "author_email": "e.emberly@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "toStU6QlTrKVL8Zsws",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373144Z"
+    },
+    {
+      "username": "r.wormwood",
+      "display_name": "Rowena Wormwood",
+      "email": "r.wormwood@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Rowena Wormwood",
+        "author_email": "r.wormwood@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "hcds6NUgarDv7p1heE",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373151Z"
+    },
+    {
+      "username": "b.goodenough",
+      "display_name": "Barnaby Goodenough",
+      "email": "b.goodenough@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Barnaby Goodenough",
+        "author_email": "b.goodenough@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "QjY6fpIzKMWx4sKAJd",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373158Z"
+    },
+    {
+      "username": "s.halloway",
+      "display_name": "Sophronia Halloway",
+      "email": "s.halloway@gloamingate.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-gloamingate"
+      ],
+      "git": {
+        "author_name": "Sophronia Halloway",
+        "author_email": "s.halloway@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "6mnOjkeaBKsoRRCQ5W",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373165Z"
+    },
+    {
+      "username": "m.thackery",
+      "display_name": "Maximilian Thackery",
+      "email": "m.thackery@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Maximilian Thackery",
+        "author_email": "m.thackery@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "O5AHO4ZektUJrhQR6F",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373175Z"
+    },
+    {
+      "username": "c.pargeter",
+      "display_name": "Clementine Pargeter",
+      "email": "c.pargeter@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Clementine Pargeter",
+        "author_email": "c.pargeter@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "ecAtpf7ZJ69PqcUDO4",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373182Z"
+    },
+    {
+      "username": "h.thackery",
+      "display_name": "Honoria Thackery",
+      "email": "h.thackery@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Honoria Thackery",
+        "author_email": "h.thackery@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "BY8DztgjzEPyVcfphV",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373192Z"
+    },
+    {
+      "username": "a.vane",
+      "display_name": "Algernon Vane",
+      "email": "a.vane@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Algernon Vane",
+        "author_email": "a.vane@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "OHzlwUMVmI5BRh8Loj",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373199Z"
+    },
+    {
+      "username": "o.vane",
+      "display_name": "Ophelia Vane",
+      "email": "o.vane@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ophelia Vane",
+        "author_email": "o.vane@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "If94ChZESFqZ8pIx5F",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373207Z"
+    },
+    {
+      "username": "c.quill",
+      "display_name": "Casimir Quill",
+      "email": "c.quill@hushpoole.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-hushpoole"
+      ],
+      "git": {
+        "author_name": "Casimir Quill",
+        "author_email": "c.quill@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "rWz5FYrsK9EjHvIHCt",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373216Z"
+    },
+    {
+      "username": "s.crankshaw2",
+      "display_name": "Silas Crankshaw",
+      "email": "s.crankshaw2@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Silas Crankshaw",
+        "author_email": "s.crankshaw2@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "JoWcURYxPY8EcFK12B",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373227Z"
+    },
+    {
+      "username": "m.rookwood",
+      "display_name": "Mercy Rookwood",
+      "email": "m.rookwood@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Mercy Rookwood",
+        "author_email": "m.rookwood@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "ai18eWqMyeuPH7M3EH",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373234Z"
+    },
+    {
+      "username": "h.quill2",
+      "display_name": "Hester Quill",
+      "email": "h.quill2@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Hester Quill",
+        "author_email": "h.quill2@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "oQrof8VRgksbudwApz",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373242Z"
+    },
+    {
+      "username": "g.sallow",
+      "display_name": "Georgiana Sallow",
+      "email": "g.sallow@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Georgiana Sallow",
+        "author_email": "g.sallow@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "ke1Mo4iCppaX3QjBvK",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373249Z"
+    },
+    {
+      "username": "m.oxbow",
+      "display_name": "Maximilian Oxbow",
+      "email": "m.oxbow@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Maximilian Oxbow",
+        "author_email": "m.oxbow@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "QCs90gxwsRbZya1W84",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373256Z"
+    },
+    {
+      "username": "s.tallow",
+      "display_name": "Sophronia Tallow",
+      "email": "s.tallow@chimefall.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-chimefall"
+      ],
+      "git": {
+        "author_name": "Sophronia Tallow",
+        "author_email": "s.tallow@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "Z3WoXnlpUVQigMcWcw",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373263Z"
+    },
+    {
+      "username": "c.featherstone",
+      "display_name": "Casimir Featherstone",
+      "email": "c.featherstone@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Casimir Featherstone",
+        "author_email": "c.featherstone@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "4uzmW2wFqk467s1XDe",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373273Z"
+    },
+    {
+      "username": "a.bellwether",
+      "display_name": "Archibald Bellwether",
+      "email": "a.bellwether@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Archibald Bellwether",
+        "author_email": "a.bellwether@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "1S87XwXaHCPPKY6gob",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373281Z"
+    },
+    {
+      "username": "o.hartwell",
+      "display_name": "Ophelia Hartwell",
+      "email": "o.hartwell@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ophelia Hartwell",
+        "author_email": "o.hartwell@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "4ndZ4szi6sEg3iCPU6",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373288Z"
+    },
+    {
+      "username": "c.thackery",
+      "display_name": "Cornelius Thackery",
+      "email": "c.thackery@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Cornelius Thackery",
+        "author_email": "c.thackery@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "UjzgEz6cwB61gQH8wy",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373295Z"
+    },
+    {
+      "username": "s.grimsbane",
+      "display_name": "Silas Grimsbane",
+      "email": "s.grimsbane@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Silas Grimsbane",
+        "author_email": "s.grimsbane@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "6ZfnN8du9WmZIKYoWW",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373302Z"
+    },
+    {
+      "username": "l.vane",
+      "display_name": "Leopold Vane",
+      "email": "l.vane@vapourmouth.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-vapourmouth"
+      ],
+      "git": {
+        "author_name": "Leopold Vane",
+        "author_email": "l.vane@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "r99HXg1iwWKaqhAhdB",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373311Z"
+    },
+    {
+      "username": "m.underhill",
+      "display_name": "Millicent Underhill",
+      "email": "m.underhill@cogswich.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-taxation"
+      ],
+      "git": {
+        "author_name": "Millicent Underhill",
+        "author_email": "m.underhill@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "KCnMT4OsNb90AgSB3t",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373329Z"
+    },
+    {
+      "username": "v.quill",
+      "display_name": "Vera Quill",
+      "email": "v.quill@brasshaven.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-maritime"
+      ],
+      "git": {
+        "author_name": "Vera Quill",
+        "author_email": "v.quill@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "hMKSxLsFAXhO2I1A3z",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373343Z"
+    },
+    {
+      "username": "e.munderby",
+      "display_name": "Evadne Munderby",
+      "email": "e.munderby@aetherquay.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-criminal"
+      ],
+      "git": {
+        "author_name": "Evadne Munderby",
+        "author_email": "e.munderby@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "zfAPxj5eZffTYIKIuh",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373355Z"
+    },
+    {
+      "username": "p.marlborough",
+      "display_name": "Phineas Marlborough",
+      "email": "p.marlborough@thornwick.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-commerce"
+      ],
+      "git": {
+        "author_name": "Phineas Marlborough",
+        "author_email": "p.marlborough@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "6A4drtgFjD0vIhroAI",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373365Z"
+    },
+    {
+      "username": "l.starling",
+      "display_name": "Lavinia Starling",
+      "email": "l.starling@cindercog.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-civic"
+      ],
+      "git": {
+        "author_name": "Lavinia Starling",
+        "author_email": "l.starling@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "MNb5ZqlRtva1JyiNbU",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373374Z"
+    },
+    {
+      "username": "p.lovelace",
+      "display_name": "Petronella Lovelace",
+      "email": "p.lovelace@gloamingate.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-succession"
+      ],
+      "git": {
+        "author_name": "Petronella Lovelace",
+        "author_email": "p.lovelace@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "AvwSWJfdjMPqPEBqUh",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373383Z"
+    },
+    {
+      "username": "b.grimsbane",
+      "display_name": "Beatrice Grimsbane",
+      "email": "b.grimsbane@hushpoole.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [],
+      "occupies": [
+        "council-jurist-1"
+      ],
+      "git": {
+        "author_name": "Beatrice Grimsbane",
+        "author_email": "b.grimsbane@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "rQEPcyLasnipuaUkxR",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373394Z"
+    },
+    {
+      "username": "a.yarborough",
+      "display_name": "Algernon Yarborough",
+      "email": "a.yarborough@chimefall.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [],
+      "occupies": [
+        "council-jurist-2"
+      ],
+      "git": {
+        "author_name": "Algernon Yarborough",
+        "author_email": "a.yarborough@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "ZXe1cb51JJRzhbuXMZ",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373406Z"
+    },
+    {
+      "username": "m.featherstone",
+      "display_name": "Millicent Featherstone",
+      "email": "m.featherstone@vapourmouth.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [],
+      "occupies": [
+        "council-jurist-3"
+      ],
+      "git": {
+        "author_name": "Millicent Featherstone",
+        "author_email": "m.featherstone@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "BgBye1UnWeNGmWv7Oj",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373416Z"
+    },
+    {
+      "username": "mechanical-magistrate",
+      "display_name": "The Mechanical Magistrate",
+      "email": "magistrate@federal-magistracy.invalid",
+      "agency": "mechanical",
+      "member_of": {
+        "type": "institution",
+        "id": "federal-magistracy"
+      },
+      "roles": [],
+      "occupies": [
+        "mechanical-magistrate"
+      ],
+      "git": {
+        "author_name": "Mechanical Magistrate",
+        "author_email": "magistrate@federal-magistracy.invalid"
+      },
+      "credentials": {
+        "password": "pkjVe6MCIJQ2N9u8tB",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373430Z"
+    }
+  ],
+  "created_at": "2026-09-06T15:51:18.373463Z"
+}

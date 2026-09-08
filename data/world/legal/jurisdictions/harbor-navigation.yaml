@@ -1,0 +1,42 @@
+jurisdiction: harbor-navigation
+name: Harbor & Navigation
+corpus_dir: maritime
+paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - northern_harbor
+  - the_roads
+  - pilot_cut
+
+actors:
+  - harbor_master
+  - merchant
+  - shipowner
+  - pilot
+
+activities:
+  - berth
+  - load_cargo
+  - pilot_in
+  - levy_dues
+
+resource_properties:
+  - berth
+  - dues
+  - right_of_way
+  - pilotage
+
+rule_forms:
+  - open_port
+  - harbor_dues
+  - compulsory_pilotage
+  - priority_berthing
+  - quarantine
+  - tonnage_exemption
+
+disputes:
+  - dues
+  - berthing_priority
+  - pilotage
+  - quarantine
+  - right_of_way

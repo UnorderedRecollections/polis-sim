@@ -1,0 +1,210 @@
+{
+  "city": {
+    "id": "thornwick",
+    "display_name": "Thornwick",
+    "created_at": "2026-09-06T15:51:18.372732Z"
+  },
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "phase": 1
+  },
+  "git": {
+    "default_branch": "main",
+    "remotes": {
+      "origin": "http://gogs:3000/thornwick/common-law.git",
+      "upstream": "http://gogs:3000/the-archive/common-law.git"
+    }
+  },
+  "citizens": [
+    {
+      "username": "w.dreever",
+      "display_name": "Wilhelmina Dreever",
+      "email": "w.dreever@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Wilhelmina Dreever",
+        "author_email": "w.dreever@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "8H6h8l7qgATtLFxJpR",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373026Z"
+    },
+    {
+      "username": "a.vexley",
+      "display_name": "Ambrose Vexley",
+      "email": "a.vexley@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ambrose Vexley",
+        "author_email": "a.vexley@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "5HSUPwePut0Sstzysh",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373034Z"
+    },
+    {
+      "username": "c.marlborough",
+      "display_name": "Cornelius Marlborough",
+      "email": "c.marlborough@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Cornelius Marlborough",
+        "author_email": "c.marlborough@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "6P3MsHarAJOCBnD3Xk",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373047Z"
+    },
+    {
+      "username": "o.fallowfield",
+      "display_name": "Odile Fallowfield",
+      "email": "o.fallowfield@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Odile Fallowfield",
+        "author_email": "o.fallowfield@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "FNuYUPnmbpD0ezNmRE",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373055Z"
+    },
+    {
+      "username": "d.marrowbone",
+      "display_name": "Drusilla Marrowbone",
+      "email": "d.marrowbone@thornwick.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Drusilla Marrowbone",
+        "author_email": "d.marrowbone@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "OaUVgAk7Gdp0CXP9K6",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373062Z"
+    },
+    {
+      "username": "j.starling",
+      "display_name": "Josiah Starling",
+      "email": "j.starling@thornwick.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-thornwick"
+      ],
+      "git": {
+        "author_name": "Josiah Starling",
+        "author_email": "j.starling@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "Y3A4Bj1BU0rWEoBSou",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373070Z"
+    },
+    {
+      "username": "p.marlborough",
+      "display_name": "Phineas Marlborough",
+      "email": "p.marlborough@thornwick.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "thornwick"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-commerce"
+      ],
+      "git": {
+        "author_name": "Phineas Marlborough",
+        "author_email": "p.marlborough@thornwick.invalid"
+      },
+      "credentials": {
+        "password": "6A4drtgFjD0vIhroAI",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373365Z"
+    }
+  ],
+  "local_offices": [
+    {
+      "id": "local-archivist-thornwick",
+      "title": "Archivist of Thornwick",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:thornwick",
+      "powers": [
+        "merge:municipal/thornwick/**",
+        "maintain:city-archive:thornwick"
+      ],
+      "occupant": "j.starling",
+      "created_at": "2026-09-06T15:51:18.373072Z"
+    }
+  ]
+}

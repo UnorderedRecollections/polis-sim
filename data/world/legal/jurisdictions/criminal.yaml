@@ -1,0 +1,39 @@
+jurisdiction: criminal
+name: Criminal Law
+corpus_dir: criminal
+paradigm: C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_high_tribunal
+  - city_watch
+  - the_assize_rolls
+
+actors:
+  - magistrate
+  - accuser
+  - accused
+
+activities:
+  - accuse
+  - arrest
+  - try
+  - punish
+
+resource_properties:
+  - act
+  - intent
+  - penalty
+  - venue
+
+rule_forms:
+  - city_venue
+  - federal_venue
+  - proportional_penalty
+  - composition_instead_of_punishment
+  - outlawry
+
+disputes:
+  - competing_venues
+  - blood_feuds
+  - disproportionate_punishment
+  - sanctuary

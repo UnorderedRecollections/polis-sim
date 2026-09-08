@@ -9,9 +9,16 @@ __pycache__/
 build/
 dist/
 
-# Mutable simulation state — generated at runtime; contains generated
-# credentials (world.json) and container persistent data
-data/
+# Container persistent state (gogs/gitea/woodpecker/postgres data dirs)
+.state/
+
+# Simulation state — generated at runtime; contains credentials
+# (world.json) and matters. EXCEPTION: data/world/legal/ is SOURCE data
+# (the legal-design YAML), tracked.
+data/*
+!data/world/
+data/world/*
+!data/world/legal/
 
 # OS / editor cruft
 .DS_Store

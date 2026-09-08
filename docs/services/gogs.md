@@ -18,7 +18,7 @@ scripts/infra/compose-up.sh    # or the whole stack via compose
 ```
 
 - HTTP: <http://localhost:10880> · SSH: `localhost:10022`
-- Data: `data/services/gogs` · Image build: `docker/gogs/`
+- Data: `.state/gogs` · Image build: `docker/gogs/`
 
 ## API key
 

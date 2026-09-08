@@ -12,6 +12,7 @@ say "run gogs"
 podman rm -f gogs 2>/dev/null || true
 require_network
 podman run -d \
+  --restart unless-stopped \
   --name gogs \
   --network "$NETWORK" \
   -p 10022:2222 \

@@ -2,7 +2,7 @@
 #
 # Works with `docker compose` and with podman (via podman-compose, or
 # `docker compose` pointed at the podman socket). Secrets come from ../.env
-# (copy ../.env.example). Persistent data lives in ../data/services/*.
+# (copy ../.env.example). Persistent data lives in ../.state/*.
 #
 # The compose project name ("polis") prefixes containers: polis-gogs-1 etc.
 # The network is named gogs-local to stay compatible with the polis CLI
@@ -19,7 +19,7 @@ services:
     container_name: postgres-gogs
     networks: [gogs-local]
     volumes:
-      - ../data/services/postgres:/var/lib/postgresql/data
+      - ../.state/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: gogs
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -34,7 +34,7 @@ services:
       - "10022:2222"   # ssh
       - "10880:3000"   # http
     volumes:
-      - ../data/services/gogs:/data
+      - ../.state/gogs:/data
     restart: unless-stopped
 
   gitea:
@@ -45,7 +45,7 @@ services:
       - "3001:3000"    # http
       - "2222:22"      # ssh
     volumes:
-      - ../data/services/gitea:/data
+      - ../.state/gitea:/data
     environment:
       USER_UID: "1000"
       USER_GID: "1000"
@@ -64,7 +64,7 @@ services:
     ports:
       - "10890:8000"   # http
     volumes:
-      - ../data/services/woodpecker/server:/var/lib/woodpecker
+      - ../.state/woodpecker/server:/var/lib/woodpecker
     environment:
       WOODPECKER_OPEN: "true"
       WOODPECKER_HOST: http://localhost:10890
@@ -90,7 +90,7 @@ services:
     security_opt:
       - label=disable
     volumes:
-      - ../data/services/woodpecker/agent/01:/etc/woodpecker
+      - ../.state/woodpecker/agent/01:/etc/woodpecker
       - /run/user/501/podman/podman.sock:/var/run/docker.sock
     environment:
       DOCKER_HOST: unix:///var/run/docker.sock

@@ -1,0 +1,39 @@
+jurisdiction: river-water
+name: River & Water
+corpus_dir: null
+paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_great_weir
+  - irrigation_cuts
+  - headwaters
+
+actors:
+  - farmer
+  - miller
+  - city_waterwarden
+
+activities:
+  - divert
+  - irrigate
+  - mill
+  - dam
+
+resource_properties:
+  - flow
+  - diversion_point
+  - season
+  - quality
+
+rule_forms:
+  - prior_appropriation
+  - riparian_sharing
+  - minimum_flow
+  - diversion_permit
+  - pollution_prohibition
+
+disputes:
+  - upstream_diversion
+  - drought_sharing
+  - pollution
+  - mill_rights

@@ -1,0 +1,39 @@
+jurisdiction: contract
+name: Contract Law
+corpus_dir: null
+paradigm: C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_bond_rolls
+  - merchants_court
+  - surety_house
+
+actors:
+  - creditor
+  - debtor
+  - surety
+
+activities:
+  - lend
+  - sell_on_credit
+  - stand_surety
+  - enforce_bond
+
+resource_properties:
+  - sum
+  - term
+  - security
+  - form
+
+rule_forms:
+  - written_form_required
+  - usury_cap
+  - specific_performance
+  - debtor_prison_abolished
+  - guild_arbitration
+
+disputes:
+  - unpaid_debts
+  - usury
+  - broken_partnerships
+  - contested_bonds

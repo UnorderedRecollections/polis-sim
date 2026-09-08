@@ -1,0 +1,210 @@
+{
+  "city": {
+    "id": "hushpoole",
+    "display_name": "Hushpoole",
+    "created_at": "2026-09-06T15:51:18.372735Z"
+  },
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "phase": 1
+  },
+  "git": {
+    "default_branch": "main",
+    "remotes": {
+      "origin": "http://gogs:3000/hushpoole/common-law.git",
+      "upstream": "http://gogs:3000/the-archive/common-law.git"
+    }
+  },
+  "citizens": [
+    {
+      "username": "m.thackery",
+      "display_name": "Maximilian Thackery",
+      "email": "m.thackery@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Maximilian Thackery",
+        "author_email": "m.thackery@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "O5AHO4ZektUJrhQR6F",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373175Z"
+    },
+    {
+      "username": "c.pargeter",
+      "display_name": "Clementine Pargeter",
+      "email": "c.pargeter@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Clementine Pargeter",
+        "author_email": "c.pargeter@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "ecAtpf7ZJ69PqcUDO4",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373182Z"
+    },
+    {
+      "username": "h.thackery",
+      "display_name": "Honoria Thackery",
+      "email": "h.thackery@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Honoria Thackery",
+        "author_email": "h.thackery@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "BY8DztgjzEPyVcfphV",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373192Z"
+    },
+    {
+      "username": "a.vane",
+      "display_name": "Algernon Vane",
+      "email": "a.vane@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Algernon Vane",
+        "author_email": "a.vane@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "OHzlwUMVmI5BRh8Loj",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373199Z"
+    },
+    {
+      "username": "o.vane",
+      "display_name": "Ophelia Vane",
+      "email": "o.vane@hushpoole.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ophelia Vane",
+        "author_email": "o.vane@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "If94ChZESFqZ8pIx5F",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373207Z"
+    },
+    {
+      "username": "c.quill",
+      "display_name": "Casimir Quill",
+      "email": "c.quill@hushpoole.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-hushpoole"
+      ],
+      "git": {
+        "author_name": "Casimir Quill",
+        "author_email": "c.quill@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "rWz5FYrsK9EjHvIHCt",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373216Z"
+    },
+    {
+      "username": "b.grimsbane",
+      "display_name": "Beatrice Grimsbane",
+      "email": "b.grimsbane@hushpoole.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "hushpoole"
+      },
+      "roles": [],
+      "occupies": [
+        "council-jurist-1"
+      ],
+      "git": {
+        "author_name": "Beatrice Grimsbane",
+        "author_email": "b.grimsbane@hushpoole.invalid"
+      },
+      "credentials": {
+        "password": "rQEPcyLasnipuaUkxR",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373394Z"
+    }
+  ],
+  "local_offices": [
+    {
+      "id": "local-archivist-hushpoole",
+      "title": "Archivist of Hushpoole",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:hushpoole",
+      "powers": [
+        "merge:municipal/hushpoole/**",
+        "maintain:city-archive:hushpoole"
+      ],
+      "occupant": "c.quill",
+      "created_at": "2026-09-06T15:51:18.373218Z"
+    }
+  ]
+}

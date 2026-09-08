@@ -1,0 +1,39 @@
+jurisdiction: trade-markets
+name: Trade & Markets
+corpus_dir: commerce
+paradigm: R/C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_great_market
+  - weighing_house
+  - market_square
+
+actors:
+  - merchant
+  - guild
+  - market_warden
+
+activities:
+  - sell
+  - weigh
+  - license_stall
+  - inspect_goods
+
+resource_properties:
+  - stall
+  - tariff_rate
+  - standard_measure
+  - license
+
+rule_forms:
+  - free_entry
+  - guild_monopoly
+  - tariff_schedule
+  - standard_weights
+  - market_days
+
+disputes:
+  - false_weights
+  - foreign_merchants
+  - guild_exclusion
+  - tariff_evasion

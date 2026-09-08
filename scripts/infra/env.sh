@@ -2,7 +2,7 @@
 # Loads secrets from the project .env (process env always wins).
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-DATA_DIR="$ROOT/data/services"
+DATA_DIR="$ROOT/.state"
 DOCKER_DIR="$ROOT/docker"
 NETWORK="gogs-local"
 

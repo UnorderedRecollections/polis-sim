@@ -14,7 +14,7 @@ scripts/infra/postgres.sh      # or scripts/infra/compose-up.sh
 
 - Internal only (no published ports); the platforms reach it at
   `postgres-gogs:5432` on the `gogs-local` network.
-- Data: `data/services/postgres` (85 MB; seeded from the original external
+- Data: `.state/postgres` (85 MB; seeded from the original external
   directory, which can now be removed).
 - Credentials: user `gogs`, password from `POSTGRES_PASSWORD` in `.env`.
 

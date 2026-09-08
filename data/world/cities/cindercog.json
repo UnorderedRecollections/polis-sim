@@ -1,0 +1,210 @@
+{
+  "city": {
+    "id": "cindercog",
+    "display_name": "Cindercog",
+    "created_at": "2026-09-06T15:51:18.372733Z"
+  },
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "phase": 1
+  },
+  "git": {
+    "default_branch": "main",
+    "remotes": {
+      "origin": "http://gogs:3000/cindercog/common-law.git",
+      "upstream": "http://gogs:3000/the-archive/common-law.git"
+    }
+  },
+  "citizens": [
+    {
+      "username": "e.featherstone",
+      "display_name": "Eustace Featherstone",
+      "email": "e.featherstone@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Eustace Featherstone",
+        "author_email": "e.featherstone@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "ioRRdzHzmA4KR1Vxav",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373080Z"
+    },
+    {
+      "username": "a.lovelace",
+      "display_name": "Archibald Lovelace",
+      "email": "a.lovelace@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Archibald Lovelace",
+        "author_email": "a.lovelace@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "07zUHLnnBbuQzkChMb",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373088Z"
+    },
+    {
+      "username": "w.thackery",
+      "display_name": "Wilhelmina Thackery",
+      "email": "w.thackery@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Wilhelmina Thackery",
+        "author_email": "w.thackery@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "IbNiCdxnuVxUZpfbH9",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373097Z"
+    },
+    {
+      "username": "p.bellwether",
+      "display_name": "Phineas Bellwether",
+      "email": "p.bellwether@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Phineas Bellwether",
+        "author_email": "p.bellwether@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "OWOU6mbjhPInRVkLUh",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373104Z"
+    },
+    {
+      "username": "e.grimshaw",
+      "display_name": "Ezekiel Grimshaw",
+      "email": "e.grimshaw@cindercog.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ezekiel Grimshaw",
+        "author_email": "e.grimshaw@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "gbtP7ySeQMgV0Lh8Wv",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373112Z"
+    },
+    {
+      "username": "b.marlborough",
+      "display_name": "Beatrice Marlborough",
+      "email": "b.marlborough@cindercog.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-cindercog"
+      ],
+      "git": {
+        "author_name": "Beatrice Marlborough",
+        "author_email": "b.marlborough@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "wFv0Yg7NZRBT7qYHDB",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373119Z"
+    },
+    {
+      "username": "l.starling",
+      "display_name": "Lavinia Starling",
+      "email": "l.starling@cindercog.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "cindercog"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-civic"
+      ],
+      "git": {
+        "author_name": "Lavinia Starling",
+        "author_email": "l.starling@cindercog.invalid"
+      },
+      "credentials": {
+        "password": "MNb5ZqlRtva1JyiNbU",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373374Z"
+    }
+  ],
+  "local_offices": [
+    {
+      "id": "local-archivist-cindercog",
+      "title": "Archivist of Cindercog",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:cindercog",
+      "powers": [
+        "merge:municipal/cindercog/**",
+        "maintain:city-archive:cindercog"
+      ],
+      "occupant": "b.marlborough",
+      "created_at": "2026-09-06T15:51:18.373121Z"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+jurisdiction: currency-weights
+name: Currency & Weights
+corpus_dir: null
+paradigm: C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_mint
+  - exchange_office
+  - standard_bushel
+
+actors:
+  - treasurer
+  - money_changer
+  - assayer
+
+activities:
+  - mint
+  - exchange
+  - assay
+  - clip
+
+resource_properties:
+  - fineness
+  - denomination
+  - exchange_rate
+  - seigniorage
+
+rule_forms:
+  - fixed_standard
+  - free_coinage
+  - debasement_prohibition
+  - legal_tender
+  - exchange_office
+
+disputes:
+  - clipped_coin
+  - debasement
+  - exchange_rates
+  - false_weights

@@ -1,0 +1,48 @@
+# Actor kinds — the "who can act" taxonomy.
+# `parent` is explicit; parents must be declared before their children.
+# `abstract: true` marks intermediary kinds that are never instantiated
+# directly (jurisdiction-specific kinds derive from them at load time).
+base: Actor
+kinds:
+  - kind: person
+    parent: null
+    label: Person
+  - kind: citizen
+    parent: person
+    label: Citizen
+  - kind: legislator
+    parent: citizen
+    label: Legislator
+  - kind: delegate
+    parent: citizen
+    label: Delegate
+  - kind: jurist
+    parent: person
+    label: Jurist
+  - kind: archivist
+    parent: person
+    label: Archivist
+  - kind: federal-archivist
+    parent: archivist
+    label: Federal Archivist
+  - kind: jurisdictional-actor
+    parent: person
+    label: Jurisdictional Actor
+    abstract: true            # intermediary — jurisdiction actors derive from this
+  # collectives
+  - kind: city
+    parent: null
+    label: City
+    collective: true
+  - kind: federation
+    parent: null
+    label: Federation
+    collective: true
+  - kind: council
+    parent: null
+    label: Council
+    collective: true
+  - kind: committee
+    parent: null
+    label: Committee
+    collective: true

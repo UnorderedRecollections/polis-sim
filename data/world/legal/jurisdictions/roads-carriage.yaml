@@ -1,0 +1,39 @@
+jurisdiction: roads-carriage
+name: Roads & Carriage
+corpus_dir: null
+paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_causeway
+  - chain_bridge
+  - toll_gates
+
+actors:
+  - carrier
+  - toll_farmer
+  - road_warden
+
+activities:
+  - carry
+  - collect_toll
+  - repair
+  - weigh_loads
+
+resource_properties:
+  - route
+  - toll_rate
+  - maintenance_duty
+  - bridge
+
+rule_forms:
+  - free_passage
+  - toll_by_weight
+  - maintenance_corvee
+  - bridge_monopoly
+  - carrier_license
+
+disputes:
+  - toll_disputes
+  - broken_bridges
+  - unlicensed_carriers
+  - corvee_evasion

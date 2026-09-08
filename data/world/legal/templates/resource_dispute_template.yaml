@@ -1,0 +1,18 @@
+story_type: resource_dispute
+
+participants:
+  claimant: city
+  respondent: city
+  resource: resource
+
+sequence:
+  - establish_traditional_use
+  - introduce_competing_claim
+  - file_petition
+  - assign_jurisdiction
+  - propose_legislation
+  - jurisdictional_review
+  - amendment
+  - constitutional_review
+  - approval
+  - enactment

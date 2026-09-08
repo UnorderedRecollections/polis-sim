@@ -24,6 +24,7 @@ class JurisdictionData(BaseModel):
     jurisdiction: str                     # slug, matches the filename
     name: str
     corpus_dir: Optional[str] = None
+    paradigm: str = "R"                   # R=resource, C=conduct/status, P=political/burden
     resources: list[str]
     actors: list[str]                     # derive from JurisdictionalActor
     activities: list[str]                 # domain verbs (NOT legal moves)

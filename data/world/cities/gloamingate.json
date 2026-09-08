@@ -1,0 +1,210 @@
+{
+  "city": {
+    "id": "gloamingate",
+    "display_name": "Gloamingate",
+    "created_at": "2026-09-06T15:51:18.372735Z"
+  },
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "phase": 1
+  },
+  "git": {
+    "default_branch": "main",
+    "remotes": {
+      "origin": "http://gogs:3000/gloamingate/common-law.git",
+      "upstream": "http://gogs:3000/the-archive/common-law.git"
+    }
+  },
+  "citizens": [
+    {
+      "username": "e.thackery",
+      "display_name": "Ebenezer Thackery",
+      "email": "e.thackery@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ebenezer Thackery",
+        "author_email": "e.thackery@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "q0Zf2pCLxb0lnXv2Rr",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373129Z"
+    },
+    {
+      "username": "s.featherstone",
+      "display_name": "Silas Featherstone",
+      "email": "s.featherstone@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Silas Featherstone",
+        "author_email": "s.featherstone@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "ozIoDSBbszpPwIv9Iv",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373137Z"
+    },
+    {
+      "username": "e.emberly",
+      "display_name": "Evadne Emberly",
+      "email": "e.emberly@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Evadne Emberly",
+        "author_email": "e.emberly@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "toStU6QlTrKVL8Zsws",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373144Z"
+    },
+    {
+      "username": "r.wormwood",
+      "display_name": "Rowena Wormwood",
+      "email": "r.wormwood@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Rowena Wormwood",
+        "author_email": "r.wormwood@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "hcds6NUgarDv7p1heE",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373151Z"
+    },
+    {
+      "username": "b.goodenough",
+      "display_name": "Barnaby Goodenough",
+      "email": "b.goodenough@gloamingate.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Barnaby Goodenough",
+        "author_email": "b.goodenough@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "QjY6fpIzKMWx4sKAJd",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373158Z"
+    },
+    {
+      "username": "s.halloway",
+      "display_name": "Sophronia Halloway",
+      "email": "s.halloway@gloamingate.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-gloamingate"
+      ],
+      "git": {
+        "author_name": "Sophronia Halloway",
+        "author_email": "s.halloway@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "6mnOjkeaBKsoRRCQ5W",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373165Z"
+    },
+    {
+      "username": "p.lovelace",
+      "display_name": "Petronella Lovelace",
+      "email": "p.lovelace@gloamingate.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "gloamingate"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-succession"
+      ],
+      "git": {
+        "author_name": "Petronella Lovelace",
+        "author_email": "p.lovelace@gloamingate.invalid"
+      },
+      "credentials": {
+        "password": "AvwSWJfdjMPqPEBqUh",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373383Z"
+    }
+  ],
+  "local_offices": [
+    {
+      "id": "local-archivist-gloamingate",
+      "title": "Archivist of Gloamingate",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:gloamingate",
+      "powers": [
+        "merge:municipal/gloamingate/**",
+        "maintain:city-archive:gloamingate"
+      ],
+      "occupant": "s.halloway",
+      "created_at": "2026-09-06T15:51:18.373168Z"
+    }
+  ]
+}

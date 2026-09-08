@@ -1,0 +1,45 @@
+# ProceduralEvent kinds — what can happen to a matter (institutional time).
+# `matter_event` aligns the canonical kind with the matter store's current
+# event strings (data/world/matters.json); null = vocabulary for richer
+# proceedings later (the matter store accepts free-form strings today).
+base: ProceduralEvent
+kinds:
+  - kind: petition-filed
+    label: petition filed
+    matter_event: filed
+  - kind: proposal-introduced
+    label: proposal introduced
+    matter_event: introduced
+  - kind: matter-referred
+    label: matter referred
+    matter_event: null
+  - kind: jurisdiction-assigned
+    label: jurisdiction assigned
+    matter_event: null
+  - kind: hearing-held
+    label: hearing held
+    matter_event: heard
+  - kind: objection-raised
+    label: objection raised
+    matter_event: null
+  - kind: amendment-proposed
+    label: amendment proposed
+    matter_event: null
+  - kind: review-completed
+    label: review completed
+    matter_event: scrutinized      # + ": approved" / ": changes requested"
+  - kind: vote-held
+    label: vote held
+    matter_event: null
+  - kind: act-approved
+    label: act approved
+    matter_event: null
+  - kind: act-rejected
+    label: act rejected
+    matter_event: rejected
+  - kind: act-enacted
+    label: act enacted
+    matter_event: enacted
+  - kind: act-repealed
+    label: act repealed
+    matter_event: null

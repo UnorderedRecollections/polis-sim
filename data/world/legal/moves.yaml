@@ -1,0 +1,34 @@
+# Legal moves — what an actor can DO in the legal process (story primitives).
+#
+# These are institutional acts, not machinery: each maps onto the simulation's
+# command surface, which then performs the git/platform steps underneath.
+# (merge/revert are NOT legal moves — they are the machinery of ratify/repeal;
+# kept at the bottom, annotated, so the layers never blur in scenarios.)
+
+legal_moves:
+
+  # petitioning
+  - file_petition                 # docket file
+
+  # proposing
+  - introduce_act                 # bill draft + amend + introduce
+  - propose_amendment             # bill draft --kind amendment
+  - withdraw_proposal             # bill withdraw (reject by proposer)
+
+  # deliberation
+  - object_to_proposal            # bill debate / docket comment
+  - request_jurisdictional_review # bill scrutinize by the domain expert
+  - request_constitutional_review # bill scrutinize by the Council
+
+  # decision
+  - approve                       # scrutiny finding: approved
+  - reject                        # scrutiny finding: changes requested / bill reject
+  - ratify                        # bill ratify — enactment into the corpus
+
+  # archival
+  - repeal                        # archive repeal / bill draft --kind repeal
+  - promulgate                    # archive promulgate (named edition)
+
+machinery_aliases:                # NOT legal moves — the machinery underneath
+  merge:  ratify                  # git merge = the machinery of enactment
+  revert: repeal                  # git revert = the machinery of repeal

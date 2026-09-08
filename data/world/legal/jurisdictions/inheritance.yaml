@@ -1,0 +1,39 @@
+jurisdiction: inheritance
+name: Inheritance
+corpus_dir: succession
+paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_probate_rolls
+  - family_seats
+  - entailments
+
+actors:
+  - heir
+  - testator
+  - probate_judge
+
+activities:
+  - bequeath
+  - inherit
+  - contest_will
+  - partition
+
+resource_properties:
+  - share
+  - legitim
+  - will
+  - debts
+
+rule_forms:
+  - primogeniture
+  - partible_inheritance
+  - testamentary_freedom
+  - forced_share
+  - escheat_to_city
+
+disputes:
+  - contested_wills
+  - disinherited_heirs
+  - cross_city_succession
+  - escheats

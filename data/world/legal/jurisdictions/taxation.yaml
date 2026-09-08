@@ -1,0 +1,39 @@
+jurisdiction: taxation
+name: Taxation
+corpus_dir: taxation
+paradigm: C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - customs_house
+  - the_levy_rolls
+  - exemption_charters
+
+actors:
+  - treasurer
+  - tax_farmer
+  - merchant
+
+activities:
+  - levy
+  - collect
+  - assess
+  - exempt
+
+resource_properties:
+  - rate
+  - base
+  - exemption
+  - point_of_collection
+
+rule_forms:
+  - uniform_levy
+  - ad_valorem
+  - exemption_charter
+  - farm_out_collection
+  - retaliatory_tariff
+
+disputes:
+  - evasion
+  - exemption_abuse
+  - retaliatory_tariffs
+  - collection_point

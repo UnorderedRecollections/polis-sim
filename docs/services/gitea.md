@@ -19,7 +19,7 @@ scripts/infra/compose-up.sh    # or the whole stack
 ```
 
 - HTTP: <http://localhost:3001> · SSH: `localhost:2222`
-- Data: `data/services/gitea` · Image build: `docker/gitea/`
+- Data: `.state/gitea` · Image build: `docker/gitea/`
 - DB: database `gitea` on the shared postgres container.
 
 ## API key

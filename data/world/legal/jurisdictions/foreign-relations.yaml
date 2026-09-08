@@ -1,0 +1,39 @@
+jurisdiction: foreign-relations
+name: Foreign Relations
+corpus_dir: null
+paradigm: P            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_border_stones
+  - treaty_archive
+  - crossing_posts
+
+actors:
+  - envoy
+  - border_warden
+  - neighboring_state
+
+activities:
+  - negotiate
+  - ratify_treaty
+  - patrol_border
+  - extradite
+
+resource_properties:
+  - boundary_line
+  - crossing_points
+  - tariff_regime
+  - extradition
+
+rule_forms:
+  - open_border
+  - treaty_boundary
+  - most_favored_nation
+  - extradition_compact
+  - neutral_zone
+
+disputes:
+  - border_incidents
+  - treaty_interpretation
+  - smuggling
+  - fugitives

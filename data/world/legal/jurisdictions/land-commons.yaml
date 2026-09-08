@@ -1,0 +1,39 @@
+jurisdiction: land-commons
+name: Land & Commons
+corpus_dir: null
+paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - western_commons
+  - old_forest
+  - stubble_fields
+
+actors:
+  - farmer
+  - shepherd
+  - village_reeve
+
+activities:
+  - graze
+  - gather_wood
+  - enclose
+  - plough
+
+resource_properties:
+  - parcel
+  - grazing_capacity
+  - enclosure
+  - tenure
+
+rule_forms:
+  - open_commons
+  - stinting
+  - enclosure_grant
+  - customary_tenure
+  - forest_reserve
+
+disputes:
+  - overgrazing
+  - enclosure
+  - wood_gathering
+  - boundary

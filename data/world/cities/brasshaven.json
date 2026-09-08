@@ -1,0 +1,210 @@
+{
+  "city": {
+    "id": "brasshaven",
+    "display_name": "Brasshaven",
+    "created_at": "2026-09-06T15:51:18.372729Z"
+  },
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "phase": 1
+  },
+  "git": {
+    "default_branch": "main",
+    "remotes": {
+      "origin": "http://gogs:3000/brasshaven/common-law.git",
+      "upstream": "http://gogs:3000/the-archive/common-law.git"
+    }
+  },
+  "citizens": [
+    {
+      "username": "m.grimshaw",
+      "display_name": "Maximilian Grimshaw",
+      "email": "m.grimshaw@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Maximilian Grimshaw",
+        "author_email": "m.grimshaw@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "0Fmxk754LEgw9YooJe",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372915Z"
+    },
+    {
+      "username": "e.tallow",
+      "display_name": "Ebenezer Tallow",
+      "email": "e.tallow@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ebenezer Tallow",
+        "author_email": "e.tallow@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "Y8HhO6kGL75UQSyPx3",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372923Z"
+    },
+    {
+      "username": "j.grimsbane",
+      "display_name": "Josiah Grimsbane",
+      "email": "j.grimsbane@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Josiah Grimsbane",
+        "author_email": "j.grimsbane@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "pdbIKaRdebuFrEHS2J",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372930Z"
+    },
+    {
+      "username": "d.sable",
+      "display_name": "Drusilla Sable",
+      "email": "d.sable@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Drusilla Sable",
+        "author_email": "d.sable@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "YlgAACTP9gyv1plBAr",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372940Z"
+    },
+    {
+      "username": "d.quill",
+      "display_name": "Drusilla Quill",
+      "email": "d.quill@brasshaven.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Drusilla Quill",
+        "author_email": "d.quill@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "B1Id9Z850kEnydx9qW",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372948Z"
+    },
+    {
+      "username": "e.fallowfield",
+      "display_name": "Evadne Fallowfield",
+      "email": "e.fallowfield@brasshaven.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-brasshaven"
+      ],
+      "git": {
+        "author_name": "Evadne Fallowfield",
+        "author_email": "e.fallowfield@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "A79ISjs8JHUdKF0j7e",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372956Z"
+    },
+    {
+      "username": "v.quill",
+      "display_name": "Vera Quill",
+      "email": "v.quill@brasshaven.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "brasshaven"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-maritime"
+      ],
+      "git": {
+        "author_name": "Vera Quill",
+        "author_email": "v.quill@brasshaven.invalid"
+      },
+      "credentials": {
+        "password": "hMKSxLsFAXhO2I1A3z",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373343Z"
+    }
+  ],
+  "local_offices": [
+    {
+      "id": "local-archivist-brasshaven",
+      "title": "Archivist of Brasshaven",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:brasshaven",
+      "powers": [
+        "merge:municipal/brasshaven/**",
+        "maintain:city-archive:brasshaven"
+      ],
+      "occupant": "e.fallowfield",
+      "created_at": "2026-09-06T15:51:18.372960Z"
+    }
+  ]
+}

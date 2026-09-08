@@ -19,6 +19,7 @@ say "run woodpecker-server"
 podman rm -f woodpecker-server 2>/dev/null || true
 require_network
 podman run -d \
+  --restart unless-stopped \
   --name woodpecker-server \
   --network "$NETWORK" \
   -p 10890:8000 \
@@ -38,6 +39,7 @@ podman run -d \
 say "run woodpecker-agent"
 podman rm -f woodpecker-agent 2>/dev/null || true
 podman run -d \
+  --restart unless-stopped \
   --name woodpecker-agent \
   --user 0:0 \
   --security-opt label=disable \

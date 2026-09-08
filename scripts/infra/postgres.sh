@@ -10,6 +10,7 @@ say "run postgres-gogs"
 podman rm -f postgres-gogs 2>/dev/null || true
 require_network
 podman run -d \
+  --restart unless-stopped \
   --name postgres-gogs \
   --network "$NETWORK" \
   -v "$DATA_DIR/postgres:/var/lib/postgresql/data" \

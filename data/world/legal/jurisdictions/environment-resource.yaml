@@ -1,0 +1,39 @@
+jurisdiction: environment-resource
+name: Environmental/Resource
+corpus_dir: null
+paradigm: R            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_great_forest
+  - tin_workings
+  - peat_moss
+
+actors:
+  - extractor
+  - forester
+  - commons_warden
+
+activities:
+  - fell
+  - dig
+  - burn_off
+  - replant
+
+resource_properties:
+  - stock
+  - regeneration
+  - extraction_method
+  - season
+
+rule_forms:
+  - sustained_yield
+  - extraction_lease
+  - closed_season
+  - commons_management
+  - royalty_on_extraction
+
+disputes:
+  - over_extraction
+  - unlicensed_workings
+  - replanting_duties
+  - royalty_evasion

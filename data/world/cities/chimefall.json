@@ -1,0 +1,210 @@
+{
+  "city": {
+    "id": "chimefall",
+    "display_name": "Chimefall",
+    "created_at": "2026-09-06T15:51:18.372736Z"
+  },
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "phase": 1
+  },
+  "git": {
+    "default_branch": "main",
+    "remotes": {
+      "origin": "http://gogs:3000/chimefall/common-law.git",
+      "upstream": "http://gogs:3000/the-archive/common-law.git"
+    }
+  },
+  "citizens": [
+    {
+      "username": "s.crankshaw2",
+      "display_name": "Silas Crankshaw",
+      "email": "s.crankshaw2@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Silas Crankshaw",
+        "author_email": "s.crankshaw2@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "JoWcURYxPY8EcFK12B",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373227Z"
+    },
+    {
+      "username": "m.rookwood",
+      "display_name": "Mercy Rookwood",
+      "email": "m.rookwood@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Mercy Rookwood",
+        "author_email": "m.rookwood@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "ai18eWqMyeuPH7M3EH",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373234Z"
+    },
+    {
+      "username": "h.quill2",
+      "display_name": "Hester Quill",
+      "email": "h.quill2@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Hester Quill",
+        "author_email": "h.quill2@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "oQrof8VRgksbudwApz",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373242Z"
+    },
+    {
+      "username": "g.sallow",
+      "display_name": "Georgiana Sallow",
+      "email": "g.sallow@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Georgiana Sallow",
+        "author_email": "g.sallow@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "ke1Mo4iCppaX3QjBvK",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373249Z"
+    },
+    {
+      "username": "m.oxbow",
+      "display_name": "Maximilian Oxbow",
+      "email": "m.oxbow@chimefall.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Maximilian Oxbow",
+        "author_email": "m.oxbow@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "QCs90gxwsRbZya1W84",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373256Z"
+    },
+    {
+      "username": "s.tallow",
+      "display_name": "Sophronia Tallow",
+      "email": "s.tallow@chimefall.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-chimefall"
+      ],
+      "git": {
+        "author_name": "Sophronia Tallow",
+        "author_email": "s.tallow@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "Z3WoXnlpUVQigMcWcw",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373263Z"
+    },
+    {
+      "username": "a.yarborough",
+      "display_name": "Algernon Yarborough",
+      "email": "a.yarborough@chimefall.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "chimefall"
+      },
+      "roles": [],
+      "occupies": [
+        "council-jurist-2"
+      ],
+      "git": {
+        "author_name": "Algernon Yarborough",
+        "author_email": "a.yarborough@chimefall.invalid"
+      },
+      "credentials": {
+        "password": "ZXe1cb51JJRzhbuXMZ",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373406Z"
+    }
+  ],
+  "local_offices": [
+    {
+      "id": "local-archivist-chimefall",
+      "title": "Archivist of Chimefall",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:chimefall",
+      "powers": [
+        "merge:municipal/chimefall/**",
+        "maintain:city-archive:chimefall"
+      ],
+      "occupant": "s.tallow",
+      "created_at": "2026-09-06T15:51:18.373265Z"
+    }
+  ]
+}

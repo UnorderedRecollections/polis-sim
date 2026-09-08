@@ -11,6 +11,7 @@ say "run gitea"
 podman rm -f gitea 2>/dev/null || true
 require_network
 podman run -d \
+  --restart unless-stopped \
   --name gitea \
   --network "$NETWORK" \
   -p 3001:3000 \

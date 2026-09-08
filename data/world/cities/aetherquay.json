@@ -1,0 +1,210 @@
+{
+  "city": {
+    "id": "aetherquay",
+    "display_name": "Aetherquay",
+    "created_at": "2026-09-06T15:51:18.372731Z"
+  },
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "phase": 1
+  },
+  "git": {
+    "default_branch": "main",
+    "remotes": {
+      "origin": "http://gogs:3000/aetherquay/common-law.git",
+      "upstream": "http://gogs:3000/the-archive/common-law.git"
+    }
+  },
+  "citizens": [
+    {
+      "username": "h.quill",
+      "display_name": "Honoria Quill",
+      "email": "h.quill@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Honoria Quill",
+        "author_email": "h.quill@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "KPoh3pKMzKG5mSoyPs",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372968Z"
+    },
+    {
+      "username": "g.quill",
+      "display_name": "Gideon Quill",
+      "email": "g.quill@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Gideon Quill",
+        "author_email": "g.quill@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "aMIgHFiveprBHs8YGP",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372976Z"
+    },
+    {
+      "username": "o.grimshaw",
+      "display_name": "Ophelia Grimshaw",
+      "email": "o.grimshaw@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ophelia Grimshaw",
+        "author_email": "o.grimshaw@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "5g2q3UjrnvQ0Fp4dNZ",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372983Z"
+    },
+    {
+      "username": "t.vane",
+      "display_name": "Thaddeus Vane",
+      "email": "t.vane@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Thaddeus Vane",
+        "author_email": "t.vane@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "ui8kBRIg6QjcwIAcw5",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372991Z"
+    },
+    {
+      "username": "t.jackdaw",
+      "display_name": "Thaddeus Jackdaw",
+      "email": "t.jackdaw@aetherquay.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Thaddeus Jackdaw",
+        "author_email": "t.jackdaw@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "npgW2zMj518Y2bTu5X",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372999Z"
+    },
+    {
+      "username": "s.crankshaw",
+      "display_name": "Sophronia Crankshaw",
+      "email": "s.crankshaw@aetherquay.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-aetherquay"
+      ],
+      "git": {
+        "author_name": "Sophronia Crankshaw",
+        "author_email": "s.crankshaw@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "qWg21nYCsXoblu17rN",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373015Z"
+    },
+    {
+      "username": "e.munderby",
+      "display_name": "Evadne Munderby",
+      "email": "e.munderby@aetherquay.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "aetherquay"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-criminal"
+      ],
+      "git": {
+        "author_name": "Evadne Munderby",
+        "author_email": "e.munderby@aetherquay.invalid"
+      },
+      "credentials": {
+        "password": "zfAPxj5eZffTYIKIuh",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373355Z"
+    }
+  ],
+  "local_offices": [
+    {
+      "id": "local-archivist-aetherquay",
+      "title": "Archivist of Aetherquay",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:aetherquay",
+      "powers": [
+        "merge:municipal/aetherquay/**",
+        "maintain:city-archive:aetherquay"
+      ],
+      "occupant": "s.crankshaw",
+      "created_at": "2026-09-06T15:51:18.373017Z"
+    }
+  ]
+}

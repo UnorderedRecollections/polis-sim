@@ -1,0 +1,210 @@
+{
+  "city": {
+    "id": "vapourmouth",
+    "display_name": "Vapourmouth",
+    "created_at": "2026-09-06T15:51:18.372737Z"
+  },
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "phase": 1
+  },
+  "git": {
+    "default_branch": "main",
+    "remotes": {
+      "origin": "http://gogs:3000/vapourmouth/common-law.git",
+      "upstream": "http://gogs:3000/the-archive/common-law.git"
+    }
+  },
+  "citizens": [
+    {
+      "username": "c.featherstone",
+      "display_name": "Casimir Featherstone",
+      "email": "c.featherstone@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Casimir Featherstone",
+        "author_email": "c.featherstone@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "4uzmW2wFqk467s1XDe",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373273Z"
+    },
+    {
+      "username": "a.bellwether",
+      "display_name": "Archibald Bellwether",
+      "email": "a.bellwether@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Archibald Bellwether",
+        "author_email": "a.bellwether@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "1S87XwXaHCPPKY6gob",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373281Z"
+    },
+    {
+      "username": "o.hartwell",
+      "display_name": "Ophelia Hartwell",
+      "email": "o.hartwell@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ophelia Hartwell",
+        "author_email": "o.hartwell@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "4ndZ4szi6sEg3iCPU6",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373288Z"
+    },
+    {
+      "username": "c.thackery",
+      "display_name": "Cornelius Thackery",
+      "email": "c.thackery@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Cornelius Thackery",
+        "author_email": "c.thackery@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "UjzgEz6cwB61gQH8wy",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373295Z"
+    },
+    {
+      "username": "s.grimsbane",
+      "display_name": "Silas Grimsbane",
+      "email": "s.grimsbane@vapourmouth.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Silas Grimsbane",
+        "author_email": "s.grimsbane@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "6ZfnN8du9WmZIKYoWW",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373302Z"
+    },
+    {
+      "username": "l.vane",
+      "display_name": "Leopold Vane",
+      "email": "l.vane@vapourmouth.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-vapourmouth"
+      ],
+      "git": {
+        "author_name": "Leopold Vane",
+        "author_email": "l.vane@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "r99HXg1iwWKaqhAhdB",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373311Z"
+    },
+    {
+      "username": "m.featherstone",
+      "display_name": "Millicent Featherstone",
+      "email": "m.featherstone@vapourmouth.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "vapourmouth"
+      },
+      "roles": [],
+      "occupies": [
+        "council-jurist-3"
+      ],
+      "git": {
+        "author_name": "Millicent Featherstone",
+        "author_email": "m.featherstone@vapourmouth.invalid"
+      },
+      "credentials": {
+        "password": "BgBye1UnWeNGmWv7Oj",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373416Z"
+    }
+  ],
+  "local_offices": [
+    {
+      "id": "local-archivist-vapourmouth",
+      "title": "Archivist of Vapourmouth",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:vapourmouth",
+      "powers": [
+        "merge:municipal/vapourmouth/**",
+        "maintain:city-archive:vapourmouth"
+      ],
+      "occupant": "l.vane",
+      "created_at": "2026-09-06T15:51:18.373315Z"
+    }
+  ]
+}

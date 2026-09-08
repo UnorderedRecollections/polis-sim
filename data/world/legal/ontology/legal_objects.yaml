@@ -1,0 +1,45 @@
+# LegalObject kinds — the things law is made of.
+# `implemented: true` = the machinery can already produce this kind today.
+base: LegalObject
+kinds:
+  - kind: constitution
+    label: Constitution
+    implemented: false
+    note: the founding document of constitution/; enacted, not drafted
+  - kind: act
+    label: Act
+    implemented: true
+  - kind: amendment
+    label: Amendment
+    implemented: true
+  - kind: regulation
+    label: Regulation
+    implemented: false
+    note: secondary legislation, later
+  - kind: treaty
+    label: Treaty
+    implemented: false
+    note: needs the treaty.md template
+  - kind: ordinance
+    label: Ordinance
+    implemented: false
+    note: municipal secondary legislation, later
+  - kind: repeal
+    label: Repeal
+    implemented: true
+  - kind: petition
+    label: Petition
+    implemented: true
+    note: lives in the matter store
+  - kind: judgment
+    label: Judgment
+    implemented: false
+    note: juridical output, later
+  - kind: order
+    label: Order
+    implemented: false
+    note: what an archivist enters into the record at a decision
+  - kind: declaration
+    label: Declaration
+    implemented: false
+    note: juridical output, later

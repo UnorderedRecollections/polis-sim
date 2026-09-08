@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T18:50:45Z
 - **type:** [simulation]
 - **depends-on:** 0007
-- **status:** open
+- **status:** in-progress
 
 ## Description
 

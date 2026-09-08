@@ -1,0 +1,16 @@
+# LegalRelation kinds — how legal objects relate to each other and to actors.
+base: LegalRelation
+kinds:
+  - { kind: authorizes }
+  - { kind: prohibits }
+  - { kind: requires }
+  - { kind: permits }
+  - { kind: establishes }
+  - { kind: amends }
+  - { kind: repeals }
+  - { kind: supersedes }
+  - { kind: incorporates }
+  - { kind: delegates }
+  - { kind: ratifies }
+  - { kind: recognizes }
+  - { kind: exempts }

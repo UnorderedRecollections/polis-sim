@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bring the compose stack down (data in ../data/services is preserved).
+# Bring the compose stack down (data in ../.state is preserved).
 set -euo pipefail
 source "$(dirname "$0")/env.sh"
 

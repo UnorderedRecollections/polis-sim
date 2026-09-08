@@ -1,0 +1,211 @@
+{
+  "city": {
+    "id": "cogswich",
+    "display_name": "Cogswich",
+    "created_at": "2026-09-06T15:51:18.372500Z"
+  },
+  "federation": {
+    "name": "The Concord of the Nine Cities",
+    "phase": 1
+  },
+  "git": {
+    "default_branch": "main",
+    "remotes": {
+      "origin": "http://gogs:3000/cogswich/common-law.git",
+      "upstream": "http://gogs:3000/the-archive/common-law.git"
+    }
+  },
+  "citizens": [
+    {
+      "username": "m.grimsbane",
+      "display_name": "Maximilian Grimsbane",
+      "email": "m.grimsbane@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Maximilian Grimsbane",
+        "author_email": "m.grimsbane@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "brnTP3fAbnFbmOHnKY",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372837Z"
+    },
+    {
+      "username": "a.kettleblack",
+      "display_name": "Ambrose Kettleblack",
+      "email": "a.kettleblack@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ambrose Kettleblack",
+        "author_email": "a.kettleblack@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "Rvj7uff0LYTH8xIZM1",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372856Z"
+    },
+    {
+      "username": "b.nightingale",
+      "display_name": "Barnaby Nightingale",
+      "email": "b.nightingale@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "citizen-legislator"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Barnaby Nightingale",
+        "author_email": "b.nightingale@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "RcoreogrNwwmq6OLkT",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372867Z"
+    },
+    {
+      "username": "e.rookwood",
+      "display_name": "Ezekiel Rookwood",
+      "email": "e.rookwood@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Ezekiel Rookwood",
+        "author_email": "e.rookwood@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "x9NIQ0Wobtqn62tOy4",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372876Z"
+    },
+    {
+      "username": "e.marrowbone",
+      "display_name": "Evadne Marrowbone",
+      "email": "e.marrowbone@cogswich.invalid",
+      "agency": "political",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [
+        "local-delegate"
+      ],
+      "occupies": [],
+      "git": {
+        "author_name": "Evadne Marrowbone",
+        "author_email": "e.marrowbone@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "qpIqK3yn9FfcgMXAdx",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372884Z"
+    },
+    {
+      "username": "e.vexley",
+      "display_name": "Evadne Vexley",
+      "email": "e.vexley@cogswich.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [],
+      "occupies": [
+        "local-archivist-cogswich",
+        "federal-archivist"
+      ],
+      "git": {
+        "author_name": "Evadne Vexley",
+        "author_email": "e.vexley@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "pI6Qh2UVvsjaSS8VFg",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.372898Z"
+    },
+    {
+      "username": "m.underhill",
+      "display_name": "Millicent Underhill",
+      "email": "m.underhill@cogswich.invalid",
+      "agency": "juridical",
+      "member_of": {
+        "type": "city",
+        "id": "cogswich"
+      },
+      "roles": [],
+      "occupies": [
+        "expert-taxation"
+      ],
+      "git": {
+        "author_name": "Millicent Underhill",
+        "author_email": "m.underhill@cogswich.invalid"
+      },
+      "credentials": {
+        "password": "KCnMT4OsNb90AgSB3t",
+        "api_tokens": {},
+        "ssh_private_key": null,
+        "ssh_public_key": null
+      },
+      "created_at": "2026-09-06T15:51:18.373329Z"
+    }
+  ],
+  "local_offices": [
+    {
+      "id": "local-archivist-cogswich",
+      "title": "Archivist of Cogswich",
+      "body": "local-archive",
+      "kind": "juridical",
+      "scope": "city:cogswich",
+      "powers": [
+        "merge:municipal/cogswich/**",
+        "maintain:city-archive:cogswich"
+      ],
+      "occupant": "e.vexley",
+      "created_at": "2026-09-06T15:51:18.372904Z"
+    }
+  ]
+}

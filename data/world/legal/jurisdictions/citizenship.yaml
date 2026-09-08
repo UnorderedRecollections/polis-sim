@@ -1,0 +1,38 @@
+jurisdiction: citizenship
+name: Citizenship
+corpus_dir: civic
+paradigm: C            # R=resource, C=conduct/status, P=political/burden (task 0009)
+
+resources:
+  - the_freedom_rolls
+  - guest_registers
+
+actors:
+  - citizen
+  - newcomer
+  - city_clerk
+
+activities:
+  - reside
+  - swear_oath
+  - enroll
+  - sponsor
+
+resource_properties:
+  - residence_duration
+  - property
+  - oath
+  - parentage
+
+rule_forms:
+  - jus_soli
+  - jus_sanguinis
+  - naturalization_by_residence
+  - freedom_by_purchase
+  - guest_status
+
+disputes:
+  - contested_freedom
+  - newcomers_rights
+  - dual_allegiance
+  - expulsion

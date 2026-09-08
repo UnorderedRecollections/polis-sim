@@ -19,7 +19,7 @@ scripts/infra/compose-up.sh                            # or the whole stack
 ```
 
 - UI: <http://localhost:10890> (log in via gitea OAuth)
-- Data: `data/services/woodpecker/{server,agent}` · Builds:
+- Data: `.state/woodpecker/{server,agent}` · Builds:
   `docker/woodpecker/`, `docker/woodpecker-agent/`
 
 ## API key
@@ -38,7 +38,7 @@ Verify: `scripts/infra/smoke.sh woodpecker`.
 - API base is `/api` (**unversioned**), Bearer auth.
 - Admin: `WOODPECKER_ADMIN=agros` makes the gitea user `agros` an admin on
   first login; an existing account can be flipped in
-  `data/services/woodpecker/server/woodpecker.sqlite` (`users.admin`).
+  `.state/woodpecker/server/woodpecker.sqlite` (`users.admin`).
 - The agent on podman-machine (macOS) needs three non-obvious settings
   (already in `scripts/infra/woodpecker.sh` and the compose file):
   - mount the **VM-internal** rootless socket
