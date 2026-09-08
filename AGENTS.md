@@ -26,14 +26,20 @@ Cities") whose legislative life runs on real local infrastructure.
 - `data/` — all mutable state:
   - `world/` — `world.json` (9 cities, 63 persons, offices) + `cities/*.json` slices
     + `matters.json`. Regenerate world with `polis world genesis --force`.
+  - `world/legal/` — the legal-design YAML (story data): `jurisdictions/*.yaml`
+    (15), `moves.yaml` (legal moves + machinery aliases), `templates/*.yaml`
+    (story grammars). Validated loader: `polis/sim/legaldata.py`; schema
+    rationale: `docs/design/story-data-model.md`.
   - `services/{gogs,gitea,woodpecker,postgres}/` — container persistent data.
 - `docker/` — per-component Dockerfiles + `docker-compose.yml` (project `polis`,
   network `gogs-local`).
 - `scripts/infra/` — `env.sh` (shared), per-service build/run scripts
   (`postgres.sh gogs.sh gitea.sh woodpecker.sh`), `compose-up/down.sh`,
   `smoke.sh` (per-container smoke tests incl. API-key validity).
-- `docs/` — `isomorphism/` (concepts), `services/` (per-service: why, start,
-  API keys, quirks), `notes/` (background docs), `todo/` (design debts).
+- `docs/` — `isomorphism/` (concepts), `design/` (simulator design + legal
+  ontology), `services/` (per-service: why, start, API keys, quirks),
+  `notes/` (background docs), `tasks/` (task files, see Task workflow),
+  `todo/` (design debts).
 - `tests/e2e-gogs.sh` — full live legislative flow against gogs (see below).
 - `.env` — secrets (NEVER commit; template in `.env.example`).
 
