@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in contract at genesis (customary).
+jurisdiction: contract
+norms:
+  - id: N-0051
+    rule_form: usury_cap
+    object: {kind: lending, type: conduct}
+    aspect: rate
+    subjects: [creditor]
+    beneficiaries: [debtor]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0051
+    holder: {actor_kind: creditor}
+    object: {kind: the_bond_rolls, type: relationship}
+    activity: lend
+    under: N-0051

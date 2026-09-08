@@ -25,3 +25,15 @@ norms:
     beneficiaries: []
     source: custom
     status: in_force
+
+holdings:
+  - id: H-0001
+    holder: {city: cogswich, actor_kind: fisher}
+    object: {kind: northern_banks, type: resource}
+    activity: fish
+    under: N-0001
+  - id: H-0002
+    holder: {city: brasshaven, actor_kind: fisher}
+    object: {kind: northern_banks, type: resource}
+    activity: fish
+    under: N-0001

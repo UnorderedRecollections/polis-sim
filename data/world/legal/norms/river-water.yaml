@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in river-water at genesis (customary).
+jurisdiction: river-water
+norms:
+  - id: N-0121
+    rule_form: riparian_sharing
+    object: {kind: irrigation_cuts, type: resource}
+    aspect: flow
+    subjects: [farmer]
+    beneficiaries: [farmer, miller]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0121
+    holder: {actor_kind: farmer}
+    object: {kind: irrigation_cuts, type: resource}
+    activity: divert
+    under: N-0121

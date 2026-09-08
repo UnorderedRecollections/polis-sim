@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in foreign-relations at genesis (customary).
+jurisdiction: foreign-relations
+norms:
+  - id: N-0091
+    rule_form: open_border
+    object: {kind: the_border_stones, type: relationship}
+    aspect: crossing_points
+    subjects: []
+    beneficiaries: [envoy, neighboring_state]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0091
+    holder: {actor_kind: border_warden}
+    object: {kind: crossing_posts, type: relationship}
+    activity: patrol_border
+    under: N-0091

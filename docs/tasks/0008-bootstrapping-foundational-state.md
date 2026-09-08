@@ -2,8 +2,9 @@
 
 - **created:** 2026-09-08T18:50:38Z
 - **type:** [simulation]
-- **depends-on:** 0007, 0009, 0010, 0011, 0012, 0013
-- **status:** open
+- **depends-on:** 0007, 0009, 0010, 0011, 0016
+  (0012/0013 feed the *director*, not the seed — not required here)
+- **status:** in-progress
 
 ## Description
 

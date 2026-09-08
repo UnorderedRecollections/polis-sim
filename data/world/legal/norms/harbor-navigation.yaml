@@ -25,3 +25,10 @@ norms:
     beneficiaries: [pilot]
     source: custom
     status: in_force
+
+holdings:
+  - id: H-0011
+    holder: {city: cogswich, actor_kind: harbor_master}
+    object: {kind: northern_harbor, type: resource}
+    activity: levy_dues
+    under: N-0012

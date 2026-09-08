@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in environment-resource at genesis (customary).
+jurisdiction: environment-resource
+norms:
+  - id: N-0081
+    rule_form: extraction_lease
+    object: {kind: the_great_forest, type: resource}
+    aspect: extraction_method
+    subjects: [extractor]
+    beneficiaries: [commons_warden]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0081
+    holder: {actor_kind: extractor}
+    object: {kind: the_great_forest, type: resource}
+    activity: fell
+    under: N-0081

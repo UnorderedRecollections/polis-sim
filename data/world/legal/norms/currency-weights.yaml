@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in currency-weights at genesis (customary).
+jurisdiction: currency-weights
+norms:
+  - id: N-0071
+    rule_form: fixed_standard
+    object: {kind: coinage, type: conduct}
+    aspect: fineness
+    subjects: [money_changer]
+    beneficiaries: [merchant, treasurer]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0071
+    holder: {actor_kind: money_changer}
+    object: {kind: exchange_office, type: right}
+    activity: exchange
+    under: N-0071

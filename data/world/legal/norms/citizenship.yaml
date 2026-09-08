@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in citizenship at genesis (customary).
+jurisdiction: citizenship
+norms:
+  - id: N-0041
+    rule_form: jus_soli
+    object: {kind: the_freedom_rolls, type: status}
+    aspect: parentage
+    subjects: [newcomer]
+    beneficiaries: [citizen]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0041
+    holder: {actor_kind: newcomer}
+    object: {kind: guest_registers, type: status}
+    activity: reside
+    under: N-0041

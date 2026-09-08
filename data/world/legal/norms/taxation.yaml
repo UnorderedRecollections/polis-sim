@@ -18,3 +18,9 @@ norms:
     source: charter
     source_ref: CHTR-0001
     status: in_force
+
+holdings:
+  - id: H-0031
+    holder: {city: brasshaven, actor_kind: merchant}
+    object: {kind: exemption_charters, type: relationship}
+    under: N-0032

@@ -24,5 +24,5 @@ kinds:
       Norms allocate burdens and govern relations between polities. The
       actors are mostly collectives (cities, the federation, neighboring
       states), not persons.
-    holding_object_types: [right, relationship]
+    holding_object_types: [right, relationship, burden]
     impact_kinds: [allocates, burdens, obliges]

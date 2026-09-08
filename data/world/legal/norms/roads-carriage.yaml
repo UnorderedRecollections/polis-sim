@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in roads-carriage at genesis (customary).
+jurisdiction: roads-carriage
+norms:
+  - id: N-0131
+    rule_form: toll_by_weight
+    object: {kind: chain_bridge, type: resource}
+    aspect: toll_rate
+    subjects: [carrier]
+    beneficiaries: [toll_farmer]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0131
+    holder: {actor_kind: toll_farmer}
+    object: {kind: chain_bridge, type: resource}
+    activity: collect_toll
+    under: N-0131

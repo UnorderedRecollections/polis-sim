@@ -25,12 +25,35 @@ NORMS_DIR = config.WORLD_DIR / "legal" / "norms"
 
 NormSource = Literal["custom", "statute", "treaty", "charter"]
 NormStatus = Literal["in_force", "superseded", "repealed"]
-ObjectType = Literal["resource", "conduct", "status", "flow", "burden", "relationship"]
+ObjectType = Literal["resource", "conduct", "status", "flow", "burden", "relationship", "right"]
 
 
 class NormObject(BaseModel):
     kind: str            # what it is (northern_banks, lending, the tariff regime)
     type: ObjectType     # resource | conduct | status | flow | burden | relationship
+
+
+class Holder(BaseModel):
+    """A party to a holding: either or both of a city and an actor kind
+    ("the fishers of Cogswich", "Brasshaven", "any carrier")."""
+    city: Optional[str] = None
+    actor_kind: Optional[str] = None
+
+    @model_validator(mode="after")
+    def _not_empty(self) -> "Holder":
+        if not self.city and not self.actor_kind:
+            raise ValueError("a holder needs a city and/or an actor_kind")
+        return self
+
+
+class Holding(BaseModel):
+    """A durable legal fact linking an actor to an object under a norm
+    (docs/design/jurisdiction-requirements.md §2)."""
+    id: str                                  # H-0001
+    holder: Holder
+    object: NormObject
+    activity: str = ""                       # the use, for resource holdings
+    under: str                               # the norm id it exists under
 
 
 class Norm(BaseModel):
@@ -54,8 +77,11 @@ class Norm(BaseModel):
 
 
 class NormSet(BaseModel):
-    """A set of norms — one document, one format, seed or snapshot alike."""
+    """A situation document: norms and holdings together (holdings cite the
+    norms they exist under and must never drift apart). One format, seed or
+    snapshot alike."""
     norms: list[Norm] = []
+    holdings: list[Holding] = []
     description: str = ""
 
     # --- queries -----------------------------------------------------------
@@ -214,4 +240,17 @@ def validate_norm_set(norm_set: NormSet, jurisdiction_slug: str) -> list[str]:
             known = set(on_disk) or set(j.resources)
             if known and n.object.kind not in known:
                 problems.append(f"{n.id}: unknown resource '{n.object.kind}' in {jurisdiction_slug}")
+
+    norm_ids = {n.id for n in norm_set.norms}
+    from .ontology import actor_type  # noqa: PLC0415 (avoid import cycle at module load)
+    for h in norm_set.holdings:
+        if h.under not in norm_ids:
+            problems.append(f"{h.id}: cites unknown norm '{h.under}'")
+        if h.activity and j.activities and h.activity not in j.activities:
+            problems.append(f"{h.id}: activity '{h.activity}' not in {jurisdiction_slug}'s activities")
+        try:
+            if h.holder.actor_kind:
+                actor_type(h.holder.actor_kind)
+        except Exception as e:
+            problems.append(f"{h.id}: bad holder: {e}")
     return problems

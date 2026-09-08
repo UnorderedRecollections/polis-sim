@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in military-defense at genesis (customary).
+jurisdiction: military-defense
+norms:
+  - id: N-0111
+    rule_form: levy_by_population
+    object: {kind: defense_burden, type: burden}
+    aspect: contingent_size
+    subjects: [city_marshal]
+    beneficiaries: [captain]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0111
+    holder: {city: cogswich}
+    object: {kind: muster_rolls, type: burden}
+    activity: muster
+    under: N-0111

@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in criminal at genesis (customary).
+jurisdiction: criminal
+norms:
+  - id: N-0061
+    rule_form: city_venue
+    object: {kind: offense, type: conduct}
+    aspect: venue
+    subjects: [accused, accuser]
+    beneficiaries: [magistrate]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0061
+    holder: {actor_kind: accuser}
+    object: {kind: the_assize_rolls, type: relationship}
+    activity: accuse
+    under: N-0061

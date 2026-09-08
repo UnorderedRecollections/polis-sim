@@ -27,7 +27,9 @@ resources_app = typer.Typer(no_args_is_help=True, help="Concrete resources stori
 app.add_typer(jurisdictions_app, name="jurisdictions")
 app.add_typer(moves_app, name="moves")
 app.add_typer(templates_app, name="templates")
+legal_app = typer.Typer(no_args_is_help=True, help="The legal seed as a whole (bootstrap step 2).")
 app.add_typer(actors_app, name="actors")
+app.add_typer(legal_app, name="legal")
 app.add_typer(legal_objects_app, name="legal-objects")
 app.add_typer(procedural_events_app, name="procedural-events")
 app.add_typer(relations_app, name="relations")
@@ -413,3 +415,36 @@ def resources_show(
             console.print(f"    - {u}")
     if r.narrative:
         console.print(f"  narrative: {r.narrative}")
+
+
+# --- the legal seed as a whole ---------------------------------------------------
+
+@legal_app.command(name="validate")
+def legal_validate() -> None:
+    """Validate the foundational legal state (bootstrap step 2):
+    jurisdictions, resources, norms and holdings as one consistent seed."""
+    from ..sim.resources import validate_resources
+
+    problems: list[str] = []
+    problems += validate_resources()
+
+    seeds = load_seed_norms()
+    for slug in load_jurisdictions():
+        if slug not in seeds:
+            problems.append(f"{slug}: no norm seed file")
+    for slug, ns in seeds.items():
+        problems += validate_norm_set(ns, slug)
+
+    n_norms = sum(len(ns.norms) for ns in seeds.values())
+    n_holdings = sum(len(ns.holdings) for ns in seeds.values())
+    console.print(
+        f"legal seed: {len(load_jurisdictions())} jurisdictions, "
+        f"{sum(len(v) for v in load_resources().values())} resources, "
+        f"{n_norms} norms, {n_holdings} holdings"
+    )
+    if problems:
+        console.print("[bold red]validation failed:[/bold red]")
+        for p in problems:
+            console.print(f"  - {p}")
+        raise typer.Exit(code=1)
+    console.print("[green]the foundational legal state is consistent[/green]")

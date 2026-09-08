@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in inheritance at genesis (customary).
+jurisdiction: inheritance
+norms:
+  - id: N-0101
+    rule_form: primogeniture
+    object: {kind: family_seats, type: resource}
+    aspect: share
+    subjects: [heir]
+    beneficiaries: [heir]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0101
+    holder: {actor_kind: heir}
+    object: {kind: family_seats, type: resource}
+    activity: inherit
+    under: N-0101

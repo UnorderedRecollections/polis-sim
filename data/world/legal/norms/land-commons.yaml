@@ -25,3 +25,10 @@ norms:
     beneficiaries: [village_reeve]
     source: custom
     status: in_force
+
+holdings:
+  - id: H-0021
+    holder: {city: brasshaven, actor_kind: farmer}
+    object: {kind: western_commons, type: resource}
+    activity: graze
+    under: N-0021

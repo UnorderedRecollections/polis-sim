@@ -1,0 +1,18 @@
+# Foundational seed — rules in force in trade-markets at genesis (customary).
+jurisdiction: trade-markets
+norms:
+  - id: N-0141
+    rule_form: guild_monopoly
+    object: {kind: the_great_market, type: resource}
+    aspect: license
+    subjects: [merchant]
+    beneficiaries: [guild]
+    source: custom
+    status: in_force
+
+holdings:
+  - id: H-0141
+    holder: {actor_kind: guild}
+    object: {kind: the_great_market, type: resource}
+    activity: license_stall
+    under: N-0141
