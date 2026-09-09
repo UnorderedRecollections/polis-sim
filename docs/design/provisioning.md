@@ -1,9 +1,9 @@
 # Provisioning — a stable, reproducible environment for a sim instance
 
 Status: design draft v1 (task 0020). The existing `polis gogs users/orgs/repos`
-commands are porcelain (thin API wrappers); `polis provision` is the
-higher-level wrapper that assembles *everything* a sim instance needs,
-idempotently, and records what it made so it can be torn down.
+commands are plumbing (thin API wrappers); `polis provision` is the
+**porcelain**: the higher-level wrapper that assembles *everything* a sim
+instance needs, idempotently, and records what it made so it can be torn down.
 
 ## 1. The simulation instance id
 
@@ -76,6 +76,8 @@ host. Fail fast with the exact remedy.
 polis provision up <sim-id> [--with-city-containers] [--force]
 polis provision status <sim-id>        # what exists vs. the inventory
 polis provision teardown <sim-id> [--yes]   # delete exactly the inventory
+polis sim stop|start|delete <sim-id>         # lifecycle (post-director, §3a)
+polis sim export|import <sim-id>             # portability (post-director, §3a)
 ```
 
 - **Idempotent**: `up` reconciles (create missing, skip existing, never
@@ -87,6 +89,40 @@ polis provision teardown <sim-id> [--yes]   # delete exactly the inventory
 - Phase 2 (gitea) later: same command, platform selected by
   `federation.phase` or a `--platform` flag; the inventory format doesn't
   change.
+
+## 3a. Sim lifecycle (added; after the director works)
+
+Beyond up/teardown, a sim instance is a manageable, portable object:
+
+```
+polis sim stop <sim-id>     # stop its city containers (platform objects persist)
+polis sim start <sim-id>    # start them again
+polis sim delete <sim-id>   # teardown + remove data/sims/<sim> entirely
+polis sim export <sim-id>   # -> <sim-id>.polis.tar.gz
+polis sim import <file>     # -> a ready-to-run sim instance
+```
+
+**Export format** (a tarball someone else can import and run): one archive
+containing—
+
+- `provision.json` (the inventory, so import can re-materialize infra);
+- the journal (`journal.jsonl`) and situation snapshot(s);
+- the per-sim city slices;
+- **the git bundle(s)** of the archive repo and each city repo
+  (`git bundle create <repo>.bundle --all`) — the complete legal history,
+  platform-independent;
+- a `manifest.json` (format version, sim id, created-at, world/seed
+  references).
+
+**Import** on another machine: reads the manifest, re-provisions via
+`provision up` (new host, same namespace), pushes the bundles into the
+fresh repos, restores slices and journal — the imported sim is runnable and
+`present`-able immediately. Import refuses on id collision unless
+`--rename <new-id>` (namespace remap of all objects — the id-prefixing
+makes this mechanical).
+
+Prerequisite note: export/import depends on the runtime/journal being
+settled (post-director), which is why it's scheduled after it.
 
 ## 4. Infra dependencies
 
