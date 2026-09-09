@@ -39,6 +39,9 @@ Verify: `scripts/infra/smoke.sh gogs`.
   with `auto_init: false` and push a seed commit.
 - Some GET admin routes 404 while the matching POST/DELETE routes work; user
   listing goes through `/api/v1/users/search`.
-- No org-deletion route; orgs are created via
-  `POST /api/v1/admin/users/{owner}/orgs`.
+- **No org-deletion route** (DELETE /api/v1/orgs/* → 404; orgs are `user`
+  rows with `type=1` plus org_user/team/team_repo/team_user). Use
+  `polis nuke gogs orgs <prefix> --yes` — a direct DB cascade; dangerous,
+  preview without `--yes` first.
+- Orgs are created via `POST /api/v1/admin/users/{owner}/orgs`.
 - First-run setup (once, via UI): create the admin user, then generate a token.

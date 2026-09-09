@@ -72,6 +72,53 @@ class GogsClient:
     def delete_user(self, username: str) -> None:
         self._request("DELETE", f"/api/v1/admin/users/{username}")
 
+    def user_exists(self, username: str) -> bool:
+        return any(u.get("username") == username for u in self.search_users(username, limit=10))
+
+    def create_token(self, username: str, password: str, name: str = "polis") -> str:
+        """A personal token for a user, via their basic auth. This build has
+        NO token-delete route and rejects duplicate names, so re-runs use
+        suffixed names (teardown deletes users, taking tokens with them)."""
+        auth = (username, password)
+        last_err = ""
+        for attempt in range(20):
+            token_name = name if attempt == 0 else f"{name}-{attempt}"
+            try:
+                r = self.http.post(f"/api/v1/users/{username}/tokens",
+                                   auth=auth, json={"name": token_name})
+            except httpx.HTTPError as e:
+                raise GogsError(f"gogs unreachable at {config.GOGS_URL}: {e}") from e
+            if r.status_code < 400:
+                return r.json()["sha1"]
+            last_err = f"{r.status_code}: {r.text[:200]}"
+            if "already exists" not in r.text:
+                break
+        raise GogsError(f"create token for {username} -> {last_err}")
+
+    def create_repo(self, owner: str, name: str, private: bool = False) -> dict:
+        """Repo for a user or org (admin route). auto_init stays false —
+        this build fails on auto_init: seed with a push instead."""
+        return self._request(
+            "POST",
+            f"/api/v1/admin/users/{owner}/repos",
+            json={"name": name, "private": private, "auto_init": False},
+        ).json()
+
+    def delete_repo(self, owner: str, name: str) -> None:
+        self._request("DELETE", f"/api/v1/repos/{owner}/{name}")
+
+    def repo_exists(self, owner: str, name: str) -> bool:
+        r = self.http.get(f"/api/v1/repos/{owner}/{name}")
+        return r.status_code == 200
+
+    def add_collaborator(self, owner: str, repo: str, username: str,
+                         permission: str = "write") -> None:
+        self._request(
+            "PUT",
+            f"/api/v1/repos/{owner}/{repo}/collaborators/{username}",
+            json={"permission": permission},
+        )
+
     def create_org(self, username: str, full_name: str = "", owner: str | None = None) -> dict:
         # this gogs build has no POST /api/v1/orgs; orgs are created through the
         # admin route, owned by the given (or the authenticated) admin user.

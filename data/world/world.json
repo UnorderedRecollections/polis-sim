@@ -344,7 +344,10 @@
       },
       "credentials": {
         "password": "brnTP3fAbnFbmOHnKY",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "19be62876d86337326a82e34a3e5e218381db954",
+          "gogs@prov-demo-02": "41bc04ef1441b5fa1afb16178fe3bee8a7d45b55"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -369,7 +372,10 @@
       },
       "credentials": {
         "password": "Rvj7uff0LYTH8xIZM1",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "56045f8879124819bcd83f6d952b9e6f72d55100",
+          "gogs@prov-demo-02": "5e9fadd3179994deb15917ec2ee989f824c4773b"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -394,7 +400,10 @@
       },
       "credentials": {
         "password": "RcoreogrNwwmq6OLkT",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "389ea9e04c8c8ea9df11bbc7b92492857cd2d8d6",
+          "gogs@prov-demo-02": "08a4763485ce127f99cc5ac3786bcd598b554980"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -419,7 +428,10 @@
       },
       "credentials": {
         "password": "x9NIQ0Wobtqn62tOy4",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "f4d0835487c1413ee69bfc9f5c68e6596aab7b3e",
+          "gogs@prov-demo-02": "258667c1dd9cc4e6b1ee81d87177bae9516c2ddc"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -444,7 +456,10 @@
       },
       "credentials": {
         "password": "qpIqK3yn9FfcgMXAdx",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "12504b7d9f86e7f5119da9850074ad6081722c1b",
+          "gogs@prov-demo-02": "a625688ef550b22464e800f1f17ab6473066c61a"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -470,7 +485,10 @@
       },
       "credentials": {
         "password": "pI6Qh2UVvsjaSS8VFg",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "8690caae707fc977343b1f540d29fdc95b7cde79",
+          "gogs@prov-demo-02": "9252d34f95ef9629e342a82d6013a48371c0d926"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -495,7 +513,10 @@
       },
       "credentials": {
         "password": "0Fmxk754LEgw9YooJe",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "40cd9867b9ef4fedf2a854eacc1bc02971299a64",
+          "gogs@prov-demo-02": "4f03f7a6305c4e1cdcf2090acfd1a42751d09070"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -520,7 +541,10 @@
       },
       "credentials": {
         "password": "Y8HhO6kGL75UQSyPx3",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "72c3e401cb2ea1fe714a8decd57ea329b1787f93",
+          "gogs@prov-demo-02": "26cb4c8509010563c45fff40843cac0bf43b747e"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -545,7 +569,10 @@
       },
       "credentials": {
         "password": "pdbIKaRdebuFrEHS2J",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "6e857cdb11e10d8979b8612d463843f5d8cce360",
+          "gogs@prov-demo-02": "196b980016b02e87ef29eb21302b077a5ede3efa"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -570,7 +597,10 @@
       },
       "credentials": {
         "password": "YlgAACTP9gyv1plBAr",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "c30bf9fe4b3c507389305cb4398ba43c12ff7d9e",
+          "gogs@prov-demo-02": "19a735599273139127ea7768c682569d104c213f"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -595,7 +625,10 @@
       },
       "credentials": {
         "password": "B1Id9Z850kEnydx9qW",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "4e3f5b5e69799a53a2436bf78f689e8c7e0a0347",
+          "gogs@prov-demo-02": "f9c32d74588c8dd2514e7907e2b5f858a2f0c55e"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -620,7 +653,10 @@
       },
       "credentials": {
         "password": "A79ISjs8JHUdKF0j7e",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "0e9588e012142e1338dd2a47567c2c740d87aaba",
+          "gogs@prov-demo-02": "fe1ac7a53328f7a89c22cf5f6e383c445cdd774a"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -645,7 +681,10 @@
       },
       "credentials": {
         "password": "KPoh3pKMzKG5mSoyPs",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "f13d754142236abb4e64baf6802c003fe2343b14",
+          "gogs@prov-demo-02": "47f01aa2a5751c8aea899bc80970b8faf7428bf1"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -670,7 +709,10 @@
       },
       "credentials": {
         "password": "aMIgHFiveprBHs8YGP",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "2d1333b19008d896cb87e7c1023b9110beda644b",
+          "gogs@prov-demo-02": "d19747d3b1a0c109e9321225ebe55d96a0e08f12"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -695,7 +737,10 @@
       },
       "credentials": {
         "password": "5g2q3UjrnvQ0Fp4dNZ",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "b4c7bc528afb22af7890aca96de0ae037ae20738",
+          "gogs@prov-demo-02": "71f718a607f75c211091fe40cd0e92a7a2dbac89"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -720,7 +765,10 @@
       },
       "credentials": {
         "password": "ui8kBRIg6QjcwIAcw5",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "adf220f3b1cec0cc5180265f01b3087e09b4cab4",
+          "gogs@prov-demo-02": "12f18821c3eb55657f5c36079ee1f1251f5735b6"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -745,7 +793,10 @@
       },
       "credentials": {
         "password": "npgW2zMj518Y2bTu5X",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "60eba9ed94eec34cd3083b681130de09f46968d8",
+          "gogs@prov-demo-02": "52b3f92858f830a969c0e637266d32989f8ee9c5"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -770,7 +821,10 @@
       },
       "credentials": {
         "password": "qWg21nYCsXoblu17rN",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "ae26264efd9b3dd75fda714c84ce4a09fd4e91b5",
+          "gogs@prov-demo-02": "63cc2d4f93f5fe10ab6cf67bcdf7c8dc6d301fa2"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -795,7 +849,10 @@
       },
       "credentials": {
         "password": "8H6h8l7qgATtLFxJpR",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "3aba0724608461db505e3386524e2a3cbe9c6772",
+          "gogs@prov-demo-02": "a0ee9c096b59df59c6a4ca5305ee3278bdcd78c6"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -820,7 +877,10 @@
       },
       "credentials": {
         "password": "5HSUPwePut0Sstzysh",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "01edca7c2554a14f6b1d53173973923dc3a28a13",
+          "gogs@prov-demo-02": "6b221257bbca76bff1bdb7f565bb67b4a82d113a"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -845,7 +905,10 @@
       },
       "credentials": {
         "password": "6P3MsHarAJOCBnD3Xk",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "dadf8ed65759b40371cbc9f5a44051dab07ec76b",
+          "gogs@prov-demo-02": "f323ef738054038e4d8835db81a297504bf54996"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -870,7 +933,10 @@
       },
       "credentials": {
         "password": "FNuYUPnmbpD0ezNmRE",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "9ff9e5b40a3c964b727ec6363fa2a62224e101a8",
+          "gogs@prov-demo-02": "d7b88e5f6ea9b77bd7694132d422a918ecf7cdc1"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -895,7 +961,10 @@
       },
       "credentials": {
         "password": "OaUVgAk7Gdp0CXP9K6",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "e23aa672f425e65acb67e9ef3c2a52a8d36dc005",
+          "gogs@prov-demo-02": "48ed36530810414ddf7b0f4deaf1dc50ca00dd94"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -920,7 +989,10 @@
       },
       "credentials": {
         "password": "Y3A4Bj1BU0rWEoBSou",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "66e454f9baa3174d9b3b6a4c369c2ba7d78c2dae",
+          "gogs@prov-demo-02": "f2cf72153ef710637baa0318fbe5ed52966a4528"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -945,7 +1017,10 @@
       },
       "credentials": {
         "password": "ioRRdzHzmA4KR1Vxav",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "431f7542b0f49c753e8d66b8af91a2fdd968bb71",
+          "gogs@prov-demo-02": "44c38cdc2d5df696e7aa440782fcb1adda8b38bb"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -970,7 +1045,10 @@
       },
       "credentials": {
         "password": "07zUHLnnBbuQzkChMb",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "ba506aa877688a18c13dc116db247edd25034bf0",
+          "gogs@prov-demo-02": "5112c103071cb4ab24454324b1397b1b1583c473"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -995,7 +1073,10 @@
       },
       "credentials": {
         "password": "IbNiCdxnuVxUZpfbH9",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "67352a49455c92cc591c3dda9750aedbbd8490d3",
+          "gogs@prov-demo-02": "195090bcbde770588a1dac5c285e7b43c4b9ab27"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1020,7 +1101,10 @@
       },
       "credentials": {
         "password": "OWOU6mbjhPInRVkLUh",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "8efc16dcbb674d06657559800be6418ed25aeb32",
+          "gogs@prov-demo-02": "e18bde11fdbf296a1520a4eb44625ec1322a0981"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1045,7 +1129,10 @@
       },
       "credentials": {
         "password": "gbtP7ySeQMgV0Lh8Wv",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "3e5976bdf38cf4d9b353cd8857915c61f7b2e523",
+          "gogs@prov-demo-02": "3f277d8256283e563deac01424cce164b178448a"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1070,7 +1157,10 @@
       },
       "credentials": {
         "password": "wFv0Yg7NZRBT7qYHDB",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "28a1d0a3993280fc70a91b33a5f7288dd9f1cb06",
+          "gogs@prov-demo-02": "ce5b391b92367398dd9a3170ba9bfcd97f21a955"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1095,7 +1185,10 @@
       },
       "credentials": {
         "password": "q0Zf2pCLxb0lnXv2Rr",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "ab7265b9e9b41a8bd9be71f7f1e8a36ee284e44a",
+          "gogs@prov-demo-02": "4d2680c3765486fa522a93b54a58656b5a1d7b55"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1120,7 +1213,10 @@
       },
       "credentials": {
         "password": "ozIoDSBbszpPwIv9Iv",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "d3e07582fd82bf1f3529e09f686bdcf1f3a047cc",
+          "gogs@prov-demo-02": "ab03c71024c3ce478446958843d1f4c70f5349b2"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1145,7 +1241,10 @@
       },
       "credentials": {
         "password": "toStU6QlTrKVL8Zsws",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "181b69ead7df8c1cc6fd273bc40d2ba826ad37bf",
+          "gogs@prov-demo-02": "42bbcbae2176c3fdd4dd369778d96a44da5c95a3"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1170,7 +1269,10 @@
       },
       "credentials": {
         "password": "hcds6NUgarDv7p1heE",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "216da0a57f278066dba952e1288f4419d2388a3f",
+          "gogs@prov-demo-02": "dda3ea9582e19d4f31f20154fe52a35cdf96eca3"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1195,7 +1297,10 @@
       },
       "credentials": {
         "password": "QjY6fpIzKMWx4sKAJd",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "5cee5642848907aa706d4f5b8e40ca67c9f8c4e8",
+          "gogs@prov-demo-02": "c1a31a87d57d9d60e4882cc1edd6c09cefcbf68d"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1220,7 +1325,10 @@
       },
       "credentials": {
         "password": "6mnOjkeaBKsoRRCQ5W",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "02f8da57669e1af0c4b7c4a11282f265c42628ef",
+          "gogs@prov-demo-02": "cbf3ae683d4acc7ac1e0e1f374534ef33f7a4d7b"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1245,7 +1353,10 @@
       },
       "credentials": {
         "password": "O5AHO4ZektUJrhQR6F",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "90a76198803b3e3dc4b5f2b6c8a22302bd1a136b",
+          "gogs@prov-demo-02": "cfc731fd7a007885e58199490209f9f4c227147f"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1270,7 +1381,10 @@
       },
       "credentials": {
         "password": "ecAtpf7ZJ69PqcUDO4",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "0c9c6952dbe904d1756f4ec98a54bc31d22e570f",
+          "gogs@prov-demo-02": "93aa65861e90b5785fc64cfb94654e46512303a7"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1295,7 +1409,10 @@
       },
       "credentials": {
         "password": "BY8DztgjzEPyVcfphV",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "121f01dbf1f9fea486044c3a6dfb90edd577e9f3",
+          "gogs@prov-demo-02": "5b0df2b0e6e3403657bbe6d9bc801d9ba4f0d310"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1320,7 +1437,10 @@
       },
       "credentials": {
         "password": "OHzlwUMVmI5BRh8Loj",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "18d80d42af33639c68cd7e62201cdca89072071b",
+          "gogs@prov-demo-02": "cb72bc1f4cc196cef78ed2cbddfba4b203c9a1b6"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1345,7 +1465,10 @@
       },
       "credentials": {
         "password": "If94ChZESFqZ8pIx5F",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "356a75e954d3b53184615180fa7f9a6cabf9c72c",
+          "gogs@prov-demo-02": "8930538c4bc0c1acaa04d8e011a770bdf6c1dc28"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1370,7 +1493,10 @@
       },
       "credentials": {
         "password": "rWz5FYrsK9EjHvIHCt",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "89b99970880b7409a8b8900fa262c40646be3ef8",
+          "gogs@prov-demo-02": "35cf8cb199638904cf9acc4e094d4c83b772ce58"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1395,7 +1521,10 @@
       },
       "credentials": {
         "password": "JoWcURYxPY8EcFK12B",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "a21a80a2cb8a648e0423f210c3f5cd3da123331f",
+          "gogs@prov-demo-02": "f0b14c60066d32318c26400a1781c71628aecbe5"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1420,7 +1549,10 @@
       },
       "credentials": {
         "password": "ai18eWqMyeuPH7M3EH",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "6ae4cd9eba94c81646eb9e3438272a9dedac762b",
+          "gogs@prov-demo-02": "6a16d3373e83fffee041526d85256db726fea955"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1445,7 +1577,10 @@
       },
       "credentials": {
         "password": "oQrof8VRgksbudwApz",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "fae94701fbc38aabd6e28d3a8d678e2db13a3c8e",
+          "gogs@prov-demo-02": "16ddb304214cb2af5291d602cfcb2187bfc0e2ee"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1470,7 +1605,10 @@
       },
       "credentials": {
         "password": "ke1Mo4iCppaX3QjBvK",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "31c29af88507fccc0898adf35a5a7578bb28a7d5",
+          "gogs@prov-demo-02": "a800e822329946f3bd5d4bb3ac70579961102789"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1495,7 +1633,10 @@
       },
       "credentials": {
         "password": "QCs90gxwsRbZya1W84",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "5eb1f81f4f75d074f0a2e64243f543a18a1952e2",
+          "gogs@prov-demo-02": "1f4701f6b33ec6ef1c2870b6a98c4d8ce86b184d"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1520,7 +1661,10 @@
       },
       "credentials": {
         "password": "Z3WoXnlpUVQigMcWcw",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "970f135944e22b51439d67646b95b45a6eda060b",
+          "gogs@prov-demo-02": "dac3aca3b69f1868939bf77159e83deab1a12bbd"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1545,7 +1689,10 @@
       },
       "credentials": {
         "password": "4uzmW2wFqk467s1XDe",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "d147d026619de873ac0bd23507ca9392f8bb383e",
+          "gogs@prov-demo-02": "f690345be9e8ea996c49f9caa68f3920244438c3"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1570,7 +1717,10 @@
       },
       "credentials": {
         "password": "1S87XwXaHCPPKY6gob",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "bd5d051dac6304b5bb555e9bea7cc26a003c5895",
+          "gogs@prov-demo-02": "c88b3751c077c5455dca4a06147c48bcfeef6e0d"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1595,7 +1745,10 @@
       },
       "credentials": {
         "password": "4ndZ4szi6sEg3iCPU6",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "6518e213d9af7d1024272beb9024710f057dc68a",
+          "gogs@prov-demo-02": "f922dae6673f084ff33a8f58a3f870ce2e394f6b"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1620,7 +1773,10 @@
       },
       "credentials": {
         "password": "UjzgEz6cwB61gQH8wy",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "df461d2c3aad85308a439bdf07a89a65758def04",
+          "gogs@prov-demo-02": "75aef66648349b9a4d078990d0ec6f43f32e2067"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1645,7 +1801,10 @@
       },
       "credentials": {
         "password": "6ZfnN8du9WmZIKYoWW",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "d75d23d578b7cf3fdf8dc438f1bfb7857489a55b",
+          "gogs@prov-demo-02": "6db7f0043d180b7f5fad8f066770523dd9b2960c"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1670,7 +1829,10 @@
       },
       "credentials": {
         "password": "r99HXg1iwWKaqhAhdB",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "6739f46909dcc56a49a3f3d9e906bf6018a17978",
+          "gogs@prov-demo-02": "e1aa051914bcb1a90e7ebb0085cbe04a54007684"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1695,7 +1857,10 @@
       },
       "credentials": {
         "password": "KCnMT4OsNb90AgSB3t",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "358bcfb990e20cc73e6e5000b8539c064c468c89",
+          "gogs@prov-demo-02": "11122e880d71c91dbaf137b994433fce6f2403c1"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1720,7 +1885,10 @@
       },
       "credentials": {
         "password": "hMKSxLsFAXhO2I1A3z",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "3540b75ded878ad342401e902bb9e16bf7e45721",
+          "gogs@prov-demo-02": "447938fa4b7fc21b514de7102c69f656966ee294"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1745,7 +1913,10 @@
       },
       "credentials": {
         "password": "zfAPxj5eZffTYIKIuh",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "38d6df005eca4d59dd3118bef55a1bd15c4a584b",
+          "gogs@prov-demo-02": "cc37fd7a3155ed3342731220558d147d5f56214e"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1770,7 +1941,10 @@
       },
       "credentials": {
         "password": "6A4drtgFjD0vIhroAI",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "cd0edef5278c5525c60f45f3c0873928c78df02f",
+          "gogs@prov-demo-02": "5fefaf439ce4bae86976f8b4b7fe8749188a17c4"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1795,7 +1969,10 @@
       },
       "credentials": {
         "password": "MNb5ZqlRtva1JyiNbU",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "33b76653bb276f446ff499806cb1de041cc66f42",
+          "gogs@prov-demo-02": "8bb3d5aac93d1ba16c02fff37bafc74275186e57"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1820,7 +1997,10 @@
       },
       "credentials": {
         "password": "AvwSWJfdjMPqPEBqUh",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "7162d896b156f2001ab84e2074adfc59bc529673",
+          "gogs@prov-demo-02": "15ca581e357766b722824c6f0c6d84299ac22cd8"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1845,7 +2025,10 @@
       },
       "credentials": {
         "password": "rQEPcyLasnipuaUkxR",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "020eb4fb6911f9d9e143fe0154de74ba33c56372",
+          "gogs@prov-demo-02": "289a109767439941bf9fe317a7b13a369a72754e"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1870,7 +2053,10 @@
       },
       "credentials": {
         "password": "ZXe1cb51JJRzhbuXMZ",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "2fd58ea120c05f54183065c78a0df7f6e41c0ce4",
+          "gogs@prov-demo-02": "668aeed48c60e4c9d8c088f5a5ae106e463a046c"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1895,7 +2081,10 @@
       },
       "credentials": {
         "password": "BgBye1UnWeNGmWv7Oj",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "1493bd33d631a9b3c588fe2824038569e5e70a83",
+          "gogs@prov-demo-02": "8cc995a27725d3a3581b1e8c541eda6eec8e6c5d"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },
@@ -1920,7 +2109,10 @@
       },
       "credentials": {
         "password": "pkjVe6MCIJQ2N9u8tB",
-        "api_tokens": {},
+        "api_tokens": {
+          "gogs@prov-demo-01": "07b127d25aa96348715f0ff53bdcd4465d01687e",
+          "gogs@prov-demo-02": "8ea9f6668d7dd291ff597c6971e26d07911d8ca1"
+        },
         "ssh_private_key": null,
         "ssh_public_key": null
       },

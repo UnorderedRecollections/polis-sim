@@ -11,7 +11,9 @@ import os
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = PROJECT_ROOT / "data"
+# POLIS_DATA_DIR: inside city containers the legal data is mounted read-only
+# (the package itself lives in site-packages there, so no project root exists)
+DATA_DIR = Path(os.environ.get("POLIS_DATA_DIR") or (PROJECT_ROOT / "data"))
 WORLD_DIR = DATA_DIR / "world"
 WORLD_FILE = WORLD_DIR / "world.json"
 CITIES_DIR = WORLD_DIR / "cities"

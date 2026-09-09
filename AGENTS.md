@@ -113,6 +113,21 @@ Cities") whose legislative life runs on real local infrastructure.
   `bill draft/amend/introduce/debate/scrutinize/ratify/consolidate/reject/withdraw`;
   `archive obtain/receive/lodge/promulgate/repeal/transplant/reconstruct/replace-history`.
 
+## Provisioning (porcelain)
+
+- `polis provision up <sim-id> [--with-city-containers] [--force]` provisions a
+  complete sim instance: users `<sim>-<username>` with per-sim tokens (written
+  to world.json as `api_tokens["gogs@<sim>"]`), orgs `<sim>-archive`/
+  `<sim>-<city>` + `common-law` repos + founding corpus, per-sim slices under
+  `data/sims/<sim>/cities/`, inventory `provision.json`. `status` /
+  `teardown --yes` (deletes exactly the inventory; **orgs are teardown-exempt**
+  — remove them with `polis nuke gogs orgs <prefix> --yes`, a DB cascade).
+- City containers: `docker/polis-city/Dockerfile` (build context = project
+  root), run as `polis-city-<city>-<sim>` with the sim slice at
+  `/etc/polis/city.json` and legal data mounted read-only via
+  `POLIS_DATA_DIR` (config.py honors it). Verified: citizens act from inside
+  their city container. Demo: `tests/provision-demo.sh` (**passing**).
+
 ## Platform facts learned the hard way (verified by probing)
 
 - **This gogs build has NO pulls API at all**; issues API works. Phase-1
@@ -120,6 +135,11 @@ Cities") whose legislative life runs on real local infrastructure.
   incorporate locally (`git merge [--squash] FETCH_HEAD` + push) and close the
   matter with the order entered into the record. Phase 2 (gitea) uses real PRs
   — same command surface, dispatch on `chamber.platform`.
+- **Also missing: forks API and token-delete route.** City repos are plain
+  repos seeded by pushing the founding corpus (no fork relationship in
+  phase 1); per-user tokens get suffixed names on re-runs (teardown deletes
+  users, taking tokens with them). Org repos need explicit collaborator grants
+  (org membership ≠ write).
 - Gogs repo creation with `auto_init: true` fails; use `auto_init: false` and
   push a seed commit.
 - Rich `Panel` takes `title_align`, not `title_justify`.

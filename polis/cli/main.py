@@ -13,8 +13,10 @@ from . import (
     gitea,
     gogs,
     health,
+    nuke,
     office,
     person,
+    provision,
     sim,
     woodpecker,
     world,
@@ -43,6 +45,12 @@ app.add_typer(archive.app, name="archive")
 
 # simulation runs — the journal and (later) replay
 app.add_typer(sim.app, name="sim")
+
+# provisioning — porcelain over the platform plumbing
+app.add_typer(provision.app, name="provision")
+
+# nuke — implementation-breaching commands (dangerous)
+app.add_typer(nuke.app, name="nuke")
 
 # component commands — the technical subsystems
 app.add_typer(gogs.app, name="gogs")
