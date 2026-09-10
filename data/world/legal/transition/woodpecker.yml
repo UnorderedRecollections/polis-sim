@@ -1,0 +1,14 @@
+# Schedule 1 to the Mechanical Magistracy Act — the formal checks
+# (the .woodpecker.yml instrument)
+#
+# The Mechanical Magistrate decides nothing; it checks the forms and
+# reports its findings to the offices (report:commit-status).
+
+pipeline:
+  formal-checks:
+    image: alpine:3
+    commands:
+      - polis formal-check identify       # every act has id, jurisdiction, proposer
+      - polis formal-check entry-force    # an Entry into Force provision
+      - polis formal-check references     # cited law exists in the corpus
+      - polis formal-check constitution   # no conflict with constitutional provisions

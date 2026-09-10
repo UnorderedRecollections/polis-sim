@@ -1,0 +1,46 @@
+# Schedule 1 to the Assigned Legal Authority Act
+# The Schedule of Assigned Legal Authority (the CODEOWNERS instrument)
+#
+# Each path of the federal archive is assigned to the office that holds
+# authority over it. The platform realizes each office by its incumbent's
+# registered username (the enactment machinery substitutes the per-sim
+# usernames; the incumbents at the founding are recorded below).
+
+# The constitution — the Constitutional Council
+constitution/**          council-jurist-1 council-jurist-2 council-jurist-3
+
+# The federal domains — each domain's jurisdictional expert
+taxation/**              expert-taxation
+maritime/**              expert-maritime
+criminal/**              expert-criminal
+commerce/**              expert-commerce
+civic/**                 expert-civic
+succession/**            expert-succession
+
+# The municipal archives — each city's archivist
+municipal/cogswich/**    local-archivist-cogswich
+municipal/brasshaven/**  local-archivist-brasshaven
+municipal/aetherquay/**  local-archivist-aetherquay
+municipal/thornwick/**   local-archivist-thornwick
+municipal/cindercog/**   local-archivist-cindercog
+municipal/gloamingate/** local-archivist-gloamingate
+municipal/hushpoole/**   local-archivist-hushpoole
+municipal/chimefall/**   local-archivist-chimefall
+municipal/vapourmouth/** local-archivist-vapourmouth
+
+# Incumbents at the founding:
+#   federal-archivist   e.vexley       (Keeper of the Federal Rolls)
+#   council-jurist-1    b.grimsbane
+#   council-jurist-2    a.yarborough
+#   council-jurist-3    m.featherstone
+#   expert-taxation     m.underhill
+#   expert-maritime     v.quill
+#   expert-criminal     e.munderby
+#   expert-commerce     p.marlborough
+#   expert-civic        l.starling
+#   expert-succession   p.lovelace
+#   local archivists:   e.vexley (cogswich), e.fallowfield (brasshaven),
+#                       s.crankshaw (aetherquay), j.starling (thornwick),
+#                       b.marlborough (cindercog), s.halloway (gloamingate),
+#                       c.quill (hushpoole), s.tallow (chimefall),
+#                       l.vane (vapourmouth)

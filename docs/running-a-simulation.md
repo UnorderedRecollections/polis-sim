@@ -79,7 +79,19 @@ norms/*.yaml           the seed situation per jurisdiction: norms in
                        state — the snapshot principle)
 ontology/*.yaml        actor/object/relation/event kinds
 resources/<j>/*.yaml   concrete resources
+transition/*.md        the phase-2 transition corpus: three acts +
+                       their instruments (CODEOWNERS, branch-protection,
+                       woodpecker.yml) — content only, enacted later
+templates/*.yaml       story grammars (resource_dispute, phase_transition)
 ```
+
+Phase 1 is explicit from the founding: every sim's founding commit
+contains `constitution/02-customary-machinery.md` (Article 3 — the
+customary machinery), and `world.json` carries `federation.phase: 1`.
+The phase-2 transition is *legislation*, not configuration: the acts
+authored in `transition/` enter the corpus through the ordinary
+phase-1 procedure (story template `phase_transition`); the machinery
+takes effect when they are ratified.
 
 Validate before anything runs:
 

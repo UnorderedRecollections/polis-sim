@@ -68,6 +68,12 @@ story:     "Brasshaven has traditionally grazed cattle in the Western
 Same grammar, different nouns and legal objects — this is what makes the
 story generator data-driven rather than a pile of string templates.
 
+A second grammar exists: `phase_transition` (three acts carrying the
+codified-machinery instruments through the customary procedure — see
+`data/world/legal/transition/`). Its participants are offices and cities
+rather than resource parties; the acts it introduces are authored legal
+texts, not template fills.
+
 ## Recorded for later: `world.enact(...)` — story block as transaction
 
 The simulation should not poke git stepwise; each **story block** should be

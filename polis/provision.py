@@ -300,6 +300,17 @@ FOUNDING_FILES = {
         "The customs of the cities, as they stood at the founding, are law "
         "until altered by the common procedure.\n"
     ),
+    "constitution/02-customary-machinery.md": (
+        "# Article 3 — The Customary Machinery\n\n"
+        "At the founding, the Concord's machinery is customary. The archive\n"
+        "host knows refs and nothing of offices, petitions or approvals: the\n"
+        "constitution is enforced by people, and the record of its proceedings\n"
+        "is kept by the institutions alone.\n\n"
+        "The Concord operates in phase 1 — the customary era. The machinery\n"
+        "may be codified only by law enacted through the common procedure; no\n"
+        "institution of the Concord may alter the machinery except by an act\n"
+        "of the Concord.\n"
+    ),
 }
 
 

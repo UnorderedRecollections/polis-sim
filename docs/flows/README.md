@@ -84,11 +84,16 @@ The federation has two machinery phases, stored in `world.json`:
 
 - **Phase 1 — customary** (gogs): petitions/bills are matter-store
   entries; ratification incorporates *locally* (`git merge FETCH_HEAD &&
-  push`). The platform has no institutional concepts at all.
+  push`). The platform has no institutional concepts at all. Phase 1 is
+  recorded **in the corpus itself**: `constitution/02-customary-machinery.md`
+  (Article 3) is part of every sim's founding commit.
 - **Phase 2 — codified** (gitea + CI): same command surface, but petitions
   are real issues/PRs and the Mechanical Magistrate checks forms. The
-  transition itself is enacted through phase-1 machinery (three ratified
-  bills: CODEOWNERS, branch protection, `.woodpecker.yml`).
+  transition itself is enacted through phase-1 machinery — three ratified
+  bills: CODEOWNERS, branch protection, `.woodpecker.yml`. The acts and
+  their instruments are authored in `data/world/legal/transition/`, and
+  the story is the `phase_transition` template
+  (`polis world templates show phase_transition`).
 
 ## The one end-to-end picture
 

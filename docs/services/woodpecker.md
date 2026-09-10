@@ -5,7 +5,9 @@
 CI is the federation's **automatic formal-legality machinery** (synopsis §9):
 it checks mechanically enforceable rules (form, references, invariants) while
 humans decide substantive law. Dormant in phase 1, erected in phase 2 — the
-checklist it will enforce is specified in `docs/notes/families-of-legal-documents.md` §6.
+checklist it will enforce is specified in `docs/notes/families-of-legal-documents.md` §6,
+and the pipeline that runs it is authored as the Mechanical Magistracy Act's
+Schedule 1 (`data/world/legal/transition/woodpecker.yml`).
 
 Two containers: `woodpecker-server` (coordinator, OAuth against gitea) and
 `woodpecker-agent` (runs pipeline steps as sibling containers).

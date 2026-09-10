@@ -1,0 +1,27 @@
+# The phase transition — one story: the codification of the machinery.
+#
+# Three acts carry the instruments of the codified machinery (CODEOWNERS,
+# branch protection, the Mechanical Magistrate's pipeline) into the federal
+# archive through the customary, phase-1 procedure. The acts and the
+# instruments are authored in data/world/legal/transition/. The machinery
+# effect (flipping the federation's phase) is task 0038.
+
+story_type: phase_transition
+
+participants:
+  proposer: city                     # a citizen-legislator introduces the acts
+  constitutional_reviewer: council-seat
+  ratifier: federal-archivist
+
+sequence:
+  - file_petition                    # the customary machinery can no longer carry the burden
+  - assign_jurisdiction              # constitutional
+  - introduce_act                    # Assigned Legal Authority Act (CODEOWNERS)
+  - introduce_act                    # Constitutional Approval Act (branch protection)
+  - introduce_act                    # Mechanical Magistracy Act (.woodpecker.yml)
+  - request_constitutional_review
+  - approve
+  - ratify                           # Assigned Legal Authority Act
+  - ratify                           # Constitutional Approval Act
+  - ratify                           # Mechanical Magistracy Act
+  - promulgate                       # the codified machinery is promulgated

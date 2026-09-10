@@ -8,7 +8,9 @@ Gitea is the **codified machinery**: issues/PRs (petitions), reviews
 
 The federation migrates here narratively: the phase-2 transition is itself
 enacted through phase-1 machinery — CODEOWNERS, branch protection and
-`.woodpecker.yml` land as ratified bills.
+`.woodpecker.yml` land as ratified bills. The three acts and their
+instruments are authored in `data/world/legal/transition/` (the
+`phase_transition` story template carries them into the corpus).
 
 ## Start locally
 

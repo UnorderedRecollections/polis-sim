@@ -33,6 +33,9 @@ Cities") whose legislative life runs on real local infrastructure.
     format/loader**; validate the whole seed with `polis world legal validate`),
     `resources/<jurisdiction>/*.yaml` (concrete resources — files are the
     source of truth; jurisdiction `resources:` list is a cross-checked index),
+    `transition/` (the phase-2 transition corpus: three acts + their
+    instruments CODEOWNERS/branch-protection/woodpecker.yml — authored
+    content only, task 0036; machinery effect is task 0038),
     `moves.yaml`, `templates/*.yaml`. Loaders: `polis/sim/legaldata.py`,
     `polis/sim/ontology.py`, `polis/sim/norms.py`, `polis/sim/resources.py`;
     event synthesis: `polis/sim/events.py` (friction derivation, charged
