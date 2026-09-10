@@ -467,11 +467,35 @@ def resources_show(
 # --- the legal seed as a whole ---------------------------------------------------
 
 @legal_app.command(name="validate")
-def legal_validate() -> None:
-    """Validate the foundational legal state (bootstrap step 2):
-    jurisdictions, resources, norms and holdings as one consistent seed."""
+def legal_validate(
+    file: Optional[str] = typer.Argument(
+        None, help="Validate ONE situation/norms file instead of the whole seed."),
+) -> None:
+    """Validate the foundational legal state — or a single situation file."""
     from ..sim.events import validate_signatures
     from ..sim.resources import validate_resources
+    from ..sim.situations import validate_situation
+
+    if file:
+        from pathlib import Path
+        src = Path(file)
+        if not src.exists():
+            die(f"file not found: {file}")
+        import yaml
+        jurisdiction = (yaml.safe_load(src.read_text(encoding="utf-8")) or {}).get("jurisdiction")
+        if not jurisdiction:
+            die(f"{src.name} has no 'jurisdiction:' key — not a situation file")
+        ns = load_norm_file(src)
+        problems = validate_situation(ns, jurisdiction)
+        if problems:
+            console.print(f"[bold red]{src.name} invalid:[/bold red]")
+            for p in problems:
+                console.print(f"  - {p}")
+            raise typer.Exit(code=1)
+        console.print(f"[green]{src.name} valid[/green] "
+                      f"({len(ns.norms)} norms, {len(ns.holdings)} holdings, "
+                      f"jurisdiction: {jurisdiction})")
+        return
 
     problems: list[str] = []
     problems += validate_resources()
@@ -506,6 +530,59 @@ def legal_validate() -> None:
             console.print(f"  - {p}")
         raise typer.Exit(code=1)
     console.print("[green]the foundational legal state is consistent[/green]")
+
+
+situation_app = typer.Typer(no_args_is_help=True,
+                            help="Situations: generate and inspect simulation seeds.")
+
+
+@situation_app.command(name="new")
+def situation_new(
+    jurisdiction: str = typer.Argument(..., help="Jurisdiction slug, e.g. fisheries."),
+    seed: Optional[int] = typer.Option(None, "--seed", help="Determinism seed for variety."),
+    out: Optional[str] = typer.Option(None, "--out",
+                                      help="Write here (default: print to stdout)."),
+    force: bool = typer.Option(False, "--force", help="Overwrite an existing file."),
+) -> None:
+    """Generate a valid situation.yaml from the jurisdiction's own data
+    (norms per resource, holdings from activities × actors × cities)."""
+    from pathlib import Path
+    from ..sim.norms import save_norm_file
+    from ..sim.situations import SituationError, generate_situation, validate_situation
+
+    try:
+        ns = generate_situation(jurisdiction, seed=seed)
+    except SituationError as e:
+        die(str(e))
+    problems = validate_situation(ns, jurisdiction)
+    if problems:
+        console.print("[bold red]generated situation is invalid (a generator bug):[/bold red]")
+        for p in problems:
+            console.print(f"  - {p}")
+        raise typer.Exit(code=1)
+    if out is None:
+        import yaml
+        console.print(yaml.safe_dump(
+            {"jurisdiction": jurisdiction,
+             **ns.model_dump(mode="json", exclude={"description"})},
+            sort_keys=False, allow_unicode=True))
+        console.print("[dim]— validate with: polis world legal validate <file>; "
+                      "write with --out[/dim]")
+        return
+    dest = Path(out)
+    if dest.exists() and not force:
+        die(f"{out} exists — use --force to overwrite")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    import yaml
+    payload = {"jurisdiction": jurisdiction,
+               **ns.model_dump(mode="json", exclude_none=True)}
+    dest.write_text(yaml.safe_dump(payload, sort_keys=False, allow_unicode=True),
+                    encoding="utf-8")
+    console.print(f"[green]situation written:[/green] {dest} "
+                  f"({len(ns.norms)} norms, {len(ns.holdings)} holdings)")
+
+
+app.add_typer(situation_app, name="situation")
 
 
 @legal_app.command(name="audit")
