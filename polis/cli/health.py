@@ -36,8 +36,9 @@ class Check:
 # --- subsystem check suites -------------------------------------------------
 
 def check_gogs() -> list[Check]:
-    checks = [Check("gogs: container running", podman.container_running("gogs"),
-                    "container 'gogs' should be up")]
+    container = (f"{config.PROVISIONED_SIM}-gogs" if config.PROVISIONED_SIM else "gogs")
+    checks = [Check("gogs: container running", podman.container_running(container),
+                    f"container '{container}' should be up")]
     try:
         client = GogsClient()
         user = client.whoami()
@@ -50,6 +51,9 @@ def check_gogs() -> list[Check]:
 
 
 def check_gitea() -> list[Check]:
+    if config.PROVISIONED_SIM:
+        return [Check("gitea: n/a in a sim context", True,
+                      "phase-1 sims run gogs only", warn=True)]
     checks = [Check("gitea: container running", podman.container_running("gitea"),
                     "container 'gitea' should be up")]
     try:
@@ -65,6 +69,9 @@ def check_gitea() -> list[Check]:
 
 
 def check_woodpecker() -> list[Check]:
+    if config.PROVISIONED_SIM:
+        return [Check("woodpecker: n/a in a sim context", True,
+                      "phase-1 sims run gogs only", warn=True)]
     checks = [
         Check("woodpecker: server container running", podman.container_running("woodpecker-server"),
               "container 'woodpecker-server' should be up"),
@@ -92,7 +99,8 @@ def check_postgres() -> list[Check]:
         return checks
     ready, out = podman.exec_ok(name, ["pg_isready", "-U", "gogs"])
     checks.append(Check("postgres: pg_isready", ready, out))
-    for db in ("gogs", "gitea"):
+    databases = ("gogs",) if config.PROVISIONED_SIM else ("gogs", "gitea")
+    for db in databases:
         ok, out = podman.exec_ok(name, ["psql", "-U", "gogs", "-d", db, "-tAc", "SELECT 1"])
         checks.append(Check(f"postgres: database '{db}' queryable", ok, out))
     return checks
@@ -102,11 +110,16 @@ def check_podman() -> list[Check]:
     try:
         state = podman.machine_state()
         machine_ok = state.lower() == "running"
-        return [
+        checks = [
             Check("podman: machine running", machine_ok, f"state: {state}"),
             Check("podman: network exists", podman.network_exists(config.PODMAN_NETWORK),
                   f"network '{config.PODMAN_NETWORK}'"),
         ]
+        if config.PROVISIONED_SIM:
+            op = f"polis-operator-{config.PROVISIONED_SIM}"
+            checks.append(Check("operator: container running",
+                                podman.container_running(op), f"container '{op}'"))
+        return checks
     except podman.PodmanError as e:
         return [Check("podman: CLI usable", False, str(e))]
 
@@ -115,9 +128,10 @@ def check_citynodes() -> list[Check]:
     if not world_exists():
         return [Check("citynodes: world exists", False, "run `polis world genesis` first")]
     world = get_world()
+    suffix = f"-{config.PROVISIONED_SIM}" if config.PROVISIONED_SIM else ""
     checks = []
     for city in world.cities:
-        name = f"{config.CITY_CONTAINER_PREFIX}{city.id}"
+        name = f"{config.CITY_CONTAINER_PREFIX}{city.id}{suffix}"
         checks.append(Check(
             f"citynode: {city.id} container", podman.container_running(name),
             f"'{name}' not built yet", warn=True,
@@ -162,6 +176,9 @@ def all_(ctx: typer.Context) -> None:
     """Run every subsystem's checks (default when no subcommand is given)."""
     if ctx.invoked_subcommand is not None:
         return
+    if config.PROVISIONED_SIM:
+        console.print(f"[dim]sim context: {config.PROVISIONED_SIM} "
+                      f"(POLIS_PROVISIONED_SIM)[/dim]")
     any_failed = False
     for name in SUITES:
         any_failed |= _render(name, SUITES[name]())

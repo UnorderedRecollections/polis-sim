@@ -41,11 +41,32 @@ def file_(
 @app.command(name="list")
 def list_(
     state: str = typer.Option("open", "--state", help="open | closed | all."),
-    as_user: str = AS, city: Optional[str] = CITY, repo_dir: Optional[str] = REPO_DIR,
+    as_user: Optional[str] = typer.Option(None, "--as",
+                                          help="Act as this person (phase-2 dispatch); "
+                                          "omit for the plain matter record."),
+    city: Optional[str] = typer.Option(None, "--city",
+                                       help="Only petitions originating from this city."),
+    repo_dir: Optional[str] = REPO_DIR,
 ) -> None:
-    """List petitions on the docket."""
-    chamber = get_chamber(as_user, city, repo_dir)
-    petitions = docket.list_petitions(chamber, state=state)
+    """List petitions on the docket — all of them, or one city's with --city.
+
+    Without --as this reads the matter record directly (phase 1); no
+    chamber, no city/person pair needed.
+    """
+    if as_user:
+        chamber = get_chamber(as_user, city, repo_dir)
+        petitions = docket.list_petitions(chamber, state=state)
+    else:
+        from .. import matters as matters_mod
+        store = matters_mod.load_matters()
+        ms = [m for m in store.matters if m.kind == "petition"]
+        if state == "open":
+            ms = [m for m in ms if m.is_open]
+        elif state == "closed":
+            ms = [m for m in ms if not m.is_open]
+        if city:
+            ms = [m for m in ms if m.city == city]
+        petitions = [m.model_dump(mode="json") for m in ms]
     table = status_table("docket", ["id", "title", "petitioner", "city", "status"])
     for p in petitions:
         if "id" in p:  # matter (phase 1)
@@ -60,14 +81,26 @@ def list_(
 @app.command()
 def show(
     matter: str = typer.Argument(..., help="Matter id (PET-0007) or issue number."),
-    as_user: str = AS, city: Optional[str] = CITY, repo_dir: Optional[str] = REPO_DIR,
+    as_user: Optional[str] = typer.Option(None, "--as",
+                                          help="Act as this person (phase-2 dispatch); "
+                                          "omit for the plain matter record."),
+    city: Optional[str] = CITY, repo_dir: Optional[str] = REPO_DIR,
 ) -> None:
-    """Show one docket entry, with its procedural record."""
-    chamber = get_chamber(as_user, city, repo_dir)
-    try:
-        p = docket.get_petition(chamber, matter)
-    except Exception as e:
-        die(str(e))
+    """Show one docket entry, with its procedural record (read-only —
+    no --as/--city needed in phase 1)."""
+    if as_user:
+        chamber = get_chamber(as_user, city, repo_dir)
+        try:
+            p = docket.get_petition(chamber, matter)
+        except Exception as e:
+            die(str(e))
+    else:
+        from .. import matters as matters_mod
+        store = matters_mod.load_matters()
+        m = next((m for m in store.matters if m.id == matter), None)
+        if m is None:
+            die(f"no such matter '{matter}'")
+        p = m.model_dump(mode="json")
     if "events" in p:  # matter (phase 1)
         console.print(f"[bold]{p['id']} — {p['title']}[/bold]  ({p['status']})")
         console.print(f"petitioner: {p['proposer']} of {p['city']}")

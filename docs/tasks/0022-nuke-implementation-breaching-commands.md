@@ -3,7 +3,7 @@
 - **created:** 2026-09-09T13:00:00Z
 - **type:** [infrastructure]
 - **depends-on:** 0021
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -22,7 +22,13 @@ with dependents in `org_user`/`team`/`team_repo`/`team_user`.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-09T14:00:00Z
+- **commit:** 836a26d
+
+Implemented `polis nuke gogs orgs <prefix> [--yes]`: preview table by
+default; with `--yes`, a single-transaction psql cascade
+(team_repo → team_user → team → org_user → user type=1) via
+`podman exec postgres-gogs`. Verified live: 20 accumulated `prov-demo-*`
+orgs previewed and deleted, org/team/membership counts 0, gogs health
+green. Wired into `polis/cli/main.py`; documented in
+`docs/services/gogs.md` and AGENTS.md.

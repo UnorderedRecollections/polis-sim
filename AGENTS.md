@@ -53,7 +53,11 @@ Cities") whose legislative life runs on real local infrastructure.
 - `scripts/infra/` — `env.sh` (shared), per-service build/run scripts
   (`postgres.sh gogs.sh gitea.sh woodpecker.sh`), `compose-up/down.sh`,
   `smoke.sh` (per-container smoke tests incl. API-key validity).
-- `docs/` — `isomorphism/` (concepts), `design/` (simulator design + legal
+- `docs/` — `running-a-simulation.md` (**the user guide**: requirements →
+  infra → genesis → legal seed → provision → drive → teardown),
+  `flows/` (**the legal flows**, master + petitions/legislation/archive/
+  simulation, with mermaid graphs — read after the guide),
+  `isomorphism/` (concepts), `design/` (simulator design + legal
   ontology), `services/` (per-service: why, start, API keys, quirks),
   `notes/` (background docs), `tasks/` (task files, see Task workflow),
   `todo/` (design debts).
@@ -72,6 +76,13 @@ Cities") whose legislative life runs on real local infrastructure.
   WOODPECKER_GITEA_CLIENT/SECRET POSTGRES_PASSWORD`). Resolution order in
   `polis/config.py`: `POLIS_*_TOKEN` env > process env > `.env`.
 - Endpoints overridable via `POLIS_*` env vars.
+- **`POLIS_PROVISIONED_SIM=<sim>`** switches the generic commands (health,
+  gogs …) from the shared dev rig to one provisioned sim: endpoints/secrets
+  come from `data/sims/<sim>/secrets.json` (resolution: `POLIS_*` override
+  > sim secrets > env/.env > defaults); container/network names become
+  `<sim>-gogs`, `<sim>-postgres`, `<sim>-net`, `polis-operator-<sim>`;
+  gitea/woodpecker checks report n/a (phase-1 sims run gogs only).
+  `sim new/drive/tick/stories/present/runtime` default their run id to it.
 
 ## Key conventions
 
@@ -115,13 +126,44 @@ Cities") whose legislative life runs on real local infrastructure.
 
 ## Provisioning (porcelain)
 
+- **The director** (`polis/sim/director.py`, design `docs/design/director.md`):
+  `polis sim drive <run> --steps N` (== `tick` with 1) drives N whole stories
+  end-to-end — situation → charged candidates → seeded selection
+  (`Random(f"{seed}:{story-n}")`, seed in `run.json`) → casting (constituency
+  petitioner, expert iff `corpus_dir`, council-seat rotation, Keeper ratifies)
+  → remedy from incompatibilities → `runtime.enact()` per block →
+  `stories.json` + `story` journal anchor. **Run id == sim id** (one dir under
+  `data/sims/<id>/`: provision.json, cities/, journal, situation, run.json,
+  stories.json, matters.json). Host-side `sim drive` proxies into the
+  **operator container** (`polis-operator-<sim>`, always created by
+  `provision up`: sim dir at `/sim` rw, whole `data/world` at
+  `/polis-data/world` ro, env `POLIS_DATA_DIR POLIS_SIM_DIR=/sim
+  POLIS_MATTERS_FILE=/sim/matters.json`); `--local` runs in-process.
+  Demo: `tests/director-demo.sh` (**passing**).
+- **Facts the director relies on**: the Keeper's `federal-archivist` office
+  never enters city slices — container-mode chambers must be told of it
+  explicitly (director appends it); ratify fetches the bill branch from the
+  chamber's **origin**, so the Keeper's chamber origin is pointed at the
+  petitioner's repo; `archive.obtain` establishes local `main` from
+  `origin/main` (API-created repos have HEAD → nonexistent master); runtime
+  anchors read `main`, not HEAD; journal `run_dir()` honors `POLIS_SIM_DIR`.
 - `polis provision up <sim-id> [--with-city-containers] [--force]` provisions a
-  complete sim instance: users `<sim>-<username>` with per-sim tokens (written
-  to world.json as `api_tokens["gogs@<sim>"]`), orgs `<sim>-archive`/
-  `<sim>-<city>` + `common-law` repos + founding corpus, per-sim slices under
-  `data/sims/<sim>/cities/`, inventory `provision.json`. `status` /
-  `teardown --yes` (deletes exactly the inventory; **orgs are teardown-exempt**
-  — remove them with `polis nuke gogs orgs <prefix> --yes`, a DB cascade).
+  **fully self-contained** sim instance: network `<sim>-net`, containers
+  `<sim>-postgres` + `<sim>-gogs` (headless bootstrap — app.ini with
+  `DEFAULT_BRANCH=main`, `operator` admin user, token; host port from
+  `_free_port(11880+)`), users `<sim>-<username>` with per-sim tokens, orgs
+  `<sim>-archive`/`<sim>-<city>` + `common-law` repos + **one shared founding
+  commit** (`_founding_repo` — all repos must share history or the Keeper's
+  enactment pushes are non-fast-forward), per-sim slices, inventory
+  `provision.json`. Secrets in `data/sims/<sim>/secrets.json` (**never
+  world.json** — provisioning must not mutate the civil registry;
+  `polis world cleanup` removes legacy `gogs@<sim>` residue). Slices/remotes
+  use the in-network URL `http://<sim>-gogs:3000`; the host port is for the
+  operator CLI only. `status`/`teardown` use `sim_gogs_client(sim)`; teardown
+  removes containers+network, the platform volumes die with the sim dir
+  (`rm -rf data/sims/<sim>`). Re-`up --force` reuses existing secrets/volume.
+- `polis nuke gogs orgs <prefix> --yes` (DB cascade) is for the **shared dev
+  rig** only — per-sim gogs instances need no surgery.
 - City containers: `docker/polis-city/Dockerfile` (build context = project
   root), run as `polis-city-<city>-<sim>` with the sim slice at
   `/etc/polis/city.json` and legal data mounted read-only via
@@ -130,6 +172,12 @@ Cities") whose legislative life runs on real local infrastructure.
 
 ## Platform facts learned the hard way (verified by probing)
 
+- **`admin` is a reserved gogs username** — the sim's provisioning admin is
+  `operator`; gogs web answers HTTP before its DB schema is migrated
+  (retry `create-user`); postgres must be `pg_isready` before gogs starts
+  (gogs crashes FATAL on connect refusal, no retry).
+- **gogs usernames cap at 35 chars** — sim ids cap at 13 (`<sim>-<username>`
+  must fit; enforced in `_validate_sim_id`).
 - **This gogs build has NO pulls API at all**; issues API works. Phase-1
   petitions/bills are **matter-store entries**; ratify/consolidate always
   incorporate locally (`git merge [--squash] FETCH_HEAD` + push) and close the
@@ -163,6 +211,15 @@ Cities") whose legislative life runs on real local infrastructure.
   correction) and repeal-as-bill (`bill draft --kind repeal`).
 - The Mechanical Magistrate's phase-2 CI spec = the checklist in
   `docs/notes/families-of-legal-documents.md` §6.
+
+## Roadmap
+
+`docs/design/roadmap.md` — agreed direction (2026-09-10), tasks 0034–0039:
+BDD driving (behave, the UX surface), situation generation, phase-1 made
+explicit + the transition corpus, platform abstraction (phase = procedure,
+not product; gitea can host phase 1), phase-transition machinery (ratified
+acts flip the federation to phase 2), LLM integration (provider boundary,
+journal provenance, MCP later).
 
 ## Design debts (docs/todo/)
 
@@ -204,7 +261,8 @@ When the task is complete:
   with `uv add` / `uv remove`. Run everything through uv: `uv run polis …`,
   `uv run python …` (or activate `.venv`). Deps: typer, httpx, pydantic, rich.
 - Verify: `scripts/infra/smoke.sh` (containers + API keys), `polis health`
-  (subsystem checks), `tests/e2e-gogs.sh` (full live flow: `e2e`-prefixed
-  users/repo, throwaway `POLIS_MATTERS_FILE`, matter-status and
-  status-lifecycle assertions, negative jurisdiction test, cleanup trap).
-  **Both passing.**
+  (subsystem checks), `tests/e2e-gogs.sh` (full live flow), `uv run behave
+  features/` (BDD stories — the user-facing surface: throwaway sim per
+  scenario; `polis/sim/scenario.py` is the Gherkin→beats model, one
+  binding for tests now and the live-sim queue (0034b) next).
+  **All passing.**

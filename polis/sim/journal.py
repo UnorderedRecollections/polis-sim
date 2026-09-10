@@ -23,6 +23,13 @@ from .. import config
 SIMS_DIR = config.DATA_DIR / "sims"
 
 
+def run_dir(run_id: str) -> Path:
+    """The run's directory. POLIS_SIM_DIR pins it exactly — the operator
+    container mounts one sim's dir at /sim and works nowhere else."""
+    pinned = os.environ.get("POLIS_SIM_DIR")
+    return Path(pinned) if pinned else SIMS_DIR / run_id
+
+
 def _utcnow() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
@@ -42,7 +49,7 @@ class JournalEntry:
 class Journal:
     def __init__(self, run_id: str):
         self.run_id = run_id
-        self.path = SIMS_DIR / run_id / "journal.jsonl"
+        self.path = run_dir(run_id) / "journal.jsonl"
 
     def append(self, entry: JournalEntry) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -75,3 +82,55 @@ def list_runs() -> list[str]:
     if not SIMS_DIR.is_dir():
         return []
     return sorted(p.name for p in SIMS_DIR.iterdir() if (p / "journal.jsonl").exists())
+
+
+# --- epochs: saved records of a run (docs/tasks/0030) -----------------------------
+#
+# The record = the files the run produces that are NOT the machinery:
+# journal, situation, stories, matters, run config. The machinery (platform
+# containers, slices, secrets, the git archive) is untouched by epoch ops.
+
+RECORD_FILES = ("journal.jsonl", "situation.yaml", "stories.json",
+                "matters.json", "run.json")
+
+
+def epochs_dir(run_id: str) -> Path:
+    return run_dir(run_id) / "epochs"
+
+
+def save_epoch(run_id: str, name: str) -> Path:
+    """Copy the current record aside as a named epoch."""
+    rd = run_dir(run_id)
+    dest = epochs_dir(run_id) / name
+    if dest.exists():
+        raise FileExistsError(f"epoch '{name}' already exists for run '{run_id}'")
+    dest.mkdir(parents=True)
+    moved = 0
+    for f in RECORD_FILES:
+        src = rd / f
+        if src.exists():
+            (dest / f).write_bytes(src.read_bytes())
+            moved += 1
+    if not moved:
+        dest.rmdir()
+        raise FileNotFoundError(f"run '{run_id}' has no record to save")
+    return dest
+
+
+def clear_record(run_id: str) -> list[str]:
+    """Remove the current record files (the machinery is untouched)."""
+    rd = run_dir(run_id)
+    removed = []
+    for f in RECORD_FILES:
+        path = rd / f
+        if path.exists():
+            path.unlink()
+            removed.append(f)
+    return removed
+
+
+def list_epochs(run_id: str) -> list[str]:
+    ed = epochs_dir(run_id)
+    if not ed.is_dir():
+        return []
+    return sorted(p.name for p in ed.iterdir() if (p / "journal.jsonl").exists())

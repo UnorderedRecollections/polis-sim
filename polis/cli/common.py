@@ -38,7 +38,8 @@ def status_table(title: str, columns: list[str]) -> Table:
 # --- legislation helpers -------------------------------------------------------
 
 def get_chamber(as_user: str, city: str | None, repo_dir: str | None):
-    """Load the legislative Chamber, turning configuration errors into CLI errors."""
+    """Load the legislative Chamber, turning configuration errors into CLI errors.
+    (load_chamber itself obtains the working copy on first use.)"""
     from ..legislation.chamber import ChamberError, load_chamber
 
     try:

@@ -62,9 +62,9 @@ class Runtime:
         write_back: optional callable applied after the machinery succeeds,
         returning situation-delta anchors (e.g. norm status transitions).
         """
-        before = _head(chamber.repo_dir) if chamber else ""
+        before = _head(chamber.repo_dir, "main") if chamber else ""
         outputs = plan.execute()
-        after = _head(chamber.repo_dir) if chamber else ""
+        after = _head(chamber.repo_dir, "main") if chamber else ""
         anchors: dict[str, Any] = {}
         if chamber:
             anchors["main_before"], anchors["main_after"] = before, after

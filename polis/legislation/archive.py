@@ -41,20 +41,45 @@ def _require_power(chamber: Chamber, power: str, act: str) -> None:
 # --- circulation of the archive (§2) ------------------------------------------
 
 def obtain(chamber: Chamber) -> Plan:
+    def _clone():
+        if (chamber.repo_dir / ".git").exists():
+            return                       # already obtained — idempotent
+        gitcmd.run(None, "clone", chamber.git_remote_url("origin"),
+                   str(chamber.repo_dir))
+
+    def _add_upstream():
+        remotes = gitcmd.run(chamber.repo_dir, "remote")
+        if "upstream" not in remotes.split():
+            gitcmd.run(chamber.repo_dir, "remote", "add", "upstream",
+                       chamber.git_remote_url("upstream"))
+
     plan = Plan(act="obtain the archive", actor=chamber.actor_label)
     plan.add(
         machinery=gitcmd.cmd_string(None, "clone", chamber.git_remote_url("origin", masked=True),
                                     str(chamber.repo_dir)),
         legal="the city receives a complete copy of the legal archive (§2)",
-        run=lambda: gitcmd.run(None, "clone", chamber.git_remote_url("origin"),
-                               str(chamber.repo_dir)),
+        run=_clone,
     )
     plan.add(
         machinery=gitcmd.cmd_string(chamber.repo_dir, "remote", "add", "upstream",
                                     chamber.git_remote_url("upstream", masked=True)),
         legal="the federal archive is recognized as the source legal order (upstream)",
-        run=lambda: gitcmd.run(chamber.repo_dir, "remote", "add", "upstream",
-                               chamber.git_remote_url("upstream")),
+        run=_add_upstream,
+    )
+
+    def _ensure_main():
+        # gogs repos created via the API have HEAD → nonexistent "master";
+        # the clone then checks out nothing. Establish local main.
+        try:
+            gitcmd.run(chamber.repo_dir, "rev-parse", "--verify", "main")
+        except Exception:
+            gitcmd.run(chamber.repo_dir, "checkout", "-b", "main", "origin/main")
+
+    plan.add(
+        machinery=gitcmd.cmd_string(chamber.repo_dir, "checkout", "-b", "main", "origin/main")
+                  + "  (if the clone came up empty)",
+        legal="the archive's authoritative line (main) is before the archivist's eyes",
+        run=_ensure_main,
     )
     return plan
 

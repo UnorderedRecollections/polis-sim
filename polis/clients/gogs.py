@@ -21,9 +21,9 @@ class GogsError(RuntimeError):
 class GogsClient:
     name = "gogs"
 
-    def __init__(self, token: str | None = None):
+    def __init__(self, token: str | None = None, base_url: str | None = None):
         self.http = httpx.Client(
-            base_url=config.GOGS_URL,
+            base_url=base_url or config.GOGS_URL,
             headers={"Authorization": f"token {token or config.gogs_token()}"},
             timeout=10.0,
         )

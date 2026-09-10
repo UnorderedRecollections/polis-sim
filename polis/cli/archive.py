@@ -122,21 +122,67 @@ def replace_history(
     enact(plan, isomorphism)
 
 
+def _archive_url() -> str:
+    """The archive repo's URL, resolved from context: the sim's own gogs
+    (POLIS_PROVISIONED_SIM) or the configured platform — no chamber needed."""
+    import json
+    from .. import config, store
+    world = store.load_world()
+    fed = world.federation
+    if config.PROVISIONED_SIM:
+        secrets = json.loads(
+            (config.DATA_DIR / "sims" / config.PROVISIONED_SIM / "secrets.json")
+            .read_text(encoding="utf-8"))
+        return f"{secrets['gogs_url_external']}/{config.PROVISIONED_SIM}-archive/{fed.repo}.git"
+    return f"{config.GOGS_URL}/{fed.archive_org}/{fed.repo}.git"
+
+
 @app.command()
 def editions(
-    as_user: str = AS, city: Optional[str] = CITY, repo_dir: Optional[str] = REPO_DIR,
+    as_user: Optional[str] = typer.Option(None, "--as",
+                                          help="Act as this person; omit to read the "
+                                          "archive directly from context."),
+    city: Optional[str] = CITY, repo_dir: Optional[str] = REPO_DIR,
 ) -> None:
-    """List the proclaimed editions (tags)."""
-    chamber = get_chamber(as_user, city, repo_dir)
-    for e in archive.editions(chamber):
-        console.print(e)
+    """List the proclaimed editions (tags) — read-only; no --as needed."""
+    if as_user:
+        chamber = get_chamber(as_user, city, repo_dir)
+        for e in archive.editions(chamber):
+            console.print(e)
+        return
+    import subprocess
+    out = subprocess.run(["git", "ls-remote", "--tags", _archive_url()],
+                         capture_output=True, text=True)
+    if out.returncode != 0:
+        die(f"archive unreachable: {out.stderr.strip()[:200]}")
+    tags = [l.rsplit("/", 1)[-1] for l in out.stdout.splitlines() if l.strip()]
+    if not tags:
+        console.print("[dim]no editions proclaimed yet[/dim]")
+    for t in tags:
+        console.print(t)
 
 
 @app.command()
 def inspect(
     limit: int = typer.Option(20, "--limit", help="How many archival acts to show."),
-    as_user: str = AS, city: Optional[str] = CITY, repo_dir: Optional[str] = REPO_DIR,
+    as_user: Optional[str] = typer.Option(None, "--as",
+                                          help="Act as this person; omit to read the "
+                                          "archive directly from context."),
+    city: Optional[str] = CITY, repo_dir: Optional[str] = REPO_DIR,
 ) -> None:
-    """Show the recent genealogy of the current line (git log)."""
-    chamber = get_chamber(as_user, city, repo_dir)
-    console.print(archive.inspect(chamber, limit))
+    """Show the recent genealogy of the current line (git log) — read-only."""
+    if as_user:
+        chamber = get_chamber(as_user, city, repo_dir)
+        console.print(archive.inspect(chamber, limit))
+        return
+    import subprocess
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        proc = subprocess.run(["git", "clone", "-q", "--bare", _archive_url(), tmp],
+                              capture_output=True, text=True)
+        if proc.returncode != 0:
+            die(f"archive unreachable: {proc.stderr.strip()[:200]}")
+        log = subprocess.run(["git", "-C", tmp, "log", "--oneline", "--graph",
+                              "--decorate", f"-{limit}", "main"],
+                             capture_output=True, text=True)
+        console.print(log.stdout or "[dim](empty archive)[/dim]")

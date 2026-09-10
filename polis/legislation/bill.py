@@ -76,12 +76,40 @@ def draft(chamber: Chamber, title: str, base: str = "main",
           kind: str | None = None, into: str | None = None,
           target: str | None = None, answering: str | None = None) -> Plan:
     branch = branch_of(title)
+
+    def _open_branch():
+        try:
+            gitcmd.run(chamber.repo_dir, "show-ref", "--verify", f"refs/heads/{branch}")
+            local = True
+        except Exception:
+            local = False
+        if local:
+            prior = matters_mod.load_matters().find_by_branch(branch)
+            hint = (f" — it is {prior.id} ({prior.status})" if prior else "")
+            raise ChamberError(
+                f"a line named '{branch}' already exists{hint}. To continue it, "
+                f"use `bill amend {branch} …`; to open a NEW act on the same "
+                "subject, choose a distinguishing title (e.g. “… (No. 2)”).")
+        # the line may exist on origin without a local copy (e.g. a fresh
+        # working clone) — resume it instead of diverging
+        try:
+            remote = bool(gitcmd.run(chamber.repo_dir, "ls-remote",
+                                     chamber.git_remote_url("origin"),
+                                     f"refs/heads/{branch}").strip())
+        except Exception:
+            remote = False
+        if remote:
+            gitcmd.run(chamber.repo_dir, "fetch", chamber.git_remote_url("origin"), branch)
+            gitcmd.run(chamber.repo_dir, "checkout", "-b", branch, "FETCH_HEAD")
+            return
+        gitcmd.run(chamber.repo_dir, "checkout", "-b", branch, base)
+
     plan = Plan(act=f"draft the bill “{title}”", actor=chamber.actor_label)
     plan.add(
         machinery=gitcmd.cmd_string(chamber.repo_dir, "checkout", "-b", branch, base),
         legal="a line of legal development opens — an alternative history diverging "
               "from the recognized corpus (§3)",
-        run=lambda: gitcmd.run(chamber.repo_dir, "checkout", "-b", branch, base),
+        run=_open_branch,
     )
     if kind:
         if not into:
@@ -312,15 +340,25 @@ def _merge_via_api(chamber: Chamber, pr_index: int, method: str) -> None:
     )
 
 
+def _enactment_dest(chamber: Chamber) -> str:
+    """Where enactment is lodged: the federal archive (upstream) for the
+    Keeper's `merge:main`; the CITY's own archive (origin) for a local
+    archivist whose powers are municipal-only (task 0033)."""
+    return "upstream" if "**" in _merge_powers(chamber) else "origin"
+
+
 def _incorporate_locally(chamber: Chamber, method: str, act_title: str | None = None,
-                         changed_files: list[str] | None = None) -> None:
+                         changed_files: list[str] | None = None,
+                         dest: str = "upstream") -> None:
     """The archivist incorporates by their own hand and lodges the new history —
     the customary form of enactment, and the fallback when the platform knows
     no merge route. The machinery then records the lifecycle: proposed → enacted."""
     gitcmd.run(chamber.repo_dir, "checkout", "main")
     name, email = chamber.author
     if method == "squash":
-        gitcmd.run(chamber.repo_dir, "merge", "--squash", "FETCH_HEAD")
+        gitcmd.run(chamber.repo_dir,
+                   "-c", f"user.name={name}", "-c", f"user.email={email}",
+                   "merge", "--squash", "FETCH_HEAD")
         if changed_files:
             documents.flip_status(chamber.repo_dir, changed_files, "enacted")
             gitcmd.run(chamber.repo_dir, "add", "-A")
@@ -330,7 +368,9 @@ def _incorporate_locally(chamber: Chamber, method: str, act_title: str | None = 
     else:
         # one archival act: incorporation and the status flip form a single
         # merge commit, so a repeal (revert -m 1) undoes the enactment whole
-        gitcmd.run(chamber.repo_dir, "merge", "--no-ff", "--no-commit", "FETCH_HEAD")
+        gitcmd.run(chamber.repo_dir,
+                   "-c", f"user.name={name}", "-c", f"user.email={email}",
+                   "merge", "--no-ff", "--no-commit", "FETCH_HEAD")
         if changed_files:
             flipped = documents.flip_status(chamber.repo_dir, changed_files, "enacted")
             if flipped:
@@ -338,7 +378,7 @@ def _incorporate_locally(chamber: Chamber, method: str, act_title: str | None = 
         gitcmd.run(chamber.repo_dir,
                    "-c", f"user.name={name}", "-c", f"user.email={email}",
                    "commit", "--no-edit")
-    gitcmd.run(chamber.repo_dir, "push", chamber.git_remote_url("upstream"), "main")
+    gitcmd.run(chamber.repo_dir, "push", chamber.git_remote_url(dest), "main")
 
 
 def _decide(chamber: Chamber, petition, status: str, event: str, detail: str = "") -> str:
@@ -355,8 +395,10 @@ def _decide(chamber: Chamber, petition, status: str, event: str, detail: str = "
 
 
 def ratify(chamber: Chamber, bill: str) -> Plan:
+    dest = _enactment_dest(chamber)
+
     def run():
-        gitcmd.run(chamber.repo_dir, "fetch", chamber.git_remote_url("upstream"), "main")
+        gitcmd.run(chamber.repo_dir, "fetch", chamber.git_remote_url(dest), "main")
         gitcmd.run(chamber.repo_dir, "fetch", chamber.git_remote_url("origin"), bill)
         changed = _changed_files(chamber, bill)
         _check_jurisdiction(chamber, changed)
@@ -365,15 +407,15 @@ def ratify(chamber: Chamber, bill: str) -> Plan:
             try:
                 _merge_via_api(chamber, petition["number"], "merge")
             except GogsError:
-                _incorporate_locally(chamber, "merge", changed_files=changed)
+                _incorporate_locally(chamber, "merge", changed_files=changed, dest=dest)
         else:
-            _incorporate_locally(chamber, "merge", changed_files=changed)
+            _incorporate_locally(chamber, "merge", changed_files=changed, dest=dest)
         return _decide(chamber, petition, "ratified", "enacted")
 
     merge_step = (
         "POST …/pulls/<petition>/merge  {\"Do\": \"merge\"}"
         if chamber.platform == "gitea"
-        else "git -C <repo> merge --no-ff FETCH_HEAD && git push upstream main  "
+        else f"git -C <repo> merge --no-ff FETCH_HEAD && git push {dest} main  "
              "(customary incorporation — the apparatus has no merge route)"
     )
     plan = Plan(act=f"ratify the bill “{bill}”", actor=chamber.actor_label)
@@ -390,8 +432,10 @@ def ratify(chamber: Chamber, bill: str) -> Plan:
 
 
 def consolidate(chamber: Chamber, bill: str, act_title: str) -> Plan:
+    dest = _enactment_dest(chamber)
+
     def run():
-        gitcmd.run(chamber.repo_dir, "fetch", chamber.git_remote_url("upstream"), "main")
+        gitcmd.run(chamber.repo_dir, "fetch", chamber.git_remote_url(dest), "main")
         gitcmd.run(chamber.repo_dir, "fetch", chamber.git_remote_url("origin"), bill)
         changed = _changed_files(chamber, bill)
         _check_jurisdiction(chamber, changed)
@@ -400,16 +444,16 @@ def consolidate(chamber: Chamber, bill: str, act_title: str) -> Plan:
             try:
                 _merge_via_api(chamber, petition["number"], "squash")
             except GogsError:
-                _incorporate_locally(chamber, "squash", act_title, changed_files=changed)
+                _incorporate_locally(chamber, "squash", act_title, changed_files=changed, dest=dest)
         else:
-            _incorporate_locally(chamber, "squash", act_title, changed_files=changed)
+            _incorporate_locally(chamber, "squash", act_title, changed_files=changed, dest=dest)
         return _decide(chamber, petition, "ratified", "enacted",
                        detail=f"codified as “{act_title}”")
 
     merge_step = (
         "POST …/pulls/<petition>/merge  {\"Do\": \"squash\"}"
         if chamber.platform == "gitea"
-        else "git -C <repo> merge --squash FETCH_HEAD && git commit && git push upstream main  "
+        else f"git -C <repo> merge --squash FETCH_HEAD && git commit && git push {dest} main  "
              "(customary codification — the apparatus has no merge route)"
     )
     plan = Plan(act=f"codify the bill “{bill}” as “{act_title}”", actor=chamber.actor_label)

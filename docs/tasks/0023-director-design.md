@@ -3,7 +3,7 @@
 - **created:** 2026-09-09T13:30:00Z
 - **type:** [simulation]
 - **depends-on:** 0019, 0021
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -25,7 +25,16 @@ Deliverable: `docs/design/director.md`.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-09T14:30:00Z
+- **commit:** 4e443a5
+
+Delivered `docs/design/director.md`: the drive loop; six decisions —
+hybrid story model; **per-party** selection policies (seeded/priority/
+scripted/interactive, queues appendable while running, journal-recorded
+so replay stays deterministic); constituency+rotation casting;
+remedy derived from incompatibilities; one story per drive step with
+`stories.json` state; and the **containerized operator** executor
+(`polis-operator-<sim>` on gogs-local, `/sim` volume with per-sim
+matters/journal/stories/slices, host CLI as proxy) — revised per review
+to run the operator inside the network instead of host-side chamber
+host-swapping.

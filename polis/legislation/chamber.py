@@ -117,6 +117,19 @@ def _load_slice(city: str | None) -> tuple[dict, bool, list[dict]]:
         raise ChamberError("no world yet — run `polis world genesis` first")
     if not city:
         raise ChamberError("operator mode: --city is required (or set POLIS_CITY_CONFIG)")
+    # sim context (POLIS_PROVISIONED_SIM): act with the SIM's slice — its
+    # remotes and per-sim tokens — not the world slice. Host-swap still
+    # applies (operator mode), and config.GOGS_URL is the sim's own gogs.
+    if config.PROVISIONED_SIM:
+        sim_slice = (config.DATA_DIR / "sims" / config.PROVISIONED_SIM
+                     / "cities" / f"{city}.json")
+        if sim_slice.exists():
+            slice_ = json.loads(sim_slice.read_text(encoding="utf-8"))
+            all_offices = [o.model_dump(mode="json") for o in world.offices]
+            return slice_, True, all_offices
+        raise ChamberError(
+            f"sim '{config.PROVISIONED_SIM}' has no slice for city '{city}' "
+            f"(expected {sim_slice})")
     try:
         slice_ = store.city_slice(world, city)
     except KeyError as e:
@@ -147,14 +160,22 @@ def load_chamber(
         (actor.get("credentials", {}).get("api_tokens") or {}).get(platform)
         or os.environ.get("POLIS_PLATFORM_TOKEN")
     )
-    return Chamber(
+    default_repo = (str(config.DATA_DIR / "sims" / config.PROVISIONED_SIM / "common-law")
+                    if config.PROVISIONED_SIM else "./common-law")
+    chamber = Chamber(
         platform=platform,
         city_id=slice_["city"]["id"],
         actor=actor,
         origin=os.environ.get("POLIS_ORIGIN_URL") or remotes["origin"],
         upstream=os.environ.get("POLIS_UPSTREAM_URL") or remotes["upstream"],
-        repo_dir=Path(repo_dir or os.environ.get("POLIS_REPO_DIR") or "./common-law"),
+        repo_dir=Path(repo_dir or os.environ.get("POLIS_REPO_DIR") or default_repo),
         operator_mode=operator_mode,
         token=token,
         offices=offices,
     )
+    # a chamber without its working copy of the corpus is useless; obtain
+    # it on first use (idempotent)
+    if not chamber.repo_dir.exists() and chamber.origin:
+        from . import archive as archive_mod
+        archive_mod.obtain(chamber).execute()
+    return chamber

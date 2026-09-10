@@ -14,6 +14,15 @@ from .common import console, die, status_table
 app = typer.Typer(no_args_is_help=True, help="Simulation runs and the journal.")
 
 
+def _run_id(run_id: Optional[str]) -> str:
+    """Run id defaults to the provisioned-sim context (POLIS_PROVISIONED_SIM)."""
+    from .. import config
+    rid = run_id or config.PROVISIONED_SIM
+    if not rid:
+        die("run id required (or export POLIS_PROVISIONED_SIM=<sim>)")
+    return rid
+
+
 def _load_runtime(run_id: str) -> runtime_mod.Runtime:
     """Runtime on an existing run (journal + situation if present)."""
     journal = Journal(run_id)
@@ -26,22 +35,36 @@ def _load_runtime(run_id: str) -> runtime_mod.Runtime:
 
 @app.command(name="new")
 def new(
-    run_id: str = typer.Argument(..., help="Run id, e.g. harbour-dues-01."),
+    run_id: Optional[str] = typer.Argument(None, help="Run id (== sim id; default: POLIS_PROVISIONED_SIM)."),
     situation: Optional[str] = typer.Option(
         None, "--situation", help="Seed situation YAML to copy in (bootstrap point)."),
+    jurisdiction: Optional[str] = typer.Option(
+        None, "--jurisdiction", help="Jurisdiction the run legislates in "
+        "(default: the situation file's stem)."),
+    seed: Optional[str] = typer.Option(
+        None, "--seed", help="Determinism seed (default: generated, recorded in run.json)."),
 ) -> None:
     """Start a simulation run (empty journal; optional situation seed)."""
+    import secrets
     from pathlib import Path
+    from ..sim.director import RunConfig
     from ..sim.norms import load_norm_file as lnf, save_norm_file
 
+    run_id = _run_id(run_id)
     journal = new_run(run_id)
+    jur = jurisdiction
     if situation:
         src = Path(situation)
         if not src.exists():
             die(f"situation file not found: {src}")
         save_norm_file(lnf(src), journal.path.parent / "situation.yaml",
                        description=f"bootstrap from {src.name}")
-        console.print(f"[green]run started:[/green] {run_id} (situation: {src.name})")
+        jur = jur or src.stem
+    if jur:
+        RunConfig(run=run_id, jurisdiction=jur,
+                  seed=seed or secrets.token_hex(4)).save()
+        console.print(f"[green]run started:[/green] {run_id} "
+                      f"(jurisdiction: {jur}, situation: {Path(situation).name if situation else 'none'})")
     else:
         console.print(f"[green]run started:[/green] {run_id}")
 
@@ -61,11 +84,24 @@ def list_() -> None:
 
 @app.command()
 def present(
-    run_id: str = typer.Argument(..., help="Run to present."),
+    run_id: Optional[str] = typer.Argument(None, help="Run to present (default: POLIS_PROVISIONED_SIM)."),
     last: Optional[int] = typer.Option(None, "--last", help="Only the last N entries."),
+    epoch: Optional[str] = typer.Option(None, "--epoch", help="Narrate a saved epoch "
+                                        "(see `polis sim epochs`) instead of the live record."),
 ) -> None:
     """Narrated step-through of a run from its journal (no infra contact)."""
-    rt = _load_runtime(run_id)
+    rid = _run_id(run_id)
+    if epoch:
+        from ..sim import journal as journal_mod
+        from ..sim import runtime as runtime_mod
+        path = journal_mod.epochs_dir(rid) / epoch / "journal.jsonl"
+        if not path.exists():
+            die(f"no epoch '{epoch}' for run '{rid}' (see `polis sim epochs`)")
+        journal = journal_mod.Journal(rid)
+        journal.path = path
+        rt = runtime_mod.Runtime(journal)
+    else:
+        rt = _load_runtime(rid)
     entries = rt.journal.entries()
     if last:
         entries = entries[-last:]
@@ -94,13 +130,187 @@ def present(
                             title_align="left", border_style="cyan"))
 
 
+@app.command()
+def drive(
+    run_id: Optional[str] = typer.Argument(None, help="Run to drive (default: POLIS_PROVISIONED_SIM)."),
+    steps: int = typer.Option(1, "--steps", help="How many stories to drive."),
+    local: bool = typer.Option(False, "--local",
+                               help="Execute in-process (used inside the operator container)."),
+) -> None:
+    """Drive the run forward: N stories, end to end (docs/design/director.md).
+
+    Host-side, this proxies into the sim's operator container; --local runs
+    the director in-process (where the network and mounts are).
+    """
+    run_id = _run_id(run_id)
+    if not local:
+        from ..clients import podman
+        name = f"polis-operator-{run_id}"
+        if podman.container_running(name):
+            import subprocess
+            proc = subprocess.run(
+                ["podman", "exec", name, "polis", "sim", "drive", run_id,
+                 "--steps", str(steps), "--local"])
+            raise typer.Exit(proc.returncode)
+        console.print("[yellow]no operator container running — executing locally[/yellow]")
+    from ..sim import director
+    try:
+        stories = director.drive(run_id, steps)
+    except director.DirectorError as e:
+        die(str(e))
+    for s in stories:
+        style = {"enacted": "green", "failed": "red", "skipped": "yellow"}.get(s.status, "white")
+        console.print(f"[{style}]{s.id}: {s.status}[/{style}] "
+                      f"{s.bindings.get('title', '')} "
+                      f"[dim](matter: {s.matter or '—'})[/dim]")
+        if s.error:
+            console.print(f"  [red]{s.error}[/red]")
+
+
+@app.command()
+def tick(
+    run_id: Optional[str] = typer.Argument(None, help="Run to drive (default: POLIS_PROVISIONED_SIM)."),
+    local: bool = typer.Option(False, "--local"),
+) -> None:
+    """One story — `sim drive --steps 1`."""
+    drive(_run_id(run_id), 1, local)
+
+
+@app.command()
+def submit(
+    feature: str = typer.Argument(..., help="Path to a .feature file (one scenario)."),
+    run_id: Optional[str] = typer.Option(None, "--run", help="Target run (default: POLIS_PROVISIONED_SIM)."),
+    name: Optional[str] = typer.Option(None, "--name", help="Scenario name override."),
+) -> None:
+    """Submit a scenario to a RUNNING sim (0034b): setup beats execute now,
+    action/expectation beats are serviced by the director, one per step.
+    """
+    from ..sim import queue as queue_mod
+    rid = _run_id(run_id)
+    try:
+        st = queue_mod.submit(rid, feature, name)
+    except queue_mod.QueueError as e:
+        die(str(e))
+    console.print(f"[green]scenario accepted:[/green] {st.name} "
+                  f"({len(st.beats)} beats, {st.position} executed at submission)")
+    console.print("[dim]the director services one action beat per drive step — "
+                  "`polis sim scenarios` shows the scoreboard[/dim]")
+
+
+@app.command()
+def scenarios(
+    run_id: Optional[str] = typer.Argument(None, help="Run to inspect (default: POLIS_PROVISIONED_SIM)."),
+) -> None:
+    """The scenario scoreboard: queued scenarios and their beat statuses."""
+    from ..sim import queue as queue_mod
+    rid = _run_id(run_id)
+    states = queue_mod.list_scenarios(rid)
+    if not states:
+        console.print(f"[dim]no scenarios queued for '{rid}' — `polis sim submit`[/dim]")
+        return
+    for st in states:
+        style = {"active": "cyan", "paused": "red", "done": "green"}.get(st.status, "white")
+        console.print(f"[{style}]{st.name}[/{style}] — {st.status}"
+                      + (f" [red]({st.error})[/red]" if st.error else ""))
+        table = status_table(None, ["line", "kind", "status", "beat"])
+        for b in st.beats:
+            table.add_row(str(b.line), b.kind, b.status, b.text[:60])
+        console.print(table)
+
+
+@app.command()
+def resume(
+    slug: str = typer.Argument(..., help="Scenario slug (see `polis sim scenarios`)."),
+    run_id: Optional[str] = typer.Option(None, "--run", help="Target run (default: POLIS_PROVISIONED_SIM)."),
+) -> None:
+    """Re-activate a paused scenario (the failed beat becomes pending again)."""
+    from ..sim import queue as queue_mod
+    rid = _run_id(run_id)
+    try:
+        st = queue_mod.resume(rid, slug)
+    except queue_mod.QueueError as e:
+        die(str(e))
+    console.print(f"[green]scenario resumed:[/green] {st.name} — "
+                  "the next drive step retries the failed beat")
+
+
+@app.command()
+def stories(
+    run_id: Optional[str] = typer.Argument(None, help="Run to inspect (default: POLIS_PROVISIONED_SIM)."),
+) -> None:
+    """The run's story records (docs/design/director.md §6)."""
+    from ..sim.director import load_stories
+    stories_ = load_stories(_run_id(run_id))
+    if not stories_:
+        console.print(f"[dim]run '{run_id}' has no stories yet — `polis sim drive`[/dim]")
+        return
+    table = status_table(f"stories — {run_id}",
+                         ["id", "status", "template", "title", "matter", "cast"])
+    for s in stories_:
+        cast = ", ".join(f"{k}={v}" for k, v in s.cast.items())
+        table.add_row(s.id, s.status, s.template,
+                      s.bindings.get("title", ""), s.matter or "—", cast)
+    console.print(table)
+
+
+@app.command()
+def fresh(
+    run_id: Optional[str] = typer.Argument(None, help="Run to reset (default: POLIS_PROVISIONED_SIM)."),
+    yes: bool = typer.Option(False, "--yes", help="Confirm archiving + clearing the record."),
+    name: Optional[str] = typer.Option(None, "--name", help="Epoch name (default: timestamp)."),
+) -> None:
+    """Start a fresh epoch: archive the current record, then clear it.
+
+    The MACHINERY is untouched (platform, slices, secrets — and the legal
+    archive's git history, which does not roll back; for a blank legal
+    slate, teardown + rm -rf the sim dir). Afterwards, `polis sim new`
+    bootstraps the new epoch.
+    """
+    from ..sim import journal as journal_mod
+    from ..sim.journal import _utcnow
+    rid = _run_id(run_id)
+    epoch = name or _utcnow().replace(":", "").replace("-", "").lower()
+    if not yes:
+        die(f"this archives the current record of '{rid}' to epochs/{epoch} "
+            "and clears it — re-run with --yes")
+    try:
+        dest = journal_mod.save_epoch(rid, epoch)
+    except (FileExistsError, FileNotFoundError) as e:
+        die(str(e))
+    removed = journal_mod.clear_record(rid)
+    console.print(f"[green]epoch saved:[/green] {dest}")
+    console.print(f"[green]record cleared[/green] ({', '.join(removed)}) "
+                  f"— `polis sim new` starts the fresh epoch")
+
+
+@app.command()
+def epochs(
+    run_id: Optional[str] = typer.Argument(None, help="Run to inspect (default: POLIS_PROVISIONED_SIM)."),
+) -> None:
+    """List the run's saved epochs (records archived by `sim fresh`)."""
+    from ..sim import journal as journal_mod
+    rid = _run_id(run_id)
+    names = journal_mod.list_epochs(rid)
+    if not names:
+        console.print(f"[dim]no saved epochs for '{rid}' — `polis sim fresh` archives one[/dim]")
+        return
+    table = status_table(f"epochs — {rid}", ["epoch", "entries", "span"])
+    for n in names:
+        journal = journal_mod.Journal(rid)
+        journal.path = journal_mod.epochs_dir(rid) / n / "journal.jsonl"
+        es = journal.entries()
+        span = f"{es[0].ts} → {es[-1].ts}" if es else "—"
+        table.add_row(n, str(len(es)), span)
+    console.print(table)
+
+
 @app.command(name="runtime")
 def runtime_(
-    run_id: str = typer.Argument(..., help="Run to attach to."),
+    run_id: Optional[str] = typer.Argument(None, help="Run to attach to (default: POLIS_PROVISIONED_SIM)."),
 ) -> None:
     """Show the runtime state for a run (journal size, situation summary)."""
-    rt = _load_runtime(run_id)
-    console.print(f"run: [bold]{run_id}[/bold]")
+    rt = _load_runtime(_run_id(run_id))
+    console.print(f"run: [bold]{rt.journal.run_id}[/bold]")
     console.print(f"  journal entries: {len(rt.journal.entries())}")
     if rt.situation is not None:
         live = rt.situation.in_force()

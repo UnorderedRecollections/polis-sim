@@ -97,14 +97,22 @@ class MatterStore(BaseModel):
 
 
 def matters_path() -> Path:
-    return Path(os.environ.get("POLIS_MATTERS_FILE") or (config.WORLD_DIR / "matters.json"))
+    # POLIS_MATTERS_FILE (explicit) > sim context (POLIS_PROVISIONED_SIM) > world
+    if os.environ.get("POLIS_MATTERS_FILE"):
+        return Path(os.environ["POLIS_MATTERS_FILE"])
+    if config.PROVISIONED_SIM:
+        return config.DATA_DIR / "sims" / config.PROVISIONED_SIM / "matters.json"
+    return config.WORLD_DIR / "matters.json"
 
 
 def load_matters() -> MatterStore:
     path = matters_path()
     if not path.exists():
         return MatterStore()
-    return MatterStore.model_validate_json(path.read_text(encoding="utf-8"))
+    text = path.read_text(encoding="utf-8").strip()
+    if not text:                       # an empty file is an empty docket
+        return MatterStore()
+    return MatterStore.model_validate_json(text)
 
 
 def save_matters(store: MatterStore) -> Path:

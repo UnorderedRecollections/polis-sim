@@ -146,17 +146,30 @@ def reject(
 @app.command(name="list")
 def list_(
     state: str = typer.Option("open", "--state", help="open | closed | all."),
-    as_user: str = AS, city: Optional[str] = CITY, repo_dir: Optional[str] = REPO_DIR,
+    as_user: Optional[str] = typer.Option(None, "--as",
+                                          help="Act as this person (phase-2 dispatch); "
+                                          "omit for the plain matter record."),
+    city: Optional[str] = CITY, repo_dir: Optional[str] = REPO_DIR,
 ) -> None:
-    """List petitions before the federation (PRs against the archive)."""
-    chamber = get_chamber(as_user, city, repo_dir)
-    prs = bills.list_bills(chamber, state=state)
+    """List bills before the federation — read-only; no --as needed in phase 1."""
+    if as_user:
+        chamber = get_chamber(as_user, city, repo_dir)
+        prs = bills.list_bills(chamber, state=state)
+    else:
+        from .. import matters as matters_mod
+        store = matters_mod.load_matters()
+        ms = [m for m in store.matters if m.kind == "bill"]
+        if state == "open":
+            ms = [m for m in ms if m.is_open]
+        elif state == "closed":
+            ms = [m for m in ms if not m.is_open]
+        prs = [m.model_dump(mode="json") for m in ms]
     table = status_table("bills", ["id", "title", "branch", "petitioner", "status"])
     for pr in prs:
         table.add_row(
             str(pr.get("id") or f"#{pr.get('number')}"), pr.get("title", ""),
-            (pr.get("head") or {}).get("ref", ""),
-            (pr.get("user") or {}).get("username", ""),
+            pr.get("branch") or (pr.get("head") or {}).get("ref", ""),
+            pr.get("proposer") or (pr.get("user") or {}).get("username", ""),
             pr.get("status") or pr.get("state", ""),
         )
     console.print(table)

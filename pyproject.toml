@@ -23,3 +23,8 @@ include = ["polis*"]
 
 [tool.setuptools.package-data]
 "polis.legislation" = ["templates/*.md"]
+
+[dependency-groups]
+dev = [
+    "behave>=1.3.3",
+]

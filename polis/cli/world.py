@@ -59,6 +59,43 @@ def genesis(
 
 
 @app.command()
+def cleanup(
+    yes: bool = typer.Option(False, "--yes", help="Apply the removals."),
+) -> None:
+    """Remove per-sim residue from the civil registry (dry-run by default).
+
+    Provisioning once wrote per-sim API tokens (`gogs@<sim>`) into
+    world.json; the registry must not carry machinery credentials — the
+    sim slices under data/sims/<sim>/ are their only home.
+    """
+    if not store.world_exists():
+        die(f"no world yet — run `polis world genesis` (expected at {config.WORLD_FILE})")
+    world = get_world()
+    residue: dict[str, list[str]] = {}          # key -> usernames
+    for p in world.persons:
+        for key in list((p.credentials.api_tokens or {}).keys()):
+            if "@" in key:
+                residue.setdefault(key, []).append(p.username)
+    if not residue:
+        console.print("[green]registry is clean[/green] — no per-sim residue")
+        return
+    table = status_table("per-sim residue in world.json", ["key", "persons"])
+    for key, users in sorted(residue.items()):
+        table.add_row(key, str(len(users)))
+    console.print(table)
+    if not yes:
+        console.print("[yellow]dry run[/yellow] — re-run with --yes to remove these keys")
+        return
+    for p in world.persons:
+        p.credentials.api_tokens = {k: v for k, v in (p.credentials.api_tokens or {}).items()
+                                    if "@" not in k}
+    store.save_world(world)
+    store.export_all_cities(world)
+    console.print(f"[green]removed {sum(len(v) for v in residue.values())} token(s) "
+                  f"across {len(residue)} key(s)[/green]; city slices re-exported")
+
+
+@app.command()
 def show() -> None:
     """Print a summary of the current world."""
     if not store.world_exists():
