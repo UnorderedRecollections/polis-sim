@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T18:30:00Z
 - **type:** [simulation]
 - **depends-on:** 0001, 0003, 0005
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -22,7 +22,5 @@ worked end-to-end story trace.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 1bf15c3

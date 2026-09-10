@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T16:57:20Z
 - **type:** [simulation]
 - **depends-on:** (none)
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -23,7 +23,5 @@ ontology (three stores, two clocks) and the recorded design debts
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 5103692

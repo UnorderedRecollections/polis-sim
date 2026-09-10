@@ -3,7 +3,7 @@
 - **created:** 2026-09-09T09:50:00Z
 - **type:** [simulation]
 - **depends-on:** 0012, 0008
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -22,7 +22,5 @@ Implement `docs/design/activity-signatures.md`:
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** d13c75b

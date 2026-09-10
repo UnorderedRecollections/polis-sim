@@ -3,7 +3,7 @@
 - **created:** 2026-09-09T08:45:00Z
 - **type:** [simulation]
 - **depends-on:** 0011, 0015
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -21,7 +21,5 @@ Implement the resource-file schema from `docs/design/resource-files.md`:
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** a2733f4

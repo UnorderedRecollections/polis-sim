@@ -4,7 +4,7 @@
 - **type:** [simulation]
 - **depends-on:** 0007, 0009, 0010, 0011, 0016
   (0012/0013 feed the *director*, not the seed — not required here)
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -30,7 +30,5 @@ Deliverable: design document + (if clear) a seed format proposal.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 85ddad6

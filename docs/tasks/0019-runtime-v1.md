@@ -3,7 +3,7 @@
 - **created:** 2026-09-09T10:40:00Z
 - **type:** [simulation]
 - **depends-on:** 0001, 0018, 0008
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -26,7 +26,5 @@ A usable runtime (Behave and the director depend on it):
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 2155317

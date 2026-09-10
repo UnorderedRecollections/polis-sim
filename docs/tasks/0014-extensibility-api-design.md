@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T18:51:22Z
 - **type:** [simulation]
 - **depends-on:** 0008, 0009, 0010, 0011, 0012, 0013
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -26,7 +26,5 @@ Deliverable: `docs/design/extensibility-api.md`.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 9553e5c

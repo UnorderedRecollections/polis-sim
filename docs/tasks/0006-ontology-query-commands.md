@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T18:10:00Z
 - **type:** [simulation]
 - **depends-on:** 0005
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -29,7 +29,5 @@ Requires `parent` recorded on dynamically built types in
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** cfe8049

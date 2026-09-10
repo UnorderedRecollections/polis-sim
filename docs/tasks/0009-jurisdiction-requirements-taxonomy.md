@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T18:50:45Z
 - **type:** [simulation]
 - **depends-on:** 0007
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -27,7 +27,5 @@ fisheries shape.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** cfe8049

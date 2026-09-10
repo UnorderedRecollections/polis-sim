@@ -3,7 +3,7 @@
 - **created:** 2026-09-09T11:15:00Z
 - **type:** [infrastructure]
 - **depends-on:** 0019
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -20,7 +20,5 @@ infra dependencies.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 81f8e75

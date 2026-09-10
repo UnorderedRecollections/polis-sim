@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T18:50:52Z
 - **type:** [simulation]
 - **depends-on:** 0007, 0009
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -23,7 +23,5 @@ Deliverable: `docs/design/norms-generalization.md`.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 7bc85d6

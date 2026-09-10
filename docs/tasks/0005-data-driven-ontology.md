@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T17:55:00Z
 - **type:** [refactoring]
 - **depends-on:** 0003, 0004
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -27,7 +27,5 @@ of `ActorJurisdictional`. API surface preserved: `is_actor_a`,
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** cfe8049

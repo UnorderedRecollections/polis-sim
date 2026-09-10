@@ -3,7 +3,7 @@
 - **created:** 2026-09-09T11:45:00Z
 - **type:** [infrastructure]
 - **depends-on:** 0020
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -24,7 +24,5 @@ Implement `docs/design/provisioning.md`:
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 836a26d

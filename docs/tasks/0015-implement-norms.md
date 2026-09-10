@@ -3,7 +3,7 @@
 - **created:** 2026-09-09T08:10:00Z
 - **type:** [simulation]
 - **depends-on:** 0010
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -28,7 +28,5 @@ bootstrapping point for another run.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 7bc85d6

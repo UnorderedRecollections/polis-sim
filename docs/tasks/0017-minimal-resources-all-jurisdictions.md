@@ -3,7 +3,7 @@
 - **created:** 2026-09-09T09:10:00Z
 - **type:** [simulation]
 - **depends-on:** 0016
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -15,7 +15,5 @@ trade-markets), so `validate_resources()` starts clean.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** a2733f4

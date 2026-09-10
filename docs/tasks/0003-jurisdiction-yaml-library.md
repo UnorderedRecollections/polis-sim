@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T17:20:00Z
 - **type:** [simulation]
 - **depends-on:** 0002
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -25,7 +25,5 @@ story-block-as-transaction idea is noted for later exploration.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 5103692

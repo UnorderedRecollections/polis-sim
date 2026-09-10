@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T17:40:00Z
 - **type:** [simulation]
 - **depends-on:** 0003
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -22,7 +22,5 @@ Read-only; data via `polis/sim/legaldata.py`.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 5103692

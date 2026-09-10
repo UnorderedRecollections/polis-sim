@@ -3,7 +3,7 @@
 - **created:** 2026-09-08T17:05:00Z
 - **type:** [simulation]
 - **depends-on:** 0001
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -30,7 +30,5 @@ used by storygen and the Behave step library).
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T21:48:57Z
+- **commit:** 5103692
