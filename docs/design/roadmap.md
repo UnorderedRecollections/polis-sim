@@ -65,6 +65,16 @@ exists. Add:
   This task delivers the *content* (act texts + artifacts + a story
   template `phase_transition`); the machinery effect is task 0038.
 
+**Delivered (task 0036, commit c55e5b2).** Three acts (Assigned Legal
+Authority Act → `CODEOWNERS`; Constitutional Approval Act →
+`branch-protection.md`; Mechanical Magistracy Act → `woodpecker.yml`)
+authored in `data/world/legal/transition/`; story template
+`data/world/legal/templates/phase_transition.yaml`; phase 1 recorded at
+the founding in `constitution/02-customary-machinery.md` (new sims
+only — existing founding commits are historical acts). Phase surfacing
+in status/health: **docs only** (user decision). Content only: nothing
+executes the story or flips the phase — see the note in §5.
+
 ## 4. Platform abstraction (task 0037) — de-gogs phase 1
 
 Phase is a **procedure**, not a product. Refactor so phase 1 has no
@@ -92,6 +102,24 @@ When the transition act(s) from 0036 are ratified:
   per sim, OAuth wiring, the Mechanical Magistrate's CI active;
 - the docket/bill CLI dispatch switches to real PRs — same command
   surface (the long-planned proceedings-backend swap).
+
+**Open question recorded at 0036 close (2026-09-11): the execution path.**
+The 0036 content can already be landed by hand through the ordinary
+phase-1 porcelain (`bill draft/introduce/scrutinize` + `archive ratify`
+per act), but nothing executes the `phase_transition` story as such and
+nothing flips the phase. 0038 must first design *how the user effects
+the transition*:
+
+- **trigger**: explicit command (`sim drive --story phase_transition`)?
+  an epoch condition (e.g. after N stories)? a queued beat via
+  `sim submit` (the queue already services one action beat per drive)?
+- **executor**: the director gains a phase_transition executor binding
+  the template's beats to the authored acts in
+  `data/world/legal/transition/`; or Gherkin bindings for "introduce the
+  Assigned Legal Authority Act (authored text)".
+- **effect**: on ratification of the third act, flip `federation.phase`
+  through the ordinary channels, then per-sim phase-2 provisioning and
+  the proceedings-backend swap.
 
 ## 6. LLM integration (task 0039, then MCP)
 
