@@ -20,7 +20,5 @@ status/health is docs-only; the CODEOWNERS schedule maps offices to paths.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-10T22:30:00Z
+- **commit:** c55e5b2
