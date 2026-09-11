@@ -371,7 +371,8 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
         # webhooks target the in-network woodpecker (a private address) —
         # the whole apparatus is local; the delivery check reads
         # security.ALLOWED_HOST_LIST
-        "GITEA__security__ALLOWED_HOST_LIST": "host.containers.internal,localhost",
+        "GITEA__security__ALLOWED_HOST_LIST":
+            f"host.containers.internal,localhost,{sim}-woodpecker-server",
         "GITEA__webhook__ALLOW_LOCALNETWORK_HOSTS": "true",
         "GITEA__service__DISABLE_REGISTRATION": "true",
         "GITEA__repository__DEFAULT_BRANCH": "main",
@@ -799,10 +800,9 @@ def up_woodpecker(sim: str) -> None:
     (plat / "woodpecker" / "server").mkdir(parents=True, exist_ok=True)
     server_env = {
         "WOODPECKER_OPEN": "true",
-        # the forge's webhook calls WOODPECKER_HOST/api/hook — the forge
-        # (a VM container) reaches the published port through the mac
-        # loopback; a localhost URL would resolve to the forge itself
-        "WOODPECKER_HOST": f"http://host.containers.internal:{wp_port}",
+        # browser-friendly links (status "details" URLs); the forge webhook
+        # is repointed to the in-network URL after the repo enable below
+        "WOODPECKER_HOST": f"http://localhost:{wp_port}",
         "WOODPECKER_AGENT_SECRET": agent_secret,
         "WOODPECKER_GRPC_SECRET": grpc_secret,
         "WOODPECKER_ADMIN": magistrate_user,
@@ -874,6 +874,22 @@ def up_woodpecker(sim: str) -> None:
     wc._request("PATCH", f"/api/repos/{enabled.get('id')}",
                 json={"require_approval": "none"})
 
+    # woodpecker registered its own webhook at enable time — with the
+    # WOODPECKER_HOST (localhost) URL, unreachable from inside the forge.
+    # Repoint it: reuse woodpecker's hook token, in-network URL.
+    for hook in gt._request("GET", f"/api/v1/repos/{archive_org}/common-law/hooks").json():
+        url = (hook.get("config") or {}).get("url", "")
+        if "/api/hook" in url and "access_token=" in url:
+            token = url.split("access_token=", 1)[1]
+            gt._request("DELETE",
+                        f"/api/v1/repos/{archive_org}/common-law/hooks/{hook['id']}")
+            gt._request("POST", f"/api/v1/repos/{archive_org}/common-law/hooks", json={
+                "type": "gitea", "active": True,
+                "config": {"url": f"http://{wp}:8000/api/hook?access_token={token}",
+                           "content_type": "json"},
+                "events": ["push", "pull_request"],
+            })
+
     # the cities hold copies of the one archive — sync the forks so every
     # repo carries the codified machinery (a PR's pipeline config is read
     # from its HEAD — the fork)
@@ -924,12 +940,10 @@ def _woodpecker_oauth_login(gitea_url: str, username: str, password: str,
     r = s.post("/user/login", data={"user_name": username, "password": password})
     if r.status_code not in (302, 303):
         raise ProvisionError(f"gitea login as {username} failed: {r.status_code}")
-    # the authorize redirect MUST match the redirect woodpecker sends at
-    # exchange time (WOODPECKER_HOST + /authorize), or gitea refuses the
-    # grant ("redirect_uri differs"); we only READ the callback Location —
-    # never follow it — so the unreachable host doesn't matter here
-    port = wp_url.rsplit(":", 1)[-1]
-    redirect_uri = f"http://host.containers.internal:{port}/authorize"
+    # the authorize redirect must match the redirect woodpecker sends at
+    # exchange time (WOODPECKER_HOST + /authorize, both localhost since
+    # task 0041's link fix)
+    redirect_uri = f"{wp_url}/authorize"
     r = s.get("/login/oauth/authorize"
               f"?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code")
     if r.status_code in (302, 303):
@@ -942,29 +956,13 @@ def _woodpecker_oauth_login(gitea_url: str, username: str, password: str,
         loc = s.post("/login/oauth/grant", data=fields).headers.get("Location", "")
     if not loc or "code=" not in loc:
         raise ProvisionError(f"gitea OAuth grant failed: {loc[:200]}")
-    # exchange the code against the operator's loopback (the code is not
-    # bound to the redirect host), walking the redirects manually
-    from urllib.parse import urljoin
-    ws = httpx.Client(base_url=wp_url, follow_redirects=False, timeout=20)
-    code_url = re.sub(r"^https?://[^/]+", wp_url, loc)   # localhost, same path+query
-    url = code_url
-    sess = None
-    for _ in range(5):
-        r = ws.get(url)
-        sess = r.cookies.get("user_sess") or sess
-        if r.status_code in (302, 303, 307, 308):
-            url = urljoin(url, r.headers.get("Location", ""))
-            continue
-        break
-    if not sess:
-        raise ProvisionError("woodpecker login did not establish a session")
-    headers = {"Cookie": f"user_sess={sess}"}
-    cfg = httpx.get(f"{wp_url}/web-config.js", headers=headers, timeout=10)
+    ws = httpx.Client(base_url=wp_url, follow_redirects=True, timeout=20)
+    ws.get(loc if loc.startswith("http") else wp_url + loc)
+    cfg = ws.get("/web-config.js")
     csrf = re.search(r'WOODPECKER_CSRF = "([^"]*)"', cfg.text)
     if not csrf or not csrf.group(1):
         raise ProvisionError("woodpecker login did not establish a session")
-    r = httpx.post(f"{wp_url}/api/user/token",
-                   headers={**headers, "X-CSRF-Token": csrf.group(1)}, timeout=10)
+    r = ws.post("/api/user/token", headers={"X-CSRF-Token": csrf.group(1)})
     if r.status_code != 200:
         raise ProvisionError(f"woodpecker token mint failed: {r.status_code}")
     return r.text.strip()
