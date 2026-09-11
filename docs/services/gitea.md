@@ -12,6 +12,11 @@ enacted through phase-1 machinery — CODEOWNERS, branch protection and
 instruments are authored in `data/world/legal/transition/` (the
 `phase_transition` story template carries them into the corpus).
 
+Since the platform abstraction (task 0037), gitea can also **host phase 1**:
+`polis provision up <sim> --platform gitea` stands a sim's own gitea up
+while the federation remains in phase 1 — matter-store petitions, local
+incorporation, no PRs. Phase is a procedure, not a product.
+
 ## Start locally
 
 ```sh

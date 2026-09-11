@@ -3,7 +3,7 @@
 - **created:** 2026-09-10T18:00:00Z
 - **type:** [refactoring]
 - **depends-on:** none
-- **status:** open
+- **status:** done
 
 ## Description
 
@@ -11,9 +11,12 @@ Phase is a procedure, not a product: Platform interface for provisioning (users/
 
 See docs/design/roadmap.md for context and ordering.
 
+Decisions taken (user, 2026-09-10): chamber splits product (platform)
+from procedure (phase) — bill/docket dispatch on `phase == 2`; full
+sim-context tooling support (health, `polis gitea`, config endpoint
+resolution); verify via `tests/provision-demo-gitea.sh`.
+
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-11T01:10:00Z
+- **commit:** (main)

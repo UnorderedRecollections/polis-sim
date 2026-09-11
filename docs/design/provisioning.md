@@ -73,7 +73,7 @@ host. Fail fast with the exact remedy.
 ## 3. Command surface
 
 ```
-polis provision up <sim-id> [--with-city-containers] [--force]
+polis provision up <sim-id> [--platform gogs|gitea] [--with-city-containers] [--force]
 polis provision status <sim-id>        # what exists vs. the inventory
 polis provision teardown <sim-id> [--yes]   # delete exactly the inventory
 polis sim stop|start|delete <sim-id>         # lifecycle (post-director, §3a)
@@ -86,9 +86,15 @@ polis sim export|import <sim-id>             # portability (post-director, §3a)
   (`DELETE /admin/users/<sim>-*`), repos, orgs (gogs has no org-delete
   route: orgs are documented as teardown-exempt, or removed via DB note in
   services docs), containers (`podman rm -f`), and the sim dir optionally.
-- Phase 2 (gitea) later: same command, platform selected by
-  `federation.phase` or a `--platform` flag; the inventory format doesn't
-  change.
+- **Platform abstraction (task 0037 — landed)**: `--platform` selects the
+  product (`gogs` default, `gitea` since 0037). Phase is a procedure, not
+  a product: either product hosts phase 1 (matter-store proceedings, local
+  incorporation); `federation.phase` never follows the product. The
+  inventory records `platform`; secrets carry per-platform keys
+  (`gogs_port`/`gitea_port`, `*_url_external/internal`); slices carry
+  `federation.platform` and tokens keyed by product; `status`/`teardown`
+  dispatch through `sim_platform_client(sim)`. Product quirks live in the
+  clients and the per-platform bring-up (provision.py), nowhere else.
 
 ## 3a. Sim lifecycle (added; after the director works)
 

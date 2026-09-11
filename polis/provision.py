@@ -5,10 +5,19 @@ users with per-sim tokens, the archive org/repo + founding corpus, city
 orgs/repos, per-sim slices, an inventory (provision.json) that status and
 teardown consume. Idempotent: re-running `up` reconciles.
 
+Platform abstraction (task 0037 — phase is a procedure, not a product):
+`up --platform gogs|gitea` stands the sim's own platform container up.
+Either product can host phase 1 (matter-store proceedings, local
+incorporation); the federation's `phase` never follows the product. Each
+product's quirks (gogs: no pulls API, no org-delete route, auto_init
+fails; gitea: scopes on token creation, org repos via /orgs route, no
+org delete while repos remain) live in its bring-up/notes here and in the
+clients.
+
 Naming (everything carries the sim id):
   org   <sim>-archive, repo common-law
-  orgs  <sim>-<city>, repo common-law (plain repos — this gogs build has no
-        forks API; city repos are seeded by pushing the founding corpus)
+  orgs  <sim>-<city>, repo common-law (plain repos — gogs has no forks
+        API; city repos are seeded by pushing the founding corpus)
   users <sim>-<username>
   containers polis-city-<city>-<sim>
 """
@@ -17,6 +26,7 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -24,6 +34,7 @@ from typing import Any
 
 from . import config, store
 from .clients import podman
+from .clients.gitea import GiteaClient, GiteaError
 from .clients.gogs import GogsClient, GogsError
 from .legislation import gitcmd
 from .sim.journal import SIMS_DIR
@@ -31,6 +42,9 @@ from .sim.journal import SIMS_DIR
 
 class ProvisionError(RuntimeError):
     pass
+
+
+API_ERRORS = (GogsError, GiteaError)
 
 
 def _utcnow() -> str:
@@ -41,13 +55,14 @@ def _utcnow() -> str:
 class Inventory:
     sim: str
     created_at: str = ""
+    platform: str = "gogs"         # the provisioned product (gogs | gitea)
     users: list[str] = field(default_factory=list)
     orgs: list[str] = field(default_factory=list)
     repos: list[str] = field(default_factory=list)        # "owner/name"
     containers: list[str] = field(default_factory=list)
     slices_dir: str = ""
     network: str = ""                # the sim's private podman network
-    gogs_port: int = 0               # host port → the sim's gogs :3000
+    platform_port: int = 0           # host port → the sim's platform :3000
     notes: list[str] = field(default_factory=list)
 
     def save(self) -> Path:
@@ -61,7 +76,12 @@ class Inventory:
         path = SIMS_DIR / sim / "provision.json"
         if not path.exists():
             raise ProvisionError(f"no provisioned sim '{sim}' (expected {path})")
-        return cls(**json.loads(path.read_text(encoding="utf-8")))
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        inv = cls(**{k: v for k, v in raw.items() if k in cls.__dataclass_fields__})
+        # pre-0037 inventories: no platform/platform_port (gogs era)
+        if not inv.platform_port:
+            inv.platform_port = raw.get("gogs_port", 0)
+        return inv
 
 
 def _validate_sim_id(sim: str) -> None:
@@ -78,17 +98,47 @@ def _validate_sim_id(sim: str) -> None:
             "('<sim>-<username>') cap at 35 characters")
 
 
-# --- the sim's own platform (task 0027): network + postgres + gogs --------------
+# --- the sim's own platform (task 0027): network + postgres + <platform> ------
 #
-# A sim is fully self-contained: <sim>-net, <sim>-postgres, <sim>-gogs (host
-# port allocated at up-time). Inside the network the gogs URL is constant
-# (http://<sim>-gogs:3000) — slices, operator and city containers use it; the
-# host port exists only for the operator's CLI (provisioning, ad-hoc checks).
-# Per-sim secrets live in data/sims/<sim>/secrets.json (gitignored), never in
-# world.json.
+# A sim is fully self-contained: <sim>-net, <sim>-postgres, <sim>-gogs or
+# <sim>-gitea (host port allocated at up-time). Inside the network the
+# platform URL is constant (http://<sim>-<platform>:3000) — slices, operator
+# and city containers use it; the host port exists only for the operator's
+# CLI (provisioning, ad-hoc checks). Per-sim secrets live in
+# data/sims/<sim>/secrets.json (gitignored), never in world.json.
+#
+# Task 0037: the platform is the *product*. Either product hosts phase 1.
 
-GOGS_IMAGE = "polis/gogs"
 POSTGRES_IMAGE = "polis/postgres"
+
+
+@dataclass(frozen=True)
+class PlatformSpec:
+    name: str                       # "gogs" | "gitea" (also the secrets-key prefix)
+    image: str                      # podman image
+    dockerfile: str                 # dir under docker/ with the Dockerfile
+    client: Any                     # client class (GogsClient | GiteaClient)
+    notes: str                      # quirks isolated here, for the inventory
+
+    def container(self, sim: str) -> str:
+        return f"{sim}-{self.name}"
+
+    def url_internal(self, sim: str) -> str:
+        return f"http://{self.container(sim)}:3000"
+
+
+PLATFORMS: dict[str, PlatformSpec] = {
+    "gogs": PlatformSpec(
+        name="gogs", image="polis/gogs", dockerfile="gogs", client=GogsClient,
+        notes="orgs/repos/users die with the sim's gogs (its volumes are at "
+              "{plat_dir}) — delete with the sim dir",
+    ),
+    "gitea": PlatformSpec(
+        name="gitea", image="polis/gitea", dockerfile="gitea", client=GiteaClient,
+        notes="orgs/repos/users die with the sim's gitea (its volumes are at "
+              "{plat_dir}) — delete with the sim dir",
+    ),
+}
 
 
 def platform_dir(sim: str) -> Path:
@@ -106,11 +156,21 @@ def load_secrets(sim: str) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def sim_gogs_client(sim: str) -> GogsClient:
-    """A client against the sim's own gogs, as the sim's admin."""
+def sim_platform(sim: str) -> str:
+    """The provisioned product of a sim ("gogs" default for pre-0037 sims)."""
+    path = SIMS_DIR / sim / "provision.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8")).get("platform") or "gogs"
+    return load_secrets(sim).get("platform") or "gogs"
+
+
+def sim_platform_client(sim: str):
+    """A client against the sim's own platform, as the sim's admin."""
+    platform = sim_platform(sim)
     secrets = load_secrets(sim)
-    return GogsClient(token=secrets["admin_token"],
-                      base_url=f"http://localhost:{secrets['gogs_port']}")
+    spec = PLATFORMS[platform]
+    return spec.client(token=secrets["admin_token"],
+                       base_url=f"http://localhost:{secrets[f'{platform}_port']}")
 
 
 def _free_port(base: int = 11880) -> int:
@@ -119,11 +179,12 @@ def _free_port(base: int = 11880) -> int:
         with socket.socket() as s:
             if s.connect_ex(("127.0.0.1", port)) != 0:
                 return port
-    raise ProvisionError("no free host port for the sim's gogs")
+    raise ProvisionError("no free host port for the sim's platform")
 
 
-def _ensure_platform_images() -> None:
-    for image, dockerfile in ((GOGS_IMAGE, "gogs"), (POSTGRES_IMAGE, "postgres")):
+def _ensure_platform_images(spec: PlatformSpec) -> None:
+    for image, dockerfile in ((spec.image, spec.dockerfile),
+                              (POSTGRES_IMAGE, "postgres")):
         df = config.PROJECT_ROOT / "docker" / dockerfile / "Dockerfile"
         if not df.exists():
             raise ProvisionError(f"platform Dockerfile missing: {df}")
@@ -134,36 +195,78 @@ def _ensure_platform_images() -> None:
                 raise ProvisionError(f"building {image} failed: {proc.stderr.strip()[:300]}")
 
 
-def _up_platform(sim: str, inv: Inventory) -> dict:
-    """Network + postgres + gogs + admin + admin token. Returns the secrets."""
+def _pg_password() -> str:
+    return (os.environ.get("POSTGRES_PASSWORD")
+            or config._load_env_file().get("POSTGRES_PASSWORD")
+            or "gogs")
+
+
+def _up_postgres(sim: str, inv: Inventory, password: str) -> str:
+    """The sim's shared postgres (already running or freshly started).
+    Returns the container name."""
+    net = f"{sim}-net"
+    pg = f"{sim}-postgres"
+    plat = platform_dir(sim)
+    (plat / "postgres").mkdir(parents=True, exist_ok=True)
+    podman._run(["network", "create", net], check=False)
+    if not podman.container_running(pg):
+        podman._run(["rm", "-f", pg], check=False)
+        proc = podman._run([
+            "run", "-d", "--name", pg, "--network", net,
+            "-v", f"{plat / 'postgres'}:/var/lib/postgresql/data",
+            "-e", "POSTGRES_USER=gogs", "-e", f"POSTGRES_PASSWORD={password}",
+            "-e", "POSTGRES_DB=gogs", POSTGRES_IMAGE,
+        ])
+        if proc.returncode != 0:
+            raise ProvisionError(f"postgres start failed: {proc.stderr.strip()[:300]}")
+    import time
+    for _ in range(60):                       # postgres must be ready before the platform
+        if podman._run(["exec", pg, "pg_isready", "-U", "gogs"],
+                       check=False).returncode == 0:
+            break
+        time.sleep(1)
+    else:
+        raise ProvisionError(f"{pg} never became ready")
+    inv.containers.append(pg)
+    inv.network = net
+    return pg
+
+
+def _ensure_postgres_db(pg: str, name: str) -> None:
+    """Create a database in the sim's postgres if missing (gitea needs its
+    own; the volume may predate it). Retried: pg_isready turns true during
+    the entrypoint's temporary bootstrap phase, when CREATE DATABASE still
+    gets torn down with the restart."""
+    import time
+    ok, out = podman.exec_ok(pg, ["psql", "-U", "gogs", "-tAc",
+                                  f"SELECT 1 FROM pg_database WHERE datname = '{name}'"])
+    if ok and "1" in out:
+        return
+    for _ in range(30):
+        if podman._run(["exec", pg, "psql", "-U", "gogs", "-c",
+                        f"CREATE DATABASE {name}"], check=False).returncode == 0:
+            return
+        time.sleep(1)
+    raise ProvisionError(f"could not create database '{name}' in {pg}")
+
+
+def _up_gogs(sim: str, inv: Inventory, pg: str, password: str,
+             port: int, admin_password: str) -> dict:
+    """The gogs container + admin user + token (customary-era platform)."""
     import secrets as secrets_mod
     import time
-
     import httpx
 
-    _ensure_platform_images()
-    net = f"{sim}-net"
-    pg, gg = f"{sim}-postgres", f"{sim}-gogs"
-    port = _free_port()
+    gg = f"{sim}-gogs"
     plat = platform_dir(sim)
     conf = plat / "gogs" / "gogs" / "conf"
     conf.mkdir(parents=True, exist_ok=True)
-    (plat / "postgres").mkdir(parents=True, exist_ok=True)
-
-    pg_password = (os.environ.get("POSTGRES_PASSWORD")
-                   or config._load_env_file().get("POSTGRES_PASSWORD")
-                   or "gogs")
-    # re-provisioning reuses the existing platform volume — keep its admin
-    # credentials, don't mint new (wrong) ones
-    existing = json.loads(secrets_path(sim).read_text(encoding="utf-8")) \
-        if secrets_path(sim).exists() else None
-    admin_password = existing["admin_password"] if existing else secrets_mod.token_urlsafe(12)
     (conf / "app.ini").write_text(f"""[database]
 TYPE     = postgres
 HOST     = {pg}:5432
 NAME     = gogs
 USER     = gogs
-PASSWORD = {pg_password}
+PASSWORD = {password}
 SSL_MODE = disable
 
 [security]
@@ -189,37 +292,21 @@ REQUIRE_EMAIL_CONFIRMATION = false
 ENABLED = false
 """, encoding="utf-8")
 
-    podman._run(["network", "create", net], check=False)
-    podman._run(["rm", "-f", pg, gg], check=False)
+    podman._run(["rm", "-f", gg], check=False)
     proc = podman._run([
-        "run", "-d", "--name", pg, "--network", net,
-        "-v", f"{plat / 'postgres'}:/var/lib/postgresql/data",
-        "-e", "POSTGRES_USER=gogs", "-e", f"POSTGRES_PASSWORD={pg_password}",
-        "-e", "POSTGRES_DB=gogs", POSTGRES_IMAGE,
-    ])
-    if proc.returncode != 0:
-        raise ProvisionError(f"postgres start failed: {proc.stderr.strip()[:300]}")
-    for _ in range(60):                       # postgres must be ready before gogs
-        if podman._run(["exec", pg, "pg_isready", "-U", "gogs"],
-                       check=False).returncode == 0:
-            break
-        time.sleep(1)
-    else:
-        raise ProvisionError(f"{pg} never became ready")
-    proc = podman._run([
-        "run", "-d", "--name", gg, "--network", net,
+        "run", "-d", "--name", gg, "--network", f"{sim}-net",
         "--restart", "unless-stopped",
         "-p", f"{port}:3000",
-        "-v", f"{plat / 'gogs'}:/data", GOGS_IMAGE,
+        "-v", f"{plat / 'gogs'}:/data", PLATFORMS["gogs"].image,
     ])
     if proc.returncode != 0:
         raise ProvisionError(f"gogs start failed: {proc.stderr.strip()[:300]}")
-    inv.containers += [pg, gg]
-    inv.network = net
-    inv.gogs_port = port
+    inv.containers.append(gg)
+    inv.platform_port = port
 
     # wait for the web layer (first start runs migrations — can take a while)
     url = f"http://localhost:{port}"
+    print(f"[provision] waiting for gogs at {url} …", file=sys.stderr, flush=True)
     for _ in range(90):
         try:
             if httpx.get(url, timeout=2.0).status_code < 500:
@@ -246,22 +333,137 @@ ENABLED = false
         time.sleep(1)
     else:
         raise ProvisionError(f"admin user creation failed: {last_err}")
-    admin_token = existing["admin_token"] if existing else GogsClient(
-        token="-", base_url=url).create_token("operator", admin_password, "provision")
-    secrets = {"admin_username": "operator", "admin_password": admin_password,
-               "admin_token": admin_token, "gogs_port": port,
-               "gogs_url_external": url, "gogs_url_internal": f"http://{gg}:3000"}
+
+    return {"platform": "gogs", "admin_username": "operator",
+            "admin_password": admin_password, "gogs_port": port,
+            "gogs_url_external": url, "gogs_url_internal": f"http://{gg}:3000"}
+
+
+def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
+              port: int, admin_password: str) -> dict:
+    """The gitea container + admin user + token (codified-machinery product;
+    a valid phase-1 host since task 0037)."""
+    import secrets as secrets_mod
+    import time
+    import httpx
+
+    gt = f"{sim}-gitea"
+    plat = platform_dir(sim)
+    (plat / "gitea").mkdir(parents=True, exist_ok=True)
+    _ensure_postgres_db(pg, "gitea")
+
+    env = {
+        "GITEA__database__DB_TYPE": "postgres",
+        "GITEA__database__HOST": f"{pg}:5432",
+        "GITEA__database__NAME": "gitea",
+        "GITEA__database__USER": "gogs",
+        "GITEA__database__PASSWD": password,
+        "GITEA__database__SSL_MODE": "disable",
+        "GITEA__server__DOMAIN": "localhost",
+        "GITEA__server__ROOT_URL": f"http://localhost:{port}/",
+        "GITEA__server__HTTP_PORT": "3000",
+        "GITEA__security__INSTALL_LOCK": "true",
+        "GITEA__security__SECRET_KEY": secrets_mod.token_hex(16),
+        "GITEA__service__DISABLE_REGISTRATION": "true",
+        "GITEA__repository__DEFAULT_BRANCH": "main",
+        "USER_UID": "1000",
+        "USER_GID": "1000",
+    }
+    run_args = ["run", "-d", "--name", gt, "--network", f"{sim}-net",
+                "--restart", "unless-stopped", "-p", f"{port}:3000"]
+    for k, v in env.items():
+        run_args += ["-e", f"{k}={v}"]
+    run_args += ["-v", f"{plat / 'gitea'}:/data", PLATFORMS["gitea"].image]
+
+    podman._run(["rm", "-f", gt], check=False)
+    proc = podman._run(run_args)
+    if proc.returncode != 0:
+        raise ProvisionError(f"gitea start failed: {proc.stderr.strip()[:300]}")
+    inv.containers.append(gt)
+    inv.platform_port = port
+
+    url = f"http://localhost:{port}"
+    print(f"[provision] waiting for gitea at {url} …", file=sys.stderr, flush=True)
+    for _ in range(90):
+        try:
+            if httpx.get(url, timeout=2.0).status_code < 500:
+                break
+        except Exception:
+            pass
+        time.sleep(1)
+    else:
+        raise ProvisionError(f"gitea at {url} never came up")
+
+    # headless bootstrap: the CLI refuses root and needs the work dir env;
+    # the web layer answers before migrations finish — retry
+    last_err = ""
+    token = ""
+    for attempt in range(60):
+        proc = podman._run([
+            "exec", "-u", "git", "-e", "HOME=/data/git", "-e", "GITEA_WORK_DIR=/data/gitea",
+            gt, "gitea", "admin", "user", "create",
+            "--username", "operator", "--password", admin_password,
+            "--email", f"operator@{sim}.invalid", "--admin",
+            "--must-change-password=false",
+            "--access-token", "--access-token-name", "provision",
+        ], check=False)
+        out = proc.stdout + proc.stderr
+        if proc.returncode == 0 or "already exists" in out:
+            for line in out.splitlines():
+                if "Access token was successfully created" in line:
+                    token = line.split("...", 1)[-1].strip()
+            break
+        last_err = out.strip()[:300]
+        if attempt % 10 == 9:
+            print(f"[provision] gitea admin bootstrap retry {attempt + 1}/60 …",
+                  file=sys.stderr, flush=True)
+        time.sleep(1)
+    else:
+        raise ProvisionError(f"gitea admin user creation failed: {last_err}")
+
+    secrets = {"platform": "gitea", "admin_username": "operator",
+               "admin_password": admin_password, "gitea_port": port,
+               "gitea_url_external": url, "gitea_url_internal": f"http://{gt}:3000"}
+    if token:      # re-provision may find the user already present (no token
+        secrets["admin_token"] = token   # on stdout) — fall back to the old one
+    return secrets
+
+
+def _up_platform(sim: str, inv: Inventory, platform: str) -> dict:
+    """Network + postgres + <platform> + admin + admin token. Returns the secrets."""
+    import secrets as secrets_mod
+
+    spec = PLATFORMS[platform]
+    _ensure_platform_images(spec)
+    pg = _up_postgres(sim, inv, _pg_password())
+
+    # re-provisioning reuses the existing platform volume — keep its admin
+    # credentials, don't mint new (wrong) ones
+    existing = json.loads(secrets_path(sim).read_text(encoding="utf-8")) \
+        if secrets_path(sim).exists() else None
+    admin_password = existing["admin_password"] if existing else secrets_mod.token_urlsafe(12)
+
+    port = _free_port()
+    secrets = _up_gogs(sim, inv, pg, _pg_password(), port, admin_password) \
+        if platform == "gogs" else \
+        _up_gitea(sim, inv, pg, _pg_password(), port, admin_password)
+
+    if "admin_token" not in secrets:
+        url = secrets[f"{platform}_url_external"]
+        secrets["admin_token"] = existing["admin_token"] if existing else \
+            PLATFORMS[platform].client(token="-", base_url=url).create_token(
+                "operator", admin_password, "provision")
     secrets_path(sim).write_text(json.dumps(secrets, indent=2), encoding="utf-8")
     return secrets
 
 
-def preflight(client: GogsClient) -> None:
+def preflight(client) -> None:
     try:
         who = client.whoami()
-    except GogsError as e:
-        raise ProvisionError(f"gogs unreachable or token invalid: {e}") from e
+    except API_ERRORS as e:
+        raise ProvisionError(f"platform unreachable or token invalid: {e}") from e
     if not who.get("login"):
-        raise ProvisionError("gogs token did not authenticate")
+        raise ProvisionError("platform token did not authenticate")
     if not store.world_exists():
         raise ProvisionError("no world yet — run `polis world genesis` first")
     try:
@@ -270,24 +472,24 @@ def preflight(client: GogsClient) -> None:
         raise ProvisionError(f"git unusable: {e}") from e
 
 
-def _ensure_user(client: GogsClient, username: str, email: str, password: str,
+def _ensure_user(client, username: str, email: str, password: str,
                  display: str) -> None:
     try:
         client.create_user(username, email, password, display)
-    except GogsError as e:
+    except API_ERRORS as e:
         if "already exists" not in str(e) and "422" not in str(e):
             raise
 
 
-def _ensure_org(client: GogsClient, username: str, full_name: str = "") -> None:
+def _ensure_org(client, username: str, full_name: str = "") -> None:
     try:
         client.create_org(username, full_name)
-    except GogsError as e:
+    except API_ERRORS as e:
         if "already exists" not in str(e) and "422" not in str(e):
             raise
 
 
-def _ensure_repo(client: GogsClient, owner: str, name: str) -> None:
+def _ensure_repo(client, owner: str, name: str) -> None:
     if not client.repo_exists(owner, name):
         client.create_repo(owner, name)
 
@@ -343,7 +545,7 @@ def _founding_repo(world, workdir: Path) -> Path:
     return repo
 
 
-def _seed_repo(client: GogsClient, owner: str, name: str, token: str,
+def _seed_repo(client, owner: str, name: str, token: str,
                world, workdir: Path, base_url: str) -> None:
     """Push the founding corpus if the repo is empty (idempotent)."""
     url = f"{base_url}/{owner}/{name}.git"
@@ -356,19 +558,23 @@ def _seed_repo(client: GogsClient, owner: str, name: str, token: str,
     gitcmd.run(founding, "push", auth_url, "main:main")
 
 
-def up(sim: str, with_city_containers: bool = False, force: bool = False) -> Inventory:
+def up(sim: str, platform: str = "gogs", with_city_containers: bool = False,
+       force: bool = False) -> Inventory:
+    if platform not in PLATFORMS:
+        raise ProvisionError(f"unknown platform '{platform}' "
+                             f"(choose from: {', '.join(PLATFORMS)})")
     _validate_sim_id(sim)
     world = store.load_world()
     fed = world.federation
-    inv = Inventory(sim=sim, created_at=_utcnow())
+    inv = Inventory(sim=sim, created_at=_utcnow(), platform=platform)
     workdir = SIMS_DIR / sim / "work"
     workdir.mkdir(parents=True, exist_ok=True)
 
-    # --- the sim's own platform: network, postgres, gogs ------------------------
-    secrets = _up_platform(sim, inv)
-    client = sim_gogs_client(sim)
+    # --- the sim's own platform: network, postgres, <platform> ---------------
+    secrets = _up_platform(sim, inv, platform)
+    client = sim_platform_client(sim)
     preflight(client)
-    base_url = secrets["gogs_url_external"]
+    base_url = secrets[f"{platform}_url_external"]
 
     # --- users + per-sim tokens ---------------------------------------------
     tokens: dict[str, str] = {}
@@ -411,16 +617,17 @@ def up(sim: str, with_city_containers: bool = False, force: bool = False) -> Inv
     # --- per-sim slices ---------------------------------------------------------
     slices_dir = SIMS_DIR / sim / "cities"
     slices_dir.mkdir(parents=True, exist_ok=True)
-    internal = secrets["gogs_url_internal"]
+    internal = secrets[f"{platform}_url_internal"]
     for city in world.cities:
         slice_ = store.city_slice(world, city.id)
+        slice_["federation"]["platform"] = platform     # the provisioned product
         slice_["git"]["remotes"] = {
             "origin": f"{internal}/{sim}-{city.id}/{fed.repo}.git",
             "upstream": f"{internal}/{archive_org}/{fed.repo}.git",
         }
         for citizen in slice_["citizens"]:
             citizen["credentials"]["api_tokens"] = {
-                "gogs": tokens[citizen["username"]]
+                platform: tokens[citizen["username"]]
             }
         (slices_dir / f"{city.id}.json").write_text(
             json.dumps(slice_, indent=2), encoding="utf-8")
@@ -433,8 +640,7 @@ def up(sim: str, with_city_containers: bool = False, force: bool = False) -> Inv
     if with_city_containers:
         inv.containers += _up_containers(sim, world, slices_dir)
 
-    inv.notes.append("orgs/repos/users die with the sim's gogs (its volumes are at "
-                     f"{platform_dir(sim)}) — delete with the sim dir")
+    inv.notes.append(PLATFORMS[platform].notes.format(plat_dir=platform_dir(sim)))
     inv.save()
     return inv
 
@@ -510,8 +716,8 @@ def _up_containers(sim: str, world, slices_dir: Path) -> list[str]:
 
 def status(sim: str) -> dict:
     inv = Inventory.load(sim)
-    client = sim_gogs_client(sim)
-    report = {"sim": sim, "ok": True, "items": []}
+    client = sim_platform_client(sim)
+    report = {"sim": sim, "ok": True, "platform": inv.platform, "items": []}
 
     def item(kind: str, name: str, exists: bool, note: str = ""):
         report["items"].append({"kind": kind, "name": name, "exists": exists, "note": note})
@@ -524,7 +730,10 @@ def status(sim: str) -> dict:
         owner, name = r.split("/", 1)
         item("repo", r, client.repo_exists(owner, name))
     for o in inv.orgs:
-        item("org", o, True, "existence not checked (no org-delete/list-by-name route)")
+        if inv.platform == "gitea":
+            item("org", o, client.org_exists(o))
+        else:
+            item("org", o, True, "existence not checked (no org-delete/list-by-name route)")
     for c in inv.containers:
         item("container", c, podman.container_running(c),
              podman.container(c).get("State") if podman.container(c) else "absent")
@@ -571,7 +780,8 @@ def sim_containers(sim: str) -> list[str]:
     proc = podman._run(["ps", "-a", "--format", "{{.Names}}"], check=False)
     names = proc.stdout.split()
     return sorted(n for n in names
-                  if n in (f"{sim}-postgres", f"{sim}-gogs", f"polis-operator-{sim}")
+                  if n in (f"{sim}-postgres", f"{sim}-gogs", f"{sim}-gitea",
+                           f"polis-operator-{sim}")
                   or (n.startswith("polis-city-") and n.endswith(f"-{sim}")))
 
 
@@ -583,25 +793,31 @@ def destroy(sim: str) -> dict:
     done: dict[str, Any] = {"repos": 0, "users": 0, "containers": [],
                             "network": None, "dir": None}
 
-    # API cleanup if the sim's gogs answers (orgs die with it regardless)
+    # API cleanup if the sim's platform answers (orgs die with it regardless)
     try:
         inv = Inventory.load(sim)
-        client = sim_gogs_client(sim)
+        client = sim_platform_client(sim)
         for r in inv.repos:
             owner, name = r.split("/", 1)
             try:
                 client.delete_repo(owner, name)
                 done["repos"] += 1
-            except GogsError:
+            except API_ERRORS:
                 pass
+        if inv.platform == "gitea":
+            for o in inv.orgs:
+                try:
+                    client.delete_org(o)
+                except API_ERRORS:
+                    pass
         for u in inv.users:
             try:
                 client.delete_user(u)
                 done["users"] += 1
-            except GogsError:
+            except API_ERRORS:
                 pass
     except Exception:
-        pass                                    # gogs gone or inventory stale — fine
+        pass                                    # platform gone or inventory stale — fine
 
     for c in sim_containers(sim):
         podman._run(["rm", "-f", c], check=False)
@@ -623,7 +839,7 @@ def list_sims() -> list[dict]:
         sims |= {p.name for p in SIMS_DIR.iterdir() if p.is_dir()}
     proc = podman._run(["ps", "-a", "--format", "{{.Names}}"], check=False)
     for n in proc.stdout.split():
-        for suffix in ("-postgres", "-gogs"):
+        for suffix in ("-postgres", "-gogs", "-gitea"):
             if n.endswith(suffix) and not n.startswith("polis-"):
                 sims.add(n[: -len(suffix)])
         if n.startswith("polis-operator-"):
@@ -646,14 +862,27 @@ def list_sims() -> list[dict]:
 
 def teardown(sim: str) -> dict:
     inv = Inventory.load(sim)
-    client = sim_gogs_client(sim)
+    client = sim_platform_client(sim)
     done = {"repos": 0, "users": 0, "containers": 0}
     for r in inv.repos:
         owner, name = r.split("/", 1)
         try:
             client.delete_repo(owner, name)
             done["repos"] += 1
-        except GogsError:
+        except API_ERRORS:
+            pass
+    if inv.platform == "gitea":
+        for o in inv.orgs:
+            try:
+                client.delete_org(o)
+            except API_ERRORS:
+                pass
+    # users before containers — the API must still be reachable
+    for u in inv.users:
+        try:
+            client.delete_user(u)
+            done["users"] += 1
+        except API_ERRORS:
             pass
     for c in inv.containers:
         podman._run(["rm", "-f", c], check=False)
@@ -661,10 +890,4 @@ def teardown(sim: str) -> dict:
     if inv.network:
         podman._run(["network", "rm", inv.network], check=False)
         done["network"] = inv.network
-    for u in inv.users:
-        try:
-            client.delete_user(u)
-            done["users"] += 1
-        except GogsError:
-            pass
     return done

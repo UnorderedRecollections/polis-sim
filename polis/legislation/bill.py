@@ -46,7 +46,7 @@ def _find_pr(chamber: Chamber, branch: str) -> dict | None:
 def _require_petition(chamber: Chamber, branch: str):
     """The open matter for a bill: a platform PR in phase 2, a matter-store
     entry in phase 1 (the institutions keep their own proceedings)."""
-    if chamber.platform == "gitea":
+    if chamber.phase == 2:
         pr = _find_pr(chamber, branch)
         if pr is None:
             raise ChamberError(f"no open petition found for '{branch}' — has the bill been introduced?")
@@ -183,7 +183,7 @@ def introduce(chamber: Chamber, bill: str, title: str, body: str,
               "the draft is lodged with the city's archive",
         run=run_push,
     )
-    if chamber.platform == "gitea":
+    if chamber.phase == 2:
         head = bill if origin_owner == up_owner else f"{origin_owner}:{bill}"
         payload = {"head": head, "base": "main", "title": title, "body": body}
 
@@ -232,7 +232,7 @@ def introduce(chamber: Chamber, bill: str, title: str, body: str,
 def debate(chamber: Chamber, bill: str, body: str) -> Plan:
     def run():
         petition = _require_petition(chamber, bill)
-        if chamber.platform == "gitea":
+        if chamber.phase == 2:
             owner, repo = chamber.upstream_owner_repo()
             return chamber.client()._request(
                 "POST", f"/api/v1/repos/{owner}/{repo}/issues/{petition['number']}/comments",
@@ -242,7 +242,7 @@ def debate(chamber: Chamber, bill: str, body: str) -> Plan:
         return petition.id
 
     machinery = (
-        "POST …/issues/<petition>/comments" if chamber.platform == "gitea"
+        "POST …/issues/<petition>/comments" if chamber.phase == 2
         else f"matters.json: append event (debated, {chamber.actor_username})"
     )
     return Plan(act=f"debate the bill “{bill}”", actor=chamber.actor_label).add(
@@ -263,7 +263,7 @@ def scrutinize(chamber: Chamber, bill: str, verdict: str, body: str) -> Plan:
 
     def run():
         petition = _require_petition(chamber, bill)
-        if chamber.platform == "gitea":
+        if chamber.phase == 2:
             owner, repo = chamber.upstream_owner_repo()
             return chamber.client()._request(
                 "POST", f"/api/v1/repos/{owner}/{repo}/issues/{petition['number']}/comments",
@@ -278,7 +278,7 @@ def scrutinize(chamber: Chamber, bill: str, verdict: str, body: str) -> Plan:
 
     machinery = (
         f"POST …/issues/<petition>/comments  {json.dumps({'body': text})}"
-        if chamber.platform == "gitea"
+        if chamber.phase == 2
         else f"matters.json: append event ({stamp.lower()}, {chamber.actor_username})"
     )
     return Plan(act=f"scrutinize the bill “{bill}” ({verdict})", actor=chamber.actor_label).add(
@@ -383,7 +383,7 @@ def _incorporate_locally(chamber: Chamber, method: str, act_title: str | None = 
 
 def _decide(chamber: Chamber, petition, status: str, event: str, detail: str = "") -> str:
     """Enter the order into the record: close the petition as decided."""
-    if chamber.platform == "gitea":
+    if chamber.phase == 2:
         owner, repo = chamber.upstream_owner_repo()
         chamber.client()._request(
             "PATCH", f"/api/v1/repos/{owner}/{repo}/pulls/{petition['number']}",
@@ -403,7 +403,7 @@ def ratify(chamber: Chamber, bill: str) -> Plan:
         changed = _changed_files(chamber, bill)
         _check_jurisdiction(chamber, changed)
         petition = _require_petition(chamber, bill)
-        if chamber.platform == "gitea":
+        if chamber.phase == 2:
             try:
                 _merge_via_api(chamber, petition["number"], "merge")
             except GogsError:
@@ -414,7 +414,7 @@ def ratify(chamber: Chamber, bill: str) -> Plan:
 
     merge_step = (
         "POST …/pulls/<petition>/merge  {\"Do\": \"merge\"}"
-        if chamber.platform == "gitea"
+        if chamber.phase == 2
         else f"git -C <repo> merge --no-ff FETCH_HEAD && git push {dest} main  "
              "(customary incorporation — the apparatus has no merge route)"
     )
@@ -440,7 +440,7 @@ def consolidate(chamber: Chamber, bill: str, act_title: str) -> Plan:
         changed = _changed_files(chamber, bill)
         _check_jurisdiction(chamber, changed)
         petition = _require_petition(chamber, bill)
-        if chamber.platform == "gitea":
+        if chamber.phase == 2:
             try:
                 _merge_via_api(chamber, petition["number"], "squash")
             except GogsError:
@@ -452,7 +452,7 @@ def consolidate(chamber: Chamber, bill: str, act_title: str) -> Plan:
 
     merge_step = (
         "POST …/pulls/<petition>/merge  {\"Do\": \"squash\"}"
-        if chamber.platform == "gitea"
+        if chamber.phase == 2
         else f"git -C <repo> merge --squash FETCH_HEAD && git commit && git push {dest} main  "
              "(customary codification — the apparatus has no merge route)"
     )
@@ -471,7 +471,7 @@ def reject(chamber: Chamber, bill: str) -> Plan:
 
     machinery = (
         "PATCH …/pulls/<petition>  {\"state\": \"closed\"}"
-        if chamber.platform == "gitea"
+        if chamber.phase == 2
         else "matters.json: status = rejected (+ event)"
     )
     return Plan(act=f"reject the bill “{bill}”", actor=chamber.actor_label).add(
@@ -484,7 +484,7 @@ def reject(chamber: Chamber, bill: str) -> Plan:
 # --- inspection ---------------------------------------------------------------
 
 def list_bills(chamber: Chamber, state: str = "open") -> list[dict]:
-    if chamber.platform == "gitea":
+    if chamber.phase == 2:
         owner, repo = chamber.upstream_owner_repo()
         prs = chamber.client()._request(
             "GET", f"/api/v1/repos/{owner}/{repo}/pulls", params={"state": state, "limit": 50}

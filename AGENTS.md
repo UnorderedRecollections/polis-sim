@@ -73,6 +73,9 @@ Cities") whose legislative life runs on real local infrastructure.
 - gogs :10880 — phase-1 platform ("customary machinery"; merely a mechanical
   archive in the fiction — no petitions/reviews/approvals).
 - gitea :3001 — phase-2 platform ("codified machinery"; postgres-backed).
+  Since 0037 it also hosts phase-1 sims: `provision up --platform gitea`
+  (phase is a procedure, not a product — the federation stays in phase 1
+  with matter-store proceedings on either product).
 - woodpecker server :10890 + agent — CI (the Mechanical Magistrate), OAuth against gitea.
 - City containers `polis-city-*` not built yet.
 - Secrets: `.env` (`GOGS_API_KEY GITEA_API_KEY WOODPECKER_API_KEY
@@ -83,8 +86,10 @@ Cities") whose legislative life runs on real local infrastructure.
   gogs …) from the shared dev rig to one provisioned sim: endpoints/secrets
   come from `data/sims/<sim>/secrets.json` (resolution: `POLIS_*` override
   > sim secrets > env/.env > defaults); container/network names become
-  `<sim>-gogs`, `<sim>-postgres`, `<sim>-net`, `polis-operator-<sim>`;
-  gitea/woodpecker checks report n/a (phase-1 sims run gogs only).
+  `<sim>-<platform>`, `<sim>-postgres`, `<sim>-net`, `polis-operator-<sim>`
+  (platform = the provisioned product, `gogs` default). Health checks the
+  sim's platform: gogs checks for gogs sims, gitea checks for gitea sims,
+  the other suite reports n/a; woodpecker stays n/a (phase 2).
   `sim new/drive/tick/stories/present/runtime` default their run id to it.
 
 ## Key conventions
@@ -94,9 +99,14 @@ Cities") whose legislative life runs on real local infrastructure.
   Stated in `polis/legislation/__init__.py`; keep it.
 - Agency separation: `political` persons (legislators/delegates) may not hold
   juridical offices; enforced in `cli/assign.py`.
-- Federation `phase`: 1 = gogs (customary), 2 = gitea+CI (codified). Stored in world.json.
-- `Chamber` (legislation/chamber.py) resolves actor/remotes/platform; two modes:
-  container (`POLIS_CITY_CONFIG` or `/etc/polis/city.json`) vs operator
+- Federation `phase`: 1 = customary, 2 = codified (gitea+CI). Stored in world.json.
+  **Phase is a procedure, not a product** (task 0037): either platform
+  product can host phase 1; `federation.phase` never follows the product.
+- `Chamber` (legislation/chamber.py) resolves actor/remotes/product/phase:
+  `platform` = the provisioned product (from the slice's `federation.platform`,
+  fallback phase-derived) and selects client/URL/token; `phase` (1|2) is the
+  procedure — bill/docket dispatch on `phase == 2`, never on product. Two
+  modes: container (`POLIS_CITY_CONFIG` or `/etc/polis/city.json`) vs operator
   (`--city`, host-swapped URLs). Testing hooks: `POLIS_PLATFORM_TOKEN`,
   `POLIS_ORIGIN_URL`, `POLIS_UPSTREAM_URL`, `POLIS_REPO_DIR`, `POLIS_MATTERS_FILE`.
 
@@ -150,21 +160,26 @@ Cities") whose legislative life runs on real local infrastructure.
   petitioner's repo; `archive.obtain` establishes local `main` from
   `origin/main` (API-created repos have HEAD → nonexistent master); runtime
   anchors read `main`, not HEAD; journal `run_dir()` honors `POLIS_SIM_DIR`.
-- `polis provision up <sim-id> [--with-city-containers] [--force]` provisions a
-  **fully self-contained** sim instance: network `<sim>-net`, containers
-  `<sim>-postgres` + `<sim>-gogs` (headless bootstrap — app.ini with
-  `DEFAULT_BRANCH=main`, `operator` admin user, token; host port from
+- `polis provision up <sim-id> [--platform gogs|gitea] [--with-city-containers]
+  [--force]` provisions a **fully self-contained** sim instance: network
+  `<sim>-net`, containers `<sim>-postgres` + `<sim>-gogs` or `<sim>-gitea`
+  (headless bootstrap — `operator` admin user + token; gogs via app.ini
+  (`DEFAULT_BRANCH=main`) + its CLI, gitea via `GITEA__*` env config +
+  `gitea admin user create --access-token`; host port from
   `_free_port(11880+)`), users `<sim>-<username>` with per-sim tokens, orgs
   `<sim>-archive`/`<sim>-<city>` + `common-law` repos + **one shared founding
   commit** (`_founding_repo` — all repos must share history or the Keeper's
-  enactment pushes are non-fast-forward), per-sim slices, inventory
-  `provision.json`. Secrets in `data/sims/<sim>/secrets.json` (**never
-  world.json** — provisioning must not mutate the civil registry;
+  enactment pushes are non-fast-forward), per-sim slices (carrying
+  `federation.platform` = the product; tokens keyed by product), inventory
+  `provision.json` (records `platform`). Secrets in `data/sims/<sim>/secrets.json`
+  (**never world.json** — provisioning must not mutate the civil registry;
   `polis world cleanup` removes legacy `gogs@<sim>` residue). Slices/remotes
-  use the in-network URL `http://<sim>-gogs:3000`; the host port is for the
-  operator CLI only. `status`/`teardown` use `sim_gogs_client(sim)`; teardown
-  removes containers+network, the platform volumes die with the sim dir
-  (`rm -rf data/sims/<sim>`). Re-`up --force` reuses existing secrets/volume.
+  use the in-network URL `http://<sim>-<platform>:3000`; the host port is for
+  the operator CLI only. `status`/`teardown`/`destroy` use
+  `sim_platform_client(sim)`; teardown removes containers+network, the
+  platform volumes die with the sim dir (`rm -rf data/sims/<sim>`).
+  Re-`up --force` reuses existing secrets/volume. Demos:
+  `tests/provision-demo.sh` + `tests/provision-demo-gitea.sh` (**passing**).
 - `polis nuke gogs orgs <prefix> --yes` (DB cascade) is for the **shared dev
   rig** only — per-sim gogs instances need no surgery.
 - City containers: `docker/polis-city/Dockerfile` (build context = project
@@ -185,7 +200,18 @@ Cities") whose legislative life runs on real local infrastructure.
   petitions/bills are **matter-store entries**; ratify/consolidate always
   incorporate locally (`git merge [--squash] FETCH_HEAD` + push) and close the
   matter with the order entered into the record. Phase 2 (gitea) uses real PRs
-  — same command surface, dispatch on `chamber.platform`.
+  — same command surface, dispatch on `chamber.phase == 2` (task 0037), not
+  on the product.
+- **Gitea facts (v1.27, task 0037)**: token creation needs `scopes:["all"]`
+  in the body when the caller authenticates with basic auth; token names are
+  unique per user (re-runs use suffixed names, like gogs); org repos go
+  through `POST /orgs/<org>/repos` (the admin-users route covers users only);
+  an org with repos refuses deletion (delete repos first); the `gitea admin`
+  CLI refuses root — run it `-u git` with `HOME=/data/git GITEA_WORK_DIR=/data/gitea`;
+  `--access-token` prints the token on the last stdout line; the sim's
+  postgres serves db `gitea` (created at provision time — `CREATE DATABASE`
+  must be retried: `pg_isready` turns true during the entrypoint's temp
+  bootstrap phase).
 - **Also missing: forks API and token-delete route.** City repos are plain
   repos seeded by pushing the founding corpus (no fork relationship in
   phase 1); per-user tokens get suffixed names on re-runs (teardown deletes

@@ -92,6 +92,16 @@ gogs dependency:
 
 Depends on nothing; blocks task 0038.
 
+**Delivered (task 0037).** `provision up --platform gitea` provisions a
+self-contained gitea for a phase-1 sim; `Chamber` now splits product
+(`platform` — client/URL/token) from procedure (`phase` — bill/docket
+dispatch on `phase == 2`); gitea client gained the parity methods with
+gitea's quirks isolated (token scopes, org repos route, CLI bootstrap);
+health/config resolve the sim's platform. Verified end-to-end: a full
+phase-1 legislative flow (petition → draft → amend → introduce →
+scrutinize → ratify) ran on a gitea-hosted sim with matter-store
+proceedings; `tests/provision-demo-gitea.sh` added (passing).
+
 ## 5. Phase-transition machinery (task 0038)
 
 When the transition act(s) from 0036 are ratified:

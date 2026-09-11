@@ -28,7 +28,7 @@ def _get_matter(store: matters_mod.MatterStore, matter_id: str) -> Matter:
 
 def file_petition(chamber: Chamber, title: str, body: str) -> Plan:
     """A recognized problem, request or dispute enters the docket."""
-    if chamber.platform == "gitea":
+    if chamber.phase == 2:
         return _platform_file(chamber, title, body)
 
     def run():
@@ -52,7 +52,7 @@ def file_petition(chamber: Chamber, title: str, body: str) -> Plan:
 
 
 def comment_petition(chamber: Chamber, matter_id: str, body: str) -> Plan:
-    if chamber.platform == "gitea":
+    if chamber.phase == 2:
         return _platform_comment(chamber, int(matter_id.lstrip("#")), body)
 
     def run():
@@ -76,7 +76,7 @@ def comment_petition(chamber: Chamber, matter_id: str, body: str) -> Plan:
 
 
 def dismiss_petition(chamber: Chamber, matter_id: str) -> Plan:
-    if chamber.platform == "gitea":
+    if chamber.phase == 2:
         return _platform_dismiss(chamber, int(matter_id.lstrip("#")))
 
     def run():
@@ -147,7 +147,7 @@ def _platform_dismiss(chamber: Chamber, number: int) -> Plan:
 # --- inspection -------------------------------------------------------------------
 
 def list_petitions(chamber: Chamber, state: str = "open") -> list[dict]:
-    if chamber.platform == "gitea":
+    if chamber.phase == 2:
         owner, repo = chamber.upstream_owner_repo()
         return chamber.client()._request(
             "GET", f"/api/v1/repos/{owner}/{repo}/issues", params={"state": state, "type": "issues"}
@@ -162,7 +162,7 @@ def list_petitions(chamber: Chamber, state: str = "open") -> list[dict]:
 
 
 def get_petition(chamber: Chamber, matter_id: str) -> dict:
-    if chamber.platform == "gitea":
+    if chamber.phase == 2:
         owner, repo = chamber.upstream_owner_repo()
         return chamber.client()._request(
             "GET", f"/api/v1/repos/{owner}/{repo}/issues/{matter_id}"

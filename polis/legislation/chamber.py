@@ -1,8 +1,14 @@
 """Chamber — the working context of a legislative act.
 
 Resolves: who acts (a person from the city slice), through which platform
-(gogs in phase 1), against which remotes (origin = the city's lodged copy,
+(the provisioned *product* — gogs or gitea; since task 0037 either product
+can host phase 1), against which remotes (origin = the city's lodged copy,
 upstream = the federal archive), and in which local clone.
+
+Product vs phase (task 0037): `platform` is the provisioned product and
+selects client/URL/token; `phase` (1 | 2) is the *procedure* — bills and
+the docket dispatch on phase, not product (phase 1 runs matter-store
+proceedings even on a gitea host).
 
 Two modes:
   * container mode — POLIS_CITY_CONFIG (or /etc/polis/city.json) present:
@@ -32,7 +38,8 @@ class ChamberError(RuntimeError):
 
 @dataclass
 class Chamber:
-    platform: str            # "gogs" | "gitea"
+    platform: str            # the provisioned product: "gogs" | "gitea"
+    phase: int               # the procedure: 1 customary | 2 codified
     city_id: str
     actor: dict              # person dict from the slice
     origin: str              # remote URL of the city's lodged copy
@@ -75,8 +82,8 @@ class Chamber:
         return self.owner_repo(self.upstream)
 
     def _host_swap(self, url: str) -> str:
-        """In operator mode the in-network URL (gogs:3000) is unreachable;
-        swap the host for the locally published one (localhost:10880)."""
+        """In operator mode the in-network URL (<platform>:3000) is
+        unreachable; swap the host for the locally published one."""
         if not self.operator_mode:
             return url
         platform_url = config.GOGS_URL if self.platform == "gogs" else config.GITEA_URL
@@ -118,8 +125,9 @@ def _load_slice(city: str | None) -> tuple[dict, bool, list[dict]]:
     if not city:
         raise ChamberError("operator mode: --city is required (or set POLIS_CITY_CONFIG)")
     # sim context (POLIS_PROVISIONED_SIM): act with the SIM's slice — its
-    # remotes and per-sim tokens — not the world slice. Host-swap still
-    # applies (operator mode), and config.GOGS_URL is the sim's own gogs.
+    # remotes, per-sim tokens and provisioned product — not the world slice.
+    # Host-swap still applies (operator mode), and config's URLs resolve to
+    # the sim's own platform.
     if config.PROVISIONED_SIM:
         sim_slice = (config.DATA_DIR / "sims" / config.PROVISIONED_SIM
                      / "cities" / f"{city}.json")
@@ -154,16 +162,21 @@ def load_chamber(
             f"'{as_user}' is not a citizen of {slice_['city']['id']} "
             "(officers of the institution act from the operator side)"
         )
-    platform = "gitea" if slice_["federation"].get("phase") == 2 else "gogs"
+    fed = slice_.get("federation", {})
+    phase = int(fed.get("phase", 1))
+    # the provisioned product (task 0037): slices written by provisioning
+    # carry it; world slices fall back to the phase-derived product
+    product = fed.get("platform") or ("gitea" if phase == 2 else "gogs")
     remotes = slice_["git"]["remotes"]
     token = (
-        (actor.get("credentials", {}).get("api_tokens") or {}).get(platform)
+        (actor.get("credentials", {}).get("api_tokens") or {}).get(product)
         or os.environ.get("POLIS_PLATFORM_TOKEN")
     )
     default_repo = (str(config.DATA_DIR / "sims" / config.PROVISIONED_SIM / "common-law")
                     if config.PROVISIONED_SIM else "./common-law")
     chamber = Chamber(
-        platform=platform,
+        platform=product,
+        phase=phase,
         city_id=slice_["city"]["id"],
         actor=actor,
         origin=os.environ.get("POLIS_ORIGIN_URL") or remotes["origin"],

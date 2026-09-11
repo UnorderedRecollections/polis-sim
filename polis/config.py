@@ -39,7 +39,8 @@ _SECRETS = sim_secrets()
 
 GOGS_URL = (os.environ.get("POLIS_GOGS_URL") or _SECRETS.get("gogs_url_external")
             or "http://localhost:10880")
-GITEA_URL = os.environ.get("POLIS_GITEA_URL", "http://localhost:3001")
+GITEA_URL = (os.environ.get("POLIS_GITEA_URL") or _SECRETS.get("gitea_url_external")
+             or "http://localhost:3001")
 WOODPECKER_URL = os.environ.get("POLIS_WOODPECKER_URL", "http://localhost:10890")
 
 PODMAN_NETWORK = (os.environ.get("POLIS_NETWORK")
@@ -84,7 +85,18 @@ def gogs_token() -> str:
 
 
 def gitea_token() -> str:
+    # sim context (gitea-platformed sims, task 0037): the sim's admin token
+    if PROVISIONED_SIM and not os.environ.get("POLIS_GITEA_TOKEN"):
+        if _SECRETS.get("admin_token"):
+            return _SECRETS["admin_token"]
     return _secret("POLIS_GITEA_TOKEN", "GITEA_API_KEY")
+
+
+def sim_platform() -> str:
+    """The provisioned product of the context sim ("gogs" outside a sim)."""
+    if not PROVISIONED_SIM:
+        return ""
+    return _SECRETS.get("platform") or "gogs"
 
 
 def woodpecker_token() -> str:

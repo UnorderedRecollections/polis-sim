@@ -1,6 +1,7 @@
 """polis provision — porcelain: assemble (and remove) a sim instance's world."""
 from __future__ import annotations
 
+import json
 from typing import Optional
 
 import typer
@@ -22,6 +23,9 @@ def _sim(sim: Optional[str]) -> str:
 @app.command()
 def up(
     sim: Optional[str] = typer.Argument(None, help="Sim instance id (default: POLIS_PROVISIONED_SIM)."),
+    platform: str = typer.Option("gogs", "--platform",
+                                 help="The platform product hosting the sim: gogs | gitea "
+                                      "(phase is a procedure, not a product — either hosts phase 1)."),
     with_city_containers: bool = typer.Option(False, "--with-city-containers",
                                               help="Also build/run the polis-city containers."),
     force: bool = typer.Option(False, "--force", help="Re-provision even if an inventory exists."),
@@ -30,21 +34,30 @@ def up(
     from ..clients import podman
     from ..sim.journal import SIMS_DIR
     sim = _sim(sim)
+    if platform not in ("gogs", "gitea"):
+        die(f"unknown platform '{platform}' — choose gogs or gitea")
     # the guard checks liveness, not files: after a teardown the sim dir
     # (inventory, journal, secrets) remains, but re-provisioning over it is
     # exactly what `up` is for — the platform layer reuses volumes/secrets
-    already = (SIMS_DIR / sim / "provision.json").exists() and \
-        podman.container_running(f"{sim}-gogs")
+    inv_path = SIMS_DIR / sim / "provision.json"
+    existing_platform = "gogs"
+    if inv_path.exists():
+        try:
+            existing_platform = json.loads(inv_path.read_text(encoding="utf-8")).get("platform") or "gogs"
+        except Exception:
+            pass
+    already = inv_path.exists() and \
+        podman.container_running(f"{sim}-{existing_platform}")
     if already and not force:
         die(f"'{sim}' is already provisioned and running — use --force to re-provision")
     try:
-        inv = provision.up(sim, with_city_containers=with_city_containers)
+        inv = provision.up(sim, platform=platform, with_city_containers=with_city_containers)
     except provision.ProvisionError as e:
         die(str(e))
-    console.print(f"[green]sim '{sim}' provisioned[/green]")
+    console.print(f"[green]sim '{sim}' provisioned[/green] (platform: {inv.platform})")
     console.print(f"  users:      {len(inv.users)}")
     console.print(f"  repos:      {len(inv.repos)} (archive + {len(inv.repos)-1} city)")
-    console.print(f"  orgs:       {len(inv.orgs)} [dim](die with the sim's gogs)[/dim]")
+    console.print(f"  orgs:       {len(inv.orgs)} [dim](die with the sim's {inv.platform})[/dim]")
     console.print(f"  slices:     {inv.slices_dir}")
     if inv.containers:
         console.print(f"  containers: {len(inv.containers)}")
@@ -60,7 +73,8 @@ def status(
         report = provision.status(sim)
     except provision.ProvisionError as e:
         die(str(e))
-    table = status_table(f"provision status — {sim}", ["kind", "name", "state", "note"])
+    table = status_table(f"provision status — {sim} (platform: {report.get('platform', 'gogs')})",
+                         ["kind", "name", "state", "note"])
     for it in report["items"]:
         state = "[green]present[/green]" if it["exists"] else "[red]MISSING[/red]"
         table.add_row(it["kind"], it["name"], state, it["note"])
@@ -148,5 +162,5 @@ def teardown(
                   f"{done['repos']} repos, {done['users']} users, "
                   f"{done['containers']} containers deleted"
                   + (f", network {done['network']} removed" if done.get("network") else "")
-                  + "; orgs die with the sim's gogs — remove data/sims/" + sim
+                  + "; orgs die with the sim's platform — remove data/sims/" + sim
                   + " to free its volumes")

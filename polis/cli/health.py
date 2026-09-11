@@ -36,6 +36,10 @@ class Check:
 # --- subsystem check suites -------------------------------------------------
 
 def check_gogs() -> list[Check]:
+    if config.PROVISIONED_SIM and config.sim_platform() == "gitea":
+        return [Check("gogs: n/a in this sim", True,
+                      "platform: gitea (gogs checks apply to gogs-platformed sims)",
+                      warn=True)]
     container = (f"{config.PROVISIONED_SIM}-gogs" if config.PROVISIONED_SIM else "gogs")
     checks = [Check("gogs: container running", podman.container_running(container),
                     f"container '{container}' should be up")]
@@ -51,11 +55,13 @@ def check_gogs() -> list[Check]:
 
 
 def check_gitea() -> list[Check]:
-    if config.PROVISIONED_SIM:
-        return [Check("gitea: n/a in a sim context", True,
-                      "phase-1 sims run gogs only", warn=True)]
-    checks = [Check("gitea: container running", podman.container_running("gitea"),
-                    "container 'gitea' should be up")]
+    if config.PROVISIONED_SIM and config.sim_platform() == "gogs":
+        return [Check("gitea: n/a in this sim", True,
+                      "platform: gogs (gitea checks apply to gitea-platformed sims)",
+                      warn=True)]
+    container = (f"{config.PROVISIONED_SIM}-gitea" if config.PROVISIONED_SIM else "gitea")
+    checks = [Check("gitea: container running", podman.container_running(container),
+                    f"container '{container}' should be up")]
     try:
         client = GiteaClient()
         checks.append(Check("gitea: version", True, f"v{client.version()}"))
@@ -71,7 +77,7 @@ def check_gitea() -> list[Check]:
 def check_woodpecker() -> list[Check]:
     if config.PROVISIONED_SIM:
         return [Check("woodpecker: n/a in a sim context", True,
-                      "phase-1 sims run gogs only", warn=True)]
+                      "the Mechanical Magistrate is erected in phase 2", warn=True)]
     checks = [
         Check("woodpecker: server container running", podman.container_running("woodpecker-server"),
               "container 'woodpecker-server' should be up"),
@@ -99,7 +105,10 @@ def check_postgres() -> list[Check]:
         return checks
     ready, out = podman.exec_ok(name, ["pg_isready", "-U", "gogs"])
     checks.append(Check("postgres: pg_isready", ready, out))
-    databases = ("gogs",) if config.PROVISIONED_SIM else ("gogs", "gitea")
+    if config.PROVISIONED_SIM:
+        databases = ("gitea",) if config.sim_platform() == "gitea" else ("gogs",)
+    else:
+        databases = ("gogs", "gitea")
     for db in databases:
         ok, out = podman.exec_ok(name, ["psql", "-U", "gogs", "-d", db, "-tAc", "SELECT 1"])
         checks.append(Check(f"postgres: database '{db}' queryable", ok, out))
@@ -178,7 +187,7 @@ def all_(ctx: typer.Context) -> None:
         return
     if config.PROVISIONED_SIM:
         console.print(f"[dim]sim context: {config.PROVISIONED_SIM} "
-                      f"(POLIS_PROVISIONED_SIM)[/dim]")
+                      f"(POLIS_PROVISIONED_SIM, platform: {config.sim_platform()})[/dim]")
     any_failed = False
     for name in SUITES:
         any_failed |= _render(name, SUITES[name]())
