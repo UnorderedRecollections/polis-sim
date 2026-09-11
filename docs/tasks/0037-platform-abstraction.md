@@ -19,4 +19,4 @@ resolution); verify via `tests/provision-demo-gitea.sh`.
 ## Completion
 
 - **finished:** 2026-09-11T01:10:00Z
-- **commit:** (main)
+- **commit:** 00d8411
