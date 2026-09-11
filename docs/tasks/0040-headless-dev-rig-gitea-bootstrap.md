@@ -37,4 +37,4 @@ admin bootstrap; compose alone leaves an admin-less gitea — documented).
 ## Completion
 
 - **finished:** 2026-09-11T02:20:00Z
-- **commit:** (main)
+- **commit:** 9d8ea66
