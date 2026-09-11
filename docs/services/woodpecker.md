@@ -12,6 +12,17 @@ Schedule 1 (`data/world/legal/transition/woodpecker.yml`).
 Two containers: `woodpecker-server` (coordinator, OAuth against gitea) and
 `woodpecker-agent` (runs pipeline steps as sibling containers).
 
+Per-sim (phase 2, task 0041): `polis sim transition <run>` erects the
+Magistrate's own CI — `<sim>-woodpecker-server` + agent on the sim's
+network, an OAuth app on the sim's gitea, the Magistrate's scripted
+first login, the archive repo enabled, and the forge webhook. The
+pipeline is `data/world/legal/transition/.woodpecker.yml` (woodpecker v3
+`steps:` format); its step runs in `polis-city:latest` (which carries the
+legal-design data). PRs on the archive run `polis formal-check
+identify|entry-force|references|constitution` — exit non-zero fails the
+check; the constitution check requires a jurist's `SCRUTINY — APPROVED`
+comment on the PR. See `tests/transition-demo.sh`.
+
 ## Start locally
 
 ```sh

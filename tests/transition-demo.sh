@@ -14,10 +14,11 @@ WORK="$(mktemp -d "${TMPDIR:-/tmp}/polis-tran.XXXXXX")"
 say() { printf '\n\033[1m== %s ==\033[0m\n' "$*"; }
 cleanup() {
   say "cleanup (best effort)"
+  # the transition flips the CIVIL REGISTRY (world.json) — restore it
+  # BEFORE $WORK is removed
+  cp "$WORK/world-backup.json" "$WORLD" 2>/dev/null || true
   (cd "$ROOT" && uv run polis provision destroy "$SIM" --yes) > /dev/null 2>&1 || true
   rm -rf "$WORK" "$ROOT/data/sims/$SIM"
-  # the transition flips the CIVIL REGISTRY (world.json) — restore it
-  cp "$WORK/world-backup.json" "$WORLD" 2>/dev/null || true
   echo "cleanup done"
 }
 trap cleanup EXIT
@@ -58,7 +59,7 @@ for f in constitution/assigned-legal-authority-act.md \
          constitution/constitutional-approval-act.md \
          constitution/mechanical-magistracy-act.md \
          constitution/branch-protection.md \
-         CODEOWNERS woodpecker.yml; do
+         CODEOWNERS .woodpecker.yml; do
   git -C data/sims/tran-demo-01/common-law cat-file -e "main:$f" 2>/dev/null \
     && echo "  corpus: $f" || { echo "FAIL: $f missing from the corpus"; exit 1; }
 done
@@ -142,6 +143,84 @@ prs = c.get("/api/v1/repos/tran-demo-01-archive/common-law/pulls",
             params={"state": "open"}).json()
 assert not any("northern-banks-codified-access" in (p.get("head") or {}).get("ref", "") for p in prs)
 print("  the PR is merged and closed")
+EOF
+
+say "the Magistrate's CI: a defective act fails the formal checks"
+# a municipal act with a broken front matter (no proposer)
+uv run polis bill draft --as m.grimsbane --city cogswich \
+  --title "Defective Ledger Act" --kind act --into municipal/cogswich > /dev/null
+git -C data/sims/tran-demo-01/common-law checkout bill/defective-ledger-act > /dev/null 2>&1
+sed -i '' '/^proposer:/d' data/sims/tran-demo-01/common-law/municipal/cogswich/defective-ledger-act.md
+git -C data/sims/tran-demo-01/common-law add municipal/cogswich/defective-ledger-act.md
+git -C data/sims/tran-demo-01/common-law -c 'user.name=M. Grimsbane' -c 'user.email=m.grimsbane@cogswich.invalid' \
+  commit -qm "lodge the defective draft"
+uv run polis bill introduce bill/defective-ledger-act --as m.grimsbane --city cogswich \
+  --title "Defective Ledger Act" --body "A defective petition." > /dev/null
+uv run python - <<'EOF'
+import json, httpx, time
+s = json.load(open("data/sims/tran-demo-01/secrets.json"))
+gtok = s["admin_token"]; gport = s["gitea_port"]
+wtok = s["woodpecker_token"]; wport = s["woodpecker_port"]
+g = httpx.Client(base_url=f"http://localhost:{gport}",
+                 headers={"Authorization": f"token {gtok}"}, timeout=10)
+w = httpx.Client(base_url=f"http://localhost:{wport}/api",
+                 headers={"Authorization": f"Bearer {wtok}"}, timeout=10)
+repo = w.get("/repos/lookup/tran-demo-01-archive/common-law").json()
+assert repo, "archive repo not enabled in woodpecker"
+# the PR's commit status turns failure (identify: proposer missing)
+deadline = time.time() + 300
+status = None
+while time.time() < deadline:
+    prs = g.get("/api/v1/repos/tran-demo-01-archive/common-law/pulls",
+                params={"state": "open"}).json()
+    pr = next((p for p in prs if "defective-ledger-act" in (p.get("head") or {}).get("ref", "")), None)
+    if pr:
+        st = g.get(f"/api/v1/repos/tran-demo-01-archive/common-law/commits/{pr['head']['sha']}/status").json()
+        status = st.get("state")
+        if status in ("failure", "error"):
+            break
+    time.sleep(10)
+assert status in ("failure", "error"), f"the defective act was not rejected (status={status})"
+print("  the defective act failed the formal checks (commit status: failure)")
+EOF
+
+say "the Magistrate's CI: the corrected act passes"
+git -C data/sims/tran-demo-01/common-law checkout bill/defective-ledger-act > /dev/null 2>&1
+sed -i '' 's|^origin_city:|proposer: m.grimsbane\
+origin_city:|' data/sims/tran-demo-01/common-law/municipal/cogswich/defective-ledger-act.md
+git -C data/sims/tran-demo-01/common-law add municipal/cogswich/defective-ledger-act.md
+git -C data/sims/tran-demo-01/common-law -c 'user.name=M. Grimsbane' -c 'user.email=m.grimsbane@cogswich.invalid' \
+  commit -qm "restore the proposer"
+# push through the operator's host-swapped URL (the clone's origin is
+# the in-network URL, unreachable from the host)
+PUSHURL=$(uv run python - <<'EOF'
+import json
+s = json.load(open("data/sims/tran-demo-01/secrets.json"))
+city = json.load(open("data/sims/tran-demo-01/cities/cogswich.json"))
+tok = next(c for c in city["citizens"] if c["username"] == "m.grimsbane")["credentials"]["api_tokens"]["gitea"]
+print(f"http://{tok}@localhost:{s['gitea_port']}/tran-demo-01-cogswich/common-law.git")
+EOF
+)
+git -C data/sims/tran-demo-01/common-law push -q "$PUSHURL" bill/defective-ledger-act:bill/defective-ledger-act
+uv run python - <<'EOF'
+import json, httpx, time
+s = json.load(open("data/sims/tran-demo-01/secrets.json"))
+gtok = s["admin_token"]; gport = s["gitea_port"]
+g = httpx.Client(base_url=f"http://localhost:{gport}",
+                 headers={"Authorization": f"token {gtok}"}, timeout=10)
+deadline = time.time() + 300
+while time.time() < deadline:
+    prs = g.get("/api/v1/repos/tran-demo-01-archive/common-law/pulls",
+                params={"state": "open"}).json()
+    pr = next((p for p in prs if "defective-ledger-act" in (p.get("head") or {}).get("ref", "")), None)
+    if pr:
+        st = g.get(f"/api/v1/repos/tran-demo-01-archive/common-law/commits/{pr['head']['sha']}/status").json()
+        if st.get("state") == "success":
+            print("  the corrected act passed the formal checks (commit status: success)")
+            break
+    time.sleep(10)
+else:
+    raise SystemExit("the corrected act did not pass within the deadline")
 EOF
 
 say "TRANSITION DEMO PASSED"

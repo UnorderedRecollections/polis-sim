@@ -38,7 +38,7 @@ ACTS = [
     ("act-2-constitutional-approval.md", "Constitutional Approval Act",
      "branch-protection.md", "constitution/branch-protection.md"),
     ("act-3-mechanical-magistracy.md", "Mechanical Magistracy Act",
-     "woodpecker.yml", "woodpecker.yml"),
+     ".woodpecker.yml", ".woodpecker.yml"),
 ]
 
 PETITION_TITLE = "Petition for the Codification of the Machinery"
@@ -113,6 +113,10 @@ def transition(run_id: str) -> Story:
     cfg = RunConfig.load(run_id)
     rd = run_dir(run_id)
     _require_gitea(run_id)
+    if store.load_world().federation.phase != 1:
+        raise DirectorError(
+            "the federation already operates in phase 2 — the transition is "
+            "a one-time event")
     stories = load_stories(run_id)
     if any(s.template == "phase_transition" and s.status == "enacted" for s in stories):
         raise DirectorError(

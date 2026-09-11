@@ -174,9 +174,37 @@ Cities") whose legislative life runs on real local infrastructure.
   move into the platform: issues/PRs (gitea city repos are **forks** —
   cross-repo PRs require the fork relationship; the merge API auto-closes
   PRs, so the order is not PATCH-closed again; container-mode chambers
-  derive the API client's base URL from the slice origin). CI (woodpecker
-  per sim + the Magistrate's pipeline) is 0038b.
+  derive the API client's base URL from the slice origin).
   Demo: `tests/transition-demo.sh` (**passing**).
+- **The Mechanical Magistrate's CI** (`provision.up_woodpecker`, task 0041;
+  the rest of roadmap §5): the transition's host wrapper erects the CI
+  after the story — per-sim `<sim>-woodpecker-server` + agent (the macOS
+  VM quirks: `--user 0:0`, `--security-opt label=disable`, the VM socket),
+  an OAuth2 app on the sim's gitea (`POST /user/applications/oauth2`,
+  redirects registered for BOTH the loopback and
+  `host.containers.internal`), the Magistrate's FIRST LOGIN scripted
+  end-to-end (gitea login form → OAuth grant (`granted=true`; already
+  authorized apps redirect straight to the callback) → woodpecker
+  `/authorize` → the CSRF token from `/web-config.js` → `POST
+  /api/user/token`), the archive repo enabled (Magistrate gets admin
+  collaborator rights; `require_approval: "none"` — fork PRs are blocked
+  pending approval otherwise), the city forks synced to the codified
+  machinery (a PR's pipeline config is read from its HEAD — the fork),
+  global secrets `POLIS_GITEA_URL`/`POLIS_GITEA_TOKEN` (the checks'
+  context — `WOODPECKER_ENVIRONMENT`'s comma format mangles URLs), and
+  the forge webhook (woodpecker registers its own — `WOODPECKER_HOST`
+  must be `host.containers.internal:<port>` so the forge can deliver,
+  and gitea needs `security.ALLOWED_HOST_LIST` incl.
+  `host.containers.internal` + `webhook.ALLOW_LOCALNETWORK_HOSTS=true`).
+  The pipeline = `data/world/legal/transition/.woodpecker.yml` (woodpecker
+  v3 `steps:` list format; the step image is `polis-city:latest`, which
+  carries the legal-design data — `POLIS_DATA_DIR` — for the CLI's
+  import-time ontology loaders). The checks: `polis formal-check
+  identify|entry-force|references|constitution` (exit non-zero =
+  failure; the constitution check requires a jurist's
+  `SCRUTINY — APPROVED` comment on the PR — read via the global secrets +
+  `CI_REPO_OWNER/CI_REPO_NAME/CI_COMMIT_PULL_REQUEST`). The demo asserts
+  both verdicts: a defective act fails, the corrected act passes.
 - **Facts the director relies on**: the Keeper's `federal-archivist` office
   never enters city slices — container-mode chambers must be told of it
   explicitly (director appends it); ratify fetches the bill branch from the
@@ -238,6 +266,16 @@ Cities") whose legislative life runs on real local infrastructure.
   postgres serves db `gitea` (created at provision time — `CREATE DATABASE`
   must be retried: `pg_isready` turns true during the entrypoint's temp
   bootstrap phase).
+- **Gitea facts (webhooks + OAuth, task 0041)**: webhook targets on private
+  addresses are DENIED by default (SSRF guard) — set
+  `security.ALLOWED_HOST_LIST=host.containers.internal,localhost` +
+  `webhook.ALLOW_LOCALNETWORK_HOSTS=true`; clone URLs reported to the forge
+  derive from `server.ROOT_URL` — the sim's gitea uses the in-network URL
+  (the CI clones from inside the network, never through the mac loopback);
+  the OAuth grant form needs `granted=true`; the exchange redirect_uri must
+  EXACTLY match the authorize request's. The sim's woodpecker DB persists in
+  `platform/<sim>/woodpecker/server` — repo enable is idempotent (409
+  "already active" → reuse the lookup).
 - **Also missing: forks API and token-delete route.** City repos are plain
   repos seeded by pushing the founding corpus (no fork relationship in
   phase 1); per-user tokens get suffixed names on re-runs (teardown deletes

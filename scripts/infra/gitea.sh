@@ -49,6 +49,8 @@ podman run -d \
   -e GITEA__database__USER=gogs \
   -e GITEA__database__PASSWD="${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}" \
   -e GITEA__security__INSTALL_LOCK=true \
+  -e GITEA__security__ALLOWED_HOST_LIST=host.containers.internal,localhost \
+  -e GITEA__webhook__ALLOW_LOCALNETWORK_HOSTS=true \
   -e GITEA__server__DOMAIN=localhost \
   -e GITEA__server__ROOT_URL=http://localhost:3001/ \
   -e GITEA__server__HTTP_PORT=3000 \

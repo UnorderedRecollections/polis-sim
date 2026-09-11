@@ -148,8 +148,18 @@ cross-repo PRs require it), ratification merges via the platform API.
 Probed quirks: the merge API auto-closes the PR (the order is not
 PATCH-closed again); container-mode chambers derive the API client's
 base URL from the slice origin. `tests/transition-demo.sh` covers the
-transition + a full phase-2 PR flow (**passing**). 0038b remains:
-per-sim woodpecker + OAuth + the Mechanical Magistrate's pipeline.
+transition + a full phase-2 PR flow (**passing**).
+
+**CI delivered (task 0041).** The transition's host wrapper erects the
+Mechanical Magistrate's CI after the story: per-sim woodpecker server +
+agent, the OAuth app on the sim's gitea, the Magistrate's scripted first
+login, the archive repo enabled, city forks synced, the forge webhook.
+PRs on the archive run `.woodpecker.yml` — `polis formal-check
+identify|entry-force|references|constitution` in the polis-city image.
+The demo asserts both verdicts: a defective act fails, the corrected act
+passes (commit statuses on the PR). See the AGENTS.md platform facts for
+the quirks this cost (SSRF host list, ROOT_URL clone URLs, OAuth
+redirect matching, `require_approval`, the v3 `steps:` config format).
 
 ## 6. LLM integration (task 0039, then MCP)
 

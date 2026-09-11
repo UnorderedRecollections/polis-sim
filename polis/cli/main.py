@@ -10,6 +10,7 @@ from . import (
     city,
     citynode,
     docket,
+    formal_check,
     gitea,
     gogs,
     health,
@@ -58,6 +59,9 @@ app.add_typer(gitea.app, name="gitea")
 app.add_typer(woodpecker.app, name="woodpecker")
 app.add_typer(citynode.app, name="citynode")
 app.add_typer(health.app, name="health")
+
+# the Mechanical Magistrate's formal checks (the CI pipeline, task 0041)
+app.add_typer(formal_check.app, name="formal-check")
 
 if __name__ == "__main__":
     app()

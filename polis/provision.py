@@ -36,6 +36,7 @@ from . import config, store
 from .clients import podman
 from .clients.gitea import GiteaClient, GiteaError
 from .clients.gogs import GogsClient, GogsError
+from .clients.woodpecker import WoodpeckerClient
 from .legislation import gitcmd
 from .sim.journal import SIMS_DIR
 
@@ -360,10 +361,18 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
         "GITEA__database__PASSWD": password,
         "GITEA__database__SSL_MODE": "disable",
         "GITEA__server__DOMAIN": "localhost",
-        "GITEA__server__ROOT_URL": f"http://localhost:{port}/",
+        # ROOT_URL shapes the clone URLs gitea reports (webhooks, forge
+        # payloads) — CI step containers reach gitea on the sim network,
+        # never through the mac loopback
+        "GITEA__server__ROOT_URL": f"http://{gt}:3000/",
         "GITEA__server__HTTP_PORT": "3000",
         "GITEA__security__INSTALL_LOCK": "true",
         "GITEA__security__SECRET_KEY": secrets_mod.token_hex(16),
+        # webhooks target the in-network woodpecker (a private address) —
+        # the whole apparatus is local; the delivery check reads
+        # security.ALLOWED_HOST_LIST
+        "GITEA__security__ALLOWED_HOST_LIST": "host.containers.internal,localhost",
+        "GITEA__webhook__ALLOW_LOCALNETWORK_HOSTS": "true",
         "GITEA__service__DISABLE_REGISTRATION": "true",
         "GITEA__repository__DEFAULT_BRANCH": "main",
         "USER_UID": "1000",
@@ -726,6 +735,241 @@ def _up_containers(sim: str, world, slices_dir: Path) -> list[str]:
     return names
 
 
+# --- the Mechanical Magistrate's CI (task 0041) ---------------------------------
+
+WOODPECKER_SERVER_IMAGE = "polis/woodpecker-server"
+WOODPECKER_AGENT_IMAGE = "polis/woodpecker-agent"
+
+
+def up_woodpecker(sim: str) -> None:
+    """Erect the Mechanical Magistrate's CI (task 0041): per-sim woodpecker
+    server + agent, the OAuth application on the sim's gitea, the
+    Magistrate's first login (the OAuth dance), the archive repo enabled
+    for builds, and the forge webhook. Idempotent."""
+    import secrets as secrets_mod
+    import time
+
+    import httpx
+
+    inv = Inventory.load(sim)
+    secrets = load_secrets(sim)
+    wp = f"{sim}-woodpecker-server"
+    agent = f"{sim}-woodpecker-agent"
+    if secrets.get("woodpecker_token") and podman.container_running(wp):
+        return                            # already erected
+    if inv.platform != "gitea":
+        raise ProvisionError("the CI is erected only on gitea-hosted sims")
+    world = store.load_world()
+    gitea_port = secrets["gitea_port"]
+    gitea_url = secrets["gitea_url_external"]
+    magistrate_user = f"{sim}-mechanical-magistrate"
+    mag_pw = next(p.credentials.password for p in world.persons
+                  if p.username == "mechanical-magistrate")
+
+    # images
+    for image, df in ((WOODPECKER_SERVER_IMAGE, "woodpecker"),
+                      (WOODPECKER_AGENT_IMAGE, "woodpecker-agent")):
+        dockerfile = config.PROJECT_ROOT / "docker" / df / "Dockerfile"
+        if not dockerfile.exists():
+            raise ProvisionError(f"woodpecker Dockerfile missing: {dockerfile}")
+        if podman._run(["image", "exists", image], check=False).returncode != 0:
+            podman._run(["build", "-t", image, "-f", str(dockerfile),
+                         str(config.PROJECT_ROOT)], check=True)
+
+    wp_port = _free_port()
+    agent_secret = secrets_mod.token_urlsafe(16)
+    grpc_secret = secrets_mod.token_urlsafe(16)
+
+    # 1. the OAuth application on the sim's gitea (before the server starts).
+    #    Two redirect URIs: the operator's loopback AND the WOODPECKER_HOST
+    #    form the server itself uses at exchange time.
+    gt = GiteaClient(token=secrets["admin_token"], base_url=gitea_url)
+    oauth = gt._request("POST", "/api/v1/user/applications/oauth2", json={
+        "name": "woodpecker",
+        "redirect_uris": [f"http://localhost:{wp_port}/authorize",
+                          f"http://host.containers.internal:{wp_port}/authorize"],
+        "confidential_client": True,
+    }).json()
+
+    # 2. the Magistrate's gitea token (the pipeline's API credential)
+    mag_token = gt.create_token(magistrate_user, mag_pw, "ci")
+
+    # 3. the server
+    plat = platform_dir(sim)
+    (plat / "woodpecker" / "server").mkdir(parents=True, exist_ok=True)
+    server_env = {
+        "WOODPECKER_OPEN": "true",
+        # the forge's webhook calls WOODPECKER_HOST/api/hook — the forge
+        # (a VM container) reaches the published port through the mac
+        # loopback; a localhost URL would resolve to the forge itself
+        "WOODPECKER_HOST": f"http://host.containers.internal:{wp_port}",
+        "WOODPECKER_AGENT_SECRET": agent_secret,
+        "WOODPECKER_GRPC_SECRET": grpc_secret,
+        "WOODPECKER_ADMIN": magistrate_user,
+        "WOODPECKER_GITEA": "true",
+        "WOODPECKER_GITEA_URL": f"http://{sim}-gitea:3000",
+        "WOODPECKER_DEV_GITEA_OAUTH_URL": f"http://localhost:{gitea_port}",
+        "WOODPECKER_GITEA_CLIENT": oauth["client_id"],
+        "WOODPECKER_GITEA_SECRET": oauth["client_secret"],
+    }
+    run_args = ["run", "-d", "--name", wp, "--network", f"{sim}-net",
+                "--restart", "unless-stopped", "-p", f"{wp_port}:8000"]
+    for k, v in server_env.items():
+        run_args += ["-e", f"{k}={v}"]
+    run_args += ["-v", f"{plat / 'woodpecker' / 'server'}:/var/lib/woodpecker",
+                 WOODPECKER_SERVER_IMAGE]
+    podman._run(["rm", "-f", wp], check=False)
+    proc = podman._run(run_args)
+    if proc.returncode != 0:
+        raise ProvisionError(f"woodpecker server start failed: {proc.stderr.strip()[:300]}")
+
+    # 4. the agent (the macOS VM quirks: root, SELinux, the VM socket)
+    (plat / "woodpecker" / "agent").mkdir(parents=True, exist_ok=True)
+    podman._run(["rm", "-f", agent], check=False)
+    proc = podman._run([
+        "run", "-d", "--name", agent,
+        "--user", "0:0", "--security-opt", "label=disable",
+        "--network", f"{sim}-net",
+        "-v", f"{plat / 'woodpecker' / 'agent'}:/etc/woodpecker",
+        "-v", "/run/user/501/podman/podman.sock:/var/run/docker.sock",
+        "-e", "DOCKER_HOST=unix:///var/run/docker.sock",
+        "-e", f"WOODPECKER_SERVER={wp}:9000",
+        "-e", f"WOODPECKER_AGENT_SECRET={agent_secret}",
+        "-e", f"WOODPECKER_BACKEND_DOCKER_NETWORK={sim}-net",
+        WOODPECKER_AGENT_IMAGE,
+    ])
+    if proc.returncode != 0:
+        raise ProvisionError(f"woodpecker agent start failed: {proc.stderr.strip()[:300]}")
+
+    # 5. wait for the server
+    wp_url = f"http://localhost:{wp_port}"
+    print(f"[provision] waiting for woodpecker at {wp_url} …", file=sys.stderr, flush=True)
+    for _ in range(60):
+        try:
+            if httpx.get(f"{wp_url}/healthz", timeout=2.0).status_code == 204:
+                break
+        except Exception:
+            pass
+        time.sleep(1)
+    else:
+        raise ProvisionError(f"woodpecker at {wp_url} never came up")
+
+    # 6. the Magistrate's first login — the OAuth dance (gitea session →
+    #    grant → woodpecker session → CSRF → mint the API token)
+    wp_token = _woodpecker_oauth_login(gitea_url, magistrate_user, mag_pw,
+                                       wp_url, oauth["client_id"])
+
+    # 7. enable the archive repo (the Magistrate must hold admin rights on
+    #    the forge repo it guards). Woodpecker registers its own forge
+    #    webhook at enable time — WOODPECKER_HOST (above) makes it
+    #    deliverable from inside the forge's network.
+    wc = WoodpeckerClient(token=wp_token, base_url=wp_url)
+    archive_org = f"{sim}-archive"
+    gt.add_collaborator(archive_org, "common-law", magistrate_user, "admin")
+    repo_id = gt._request("GET", f"/api/v1/repos/{archive_org}/common-law").json()["id"]
+    enabled = wc.enable_repo(repo_id, archive_org, "common-law")
+    # fork PRs are blocked pending approval by default (require_approval:
+    # "forks") — the Magistrate's office already holds the approval; let
+    # the checks run. (v3 enum: none | forks | all.)
+    wc._request("PATCH", f"/api/repos/{enabled.get('id')}",
+                json={"require_approval": "none"})
+
+    # the cities hold copies of the one archive — sync the forks so every
+    # repo carries the codified machinery (a PR's pipeline config is read
+    # from its HEAD — the fork)
+    synced = 0
+    for org in [o for o in inv.orgs if o != archive_org]:
+        proc = subprocess.run(
+            ["git", "push", "-q",
+             f"http://{secrets['admin_token']}@localhost:{gitea_port}/"
+             f"{org}/common-law.git", "main:main"],
+            cwd=str(SIMS_DIR / sim / "common-law"), capture_output=True, text=True)
+        if proc.returncode == 0:
+            synced += 1
+    print(f"[provision] {synced} city archives synced to the codified machinery",
+          file=sys.stderr, flush=True)
+
+    # the formal checks' gitea context, injected into every pipeline step
+    # (global secrets — WOODPECKER_ENVIRONMENT's comma format mangles URLs)
+    wc.create_global_secret("POLIS_GITEA_URL", f"http://{sim}-gitea:3000",
+                            ["pull_request"])
+    wc.create_global_secret("POLIS_GITEA_TOKEN", mag_token, ["pull_request"])
+
+    # 8. persist
+    secrets.update({
+        "woodpecker_port": wp_port, "woodpecker_url_external": wp_url,
+        "woodpecker_token": wp_token, "woodpecker_agent_secret": agent_secret,
+        "woodpecker_gitea_client": oauth["client_id"],
+        "woodpecker_gitea_secret": oauth["client_secret"],
+    })
+    secrets_path(sim).write_text(json.dumps(secrets, indent=2), encoding="utf-8")
+    inv.containers += [wp, agent]
+    inv.save()
+
+
+def _woodpecker_oauth_login(gitea_url: str, username: str, password: str,
+                            wp_url: str, client_id: str) -> str:
+    """The Magistrate logs into the CI: gitea session → OAuth grant →
+    woodpecker session → CSRF token → the woodpecker API token (a JWT).
+    Gitea quirks: no CSRF field on the login form; the grant form needs
+    granted=true; already-authorized apps redirect straight to the
+    callback."""
+    import re
+
+    import httpx
+
+    s = httpx.Client(base_url=gitea_url, follow_redirects=False, timeout=20)
+    if s.get("/user/login").status_code != 200:
+        raise ProvisionError(f"gitea login page unreachable at {gitea_url}")
+    r = s.post("/user/login", data={"user_name": username, "password": password})
+    if r.status_code not in (302, 303):
+        raise ProvisionError(f"gitea login as {username} failed: {r.status_code}")
+    # the authorize redirect MUST match the redirect woodpecker sends at
+    # exchange time (WOODPECKER_HOST + /authorize), or gitea refuses the
+    # grant ("redirect_uri differs"); we only READ the callback Location —
+    # never follow it — so the unreachable host doesn't matter here
+    port = wp_url.rsplit(":", 1)[-1]
+    redirect_uri = f"http://host.containers.internal:{port}/authorize"
+    r = s.get("/login/oauth/authorize"
+              f"?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code")
+    if r.status_code in (302, 303):
+        loc = r.headers.get("Location", "")
+    else:
+        fields = {m.group(1): m.group(2) for m in
+                  re.finditer(r'<input type="hidden" name="([^"]+)" value="([^"]*)">',
+                              r.text)}
+        fields["granted"] = "true"
+        loc = s.post("/login/oauth/grant", data=fields).headers.get("Location", "")
+    if not loc or "code=" not in loc:
+        raise ProvisionError(f"gitea OAuth grant failed: {loc[:200]}")
+    # exchange the code against the operator's loopback (the code is not
+    # bound to the redirect host), walking the redirects manually
+    from urllib.parse import urljoin
+    ws = httpx.Client(base_url=wp_url, follow_redirects=False, timeout=20)
+    code_url = re.sub(r"^https?://[^/]+", wp_url, loc)   # localhost, same path+query
+    url = code_url
+    sess = None
+    for _ in range(5):
+        r = ws.get(url)
+        sess = r.cookies.get("user_sess") or sess
+        if r.status_code in (302, 303, 307, 308):
+            url = urljoin(url, r.headers.get("Location", ""))
+            continue
+        break
+    if not sess:
+        raise ProvisionError("woodpecker login did not establish a session")
+    headers = {"Cookie": f"user_sess={sess}"}
+    cfg = httpx.get(f"{wp_url}/web-config.js", headers=headers, timeout=10)
+    csrf = re.search(r'WOODPECKER_CSRF = "([^"]*)"', cfg.text)
+    if not csrf or not csrf.group(1):
+        raise ProvisionError("woodpecker login did not establish a session")
+    r = httpx.post(f"{wp_url}/api/user/token",
+                   headers={**headers, "X-CSRF-Token": csrf.group(1)}, timeout=10)
+    if r.status_code != 200:
+        raise ProvisionError(f"woodpecker token mint failed: {r.status_code}")
+    return r.text.strip()
+
+
 # --- status / teardown ---------------------------------------------------------
 
 def status(sim: str) -> dict:
@@ -795,6 +1039,7 @@ def sim_containers(sim: str) -> list[str]:
     names = proc.stdout.split()
     return sorted(n for n in names
                   if n in (f"{sim}-postgres", f"{sim}-gogs", f"{sim}-gitea",
+                           f"{sim}-woodpecker-server", f"{sim}-woodpecker-agent",
                            f"polis-operator-{sim}")
                   or (n.startswith("polis-city-") and n.endswith(f"-{sim}")))
 
@@ -838,6 +1083,10 @@ def destroy(sim: str) -> dict:
         done["containers"].append(c)
     podman._run(["network", "rm", f"{sim}-net"], check=False)
     done["network"] = f"{sim}-net"
+    # container restarts leave anonymous volumes behind (the platform
+    # images declare VOLUMEs); prune the orphans — a full VM disk is the
+    # alternative
+    podman._run(["volume", "prune", "-f"], check=False)
 
     sim_dir = SIMS_DIR / sim
     if sim_dir.exists():

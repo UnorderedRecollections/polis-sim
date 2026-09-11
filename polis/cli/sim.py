@@ -186,7 +186,8 @@ def transition(
     codified machinery (data/world/legal/transition/) are introduced and
     ratified through the customary procedure; the third ratification flips
     the federation to phase 2 (situation + registry + slices). Requires a
-    gitea-hosted sim (`provision up --platform gitea`).
+    gitea-hosted sim (`provision up --platform gitea`). When the story is
+    enacted, the host erects the Mechanical Magistrate's CI (task 0041).
     """
     run_id = _run_id(run_id)
     if not local:
@@ -197,6 +198,8 @@ def transition(
             proc = subprocess.run(
                 ["podman", "exec", name, "polis", "sim", "transition", run_id,
                  "--local"])
+            if proc.returncode == 0:
+                _erect_ci(run_id)
             raise typer.Exit(proc.returncode)
         console.print("[yellow]no operator container running — executing locally[/yellow]")
     from ..sim import transition as transition_mod
@@ -212,6 +215,23 @@ def transition(
     else:
         console.print(f"[bold]the federation now operates in phase 2[/bold] "
                       f"(edition: {story.bindings.get('edition', '')})")
+        _erect_ci(run_id)
+
+
+def _erect_ci(run_id: str) -> None:
+    """The third act erects the Mechanical Magistrate — bring its CI up.
+    The operator container has no podman; the host wrapper (the proxied
+    call site) performs the bring-up."""
+    import os
+    if os.environ.get("POLIS_SIM_DIR"):
+        return    # inside the operator container — the host handles this
+    from .. import provision
+    try:
+        provision.up_woodpecker(run_id)
+        console.print("[bold]the Mechanical Magistrate's CI is erected[/bold] "
+                      "(woodpecker server + agent, OAuth, the archive repo enabled)")
+    except provision.ProvisionError as e:
+        console.print(f"[yellow]CI bring-up failed: {e}[/yellow]")
 
 
 @app.command()
