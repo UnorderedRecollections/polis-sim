@@ -26,4 +26,4 @@ council-comment constitution check; the polis-city image runs the steps
 ## Completion
 
 - **finished:** 2026-09-11T13:45:00Z
-- **commit:** (main)
+- **commit:** 2e1670b
