@@ -21,27 +21,34 @@ incorporation, no PRs. Phase is a procedure, not a product.
 
 ```sh
 scripts/infra/postgres.sh      # dependency first
-scripts/infra/gitea.sh
-scripts/infra/compose-up.sh    # or the whole stack
+scripts/infra/gitea.sh         # headless: builds, runs, bootstraps the admin
+scripts/infra/compose-up.sh    # or the whole stack (then run gitea.sh once for the admin)
 ```
 
 - HTTP: <http://localhost:3001> · SSH: `localhost:2222`
 - Data: `.state/gitea` · Image build: `docker/gitea/`
 - DB: database `gitea` on the shared postgres container.
 
+## Admin identity (headless, task 0040)
+
+There is **no web installer** — `gitea.sh` bootstraps the admin from
+`.env` (`GITEA_ADMIN_USERNAME` / `GITEA_ADMIN_PASSWORD` /
+`GITEA_ADMIN_EMAIL`) with the `gitea admin user create` CLI, and mints a
+full-scope API token straight into `.env` as `GITEA_API_KEY`. Use a
+neutral, project-owned identity (e.g. `operator`), never a personal
+account. To re-bootstrap from scratch: stop the container, delete
+`.state/gitea`, re-run `gitea.sh`.
+
 ## API key
 
-`GITEA_API_KEY` in `.env` — must be **full scope** (the original limited
-token was replaced during bring-up).
-
-- UI: **Settings → Applications → Generate New Token**, check all scopes.
+`GITEA_API_KEY` in `.env` — auto-minted (full scope) by `gitea.sh`; the
+web UI route also works: **Settings → Applications → Generate New Token**,
+check all scopes.
 
 Verify: `scripts/infra/smoke.sh gitea` (also checks admin access).
 
 ## Notes
 
-- First-run: the installer appears on first visit; create the admin user
-  (`agros`) matching `WOODPECKER_ADMIN` in the woodpecker service config.
 - Woodpecker OAuth application (needed by the CI server): **Settings →
   Applications → Add OAuth2 Application**, redirect URI
   `http://localhost:10890/authorize`; copy client id/secret into

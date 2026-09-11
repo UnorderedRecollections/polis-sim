@@ -52,8 +52,11 @@ services:
       GITEA__database__DB_TYPE: postgres
       GITEA__database__HOST: postgres-gogs:5432
       GITEA__database__NAME: gitea
-      GITEA__database__USER: gitea
-      GITEA__database__PASSWD: gitea
+      GITEA__database__USER: gogs
+      GITEA__database__PASSWD: ${POSTGRES_PASSWORD}
+      GITEA__security__INSTALL_LOCK: "true"
+    # The admin account is bootstrapped headlessly by scripts/infra/gitea.sh
+    # (the compose stack alone leaves an admin-less gitea).
     depends_on: [postgres]
     restart: unless-stopped
 
@@ -69,7 +72,7 @@ services:
       WOODPECKER_OPEN: "true"
       WOODPECKER_HOST: http://localhost:10890
       WOODPECKER_AGENT_SECRET: w00000d
-      WOODPECKER_ADMIN: agros
+      WOODPECKER_ADMIN: ${GITEA_ADMIN_USERNAME:-operator}
       WOODPECKER_GITEA: "true"
       WOODPECKER_GITEA_URL: http://gitea:3000
       WOODPECKER_DEV_GITEA_OAUTH_URL: http://localhost:3001

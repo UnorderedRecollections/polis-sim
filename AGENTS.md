@@ -75,7 +75,12 @@ Cities") whose legislative life runs on real local infrastructure.
 - gitea :3001 — phase-2 platform ("codified machinery"; postgres-backed).
   Since 0037 it also hosts phase-1 sims: `provision up --platform gitea`
   (phase is a procedure, not a product — the federation stays in phase 1
-  with matter-store proceedings on either product).
+  with matter-store proceedings on either product). The dev rig's gitea
+  bootstraps **headlessly** (task 0040): `scripts/infra/gitea.sh` takes
+  `GITEA_ADMIN_USERNAME/PASSWORD/EMAIL` from `.env` (project-owned,
+  neutral identity — never a personal account), creates the admin via the
+  gitea CLI and mints `GITEA_API_KEY` into `.env`; `WOODPECKER_ADMIN`
+  follows `GITEA_ADMIN_USERNAME`.
 - woodpecker server :10890 + agent — CI (the Mechanical Magistrate), OAuth against gitea.
 - City containers `polis-city-*` not built yet.
 - Secrets: `.env` (`GOGS_API_KEY GITEA_API_KEY WOODPECKER_API_KEY

@@ -27,7 +27,7 @@ podman run -d \
   -e WOODPECKER_OPEN=true \
   -e WOODPECKER_HOST="http://localhost:10890" \
   -e WOODPECKER_AGENT_SECRET="w00000d" \
-  -e WOODPECKER_ADMIN="agros" \
+  -e WOODPECKER_ADMIN="${GITEA_ADMIN_USERNAME:?set GITEA_ADMIN_USERNAME in .env}" \
   -e WOODPECKER_GITEA=true \
   -e WOODPECKER_GITEA_URL=http://gitea:3000 \
   -e WOODPECKER_DEV_GITEA_OAUTH_URL=http://localhost:3001 \

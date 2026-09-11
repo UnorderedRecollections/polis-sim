@@ -38,8 +38,9 @@ Verify: `scripts/infra/smoke.sh woodpecker`.
 ## Notes / quirks
 
 - API base is `/api` (**unversioned**), Bearer auth.
-- Admin: `WOODPECKER_ADMIN=agros` makes the gitea user `agros` an admin on
-  first login; an existing account can be flipped in
+- Admin: `WOODPECKER_ADMIN=${GITEA_ADMIN_USERNAME}` (from `.env`) makes the
+  gitea admin user a woodpecker admin on first login; an existing account
+  can be flipped in
   `.state/woodpecker/server/woodpecker.sqlite` (`users.admin`).
 - The agent on podman-machine (macOS) needs three non-obvious settings
   (already in `scripts/infra/woodpecker.sh` and the compose file):
