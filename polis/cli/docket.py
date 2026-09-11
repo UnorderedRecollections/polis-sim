@@ -35,7 +35,11 @@ def file_(
         return
     results = enact(plan, False)
     matter = results[0] if results else None
-    console.print(f"[green]petition filed:[/green] {matter.id if matter else ''} — {title}")
+    if isinstance(matter, dict):                      # platform issue (phase 2)
+        ref = f"#{matter.get('number')}"
+    else:                                             # matter-store entry (phase 1)
+        ref = matter.id if matter else ""
+    console.print(f"[green]petition filed:[/green] {ref} — {title}")
 
 
 @app.command(name="list")

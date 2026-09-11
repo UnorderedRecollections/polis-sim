@@ -603,16 +603,25 @@ def up(sim: str, platform: str = "gogs", with_city_containers: bool = False,
     _seed_repo(client, archive_org, fed.repo, keeper_token, world, workdir, base_url)
 
     # --- city orgs + repos + collaborators ------------------------------------
+    # gitea: city repos are FORKS of the federal archive (cross-repo PRs
+    # require the head repo to be a real fork — phase-2 proceedings, 0038).
+    # gogs: no forks API — plain repos seeded by push (phase 1 has no PRs).
+    # The Keeper's write grant precedes any seed push.
     for city in world.cities:
         org = f"{sim}-{city.id}"
         _ensure_org(client, org, city.display_name)
         inv.orgs.append(org)
-        _ensure_repo(client, org, fed.repo)
+        if platform == "gitea":
+            if not client.repo_exists(org, fed.repo):
+                client.create_fork(archive_org, fed.repo, org)
+        else:
+            _ensure_repo(client, org, fed.repo)
         inv.repos.append(f"{org}/{fed.repo}")
         client.add_collaborator(org, fed.repo, keeper_sim_user, "write")
-        _seed_repo(client, org, fed.repo, keeper_token, world, workdir, base_url)
         for p in world.city_persons(city.id):
             client.add_collaborator(org, fed.repo, f"{sim}-{p.username}", "write")
+        if platform != "gitea":
+            _seed_repo(client, org, fed.repo, keeper_token, world, workdir, base_url)
 
     # --- per-sim slices ---------------------------------------------------------
     slices_dir = SIMS_DIR / sim / "cities"
@@ -649,6 +658,8 @@ CITY_IMAGE = "polis-city:latest"
 
 
 def _ensure_image() -> str:
+    """Build the operator/city image (contains the polis package — always
+    rebuilt so the containers run the current code)."""
     dockerfile = config.PROJECT_ROOT / "docker" / "polis-city" / "Dockerfile"
     if not dockerfile.exists():
         raise ProvisionError(f"city image Dockerfile missing: {dockerfile}")
@@ -674,7 +685,10 @@ def _run_operator_container(sim: str) -> str:
         "run", "-d", "--name", name,
         "--network", f"{sim}-net",
         "-v", f"{sim_dir}:/sim:rw",
-        "-v", f"{config.WORLD_DIR}:/polis-data/world:ro",
+        # the world mount is WRITABLE: the phase transition (task 0038) is
+        # the Keeper's own archival act, and it records the new machinery
+        # state in the civil registry (world.json) from inside the operator
+        "-v", f"{config.WORLD_DIR}:/polis-data/world",
         "-e", "POLIS_DATA_DIR=/polis-data",
         "-e", "POLIS_SIM_DIR=/sim",
         "-e", "POLIS_MATTERS_FILE=/sim/matters.json",

@@ -1,5 +1,16 @@
 # TODO: Docket/bill refactoring for phase II
 
+> **Resolved by task 0038** (2026-09-11): the dispatch on
+> `chamber.phase == 2` stays (not a full backend-interface extraction —
+> the phase-2 branches became the proceedings backend and are exercised
+> by tests/transition-demo.sh). Decision on the institutional mapping:
+> **the record truly moves into the platform** in phase 2 — petitions
+> are gitea issues, bills are PRs; the matter store serves phase 1 only.
+> Remaining from below: the CLI's dual id typing still exists (matter
+> ids vs issue numbers — the CLI renders both shapes; `file`/`introduce`
+> now print the platform form). The Magistrate's checklist correlation
+> (§4 below) is 0038b.
+
 ## The problem
 
 After the phase-1 ontology fix, `polis/legislation/docket.py` and parts of

@@ -381,14 +381,19 @@ def _incorporate_locally(chamber: Chamber, method: str, act_title: str | None = 
     gitcmd.run(chamber.repo_dir, "push", chamber.git_remote_url(dest), "main")
 
 
-def _decide(chamber: Chamber, petition, status: str, event: str, detail: str = "") -> str:
-    """Enter the order into the record: close the petition as decided."""
+def _decide(chamber: Chamber, petition, status: str, event: str, detail: str = "",
+            close: bool = True) -> str:
+    """Enter the order into the record: close the petition as decided.
+
+    In phase 2 the merge API closes the PR itself — ratify/consolidate pass
+    close=False; reject closes explicitly."""
     if chamber.phase == 2:
-        owner, repo = chamber.upstream_owner_repo()
-        chamber.client()._request(
-            "PATCH", f"/api/v1/repos/{owner}/{repo}/pulls/{petition['number']}",
-            json={"state": "closed"},
-        )
+        if close:
+            owner, repo = chamber.upstream_owner_repo()
+            chamber.client()._request(
+                "PATCH", f"/api/v1/repos/{owner}/{repo}/pulls/{petition['number']}",
+                json={"state": "closed"},
+            )
         return str(petition["number"])
     _record_event(chamber, petition, event, detail=detail, status=status)
     return petition.id
@@ -410,7 +415,7 @@ def ratify(chamber: Chamber, bill: str) -> Plan:
                 _incorporate_locally(chamber, "merge", changed_files=changed, dest=dest)
         else:
             _incorporate_locally(chamber, "merge", changed_files=changed, dest=dest)
-        return _decide(chamber, petition, "ratified", "enacted")
+        return _decide(chamber, petition, "ratified", "enacted", close=False)
 
     merge_step = (
         "POST …/pulls/<petition>/merge  {\"Do\": \"merge\"}"
@@ -448,7 +453,7 @@ def consolidate(chamber: Chamber, bill: str, act_title: str) -> Plan:
         else:
             _incorporate_locally(chamber, "squash", act_title, changed_files=changed, dest=dest)
         return _decide(chamber, petition, "ratified", "enacted",
-                       detail=f"codified as “{act_title}”")
+                       detail=f"codified as “{act_title}”", close=False)
 
     merge_step = (
         "POST …/pulls/<petition>/merge  {\"Do\": \"squash\"}"

@@ -93,7 +93,11 @@ The federation has two machinery phases, stored in `world.json`:
   bills: CODEOWNERS, branch protection, `.woodpecker.yml`. The acts and
   their instruments are authored in `data/world/legal/transition/`, and
   the story is the `phase_transition` template
-  (`polis world templates show phase_transition`).
+  (`polis world templates show phase_transition`). Effecting it:
+  `polis sim transition <run>` (task 0038) — the third ratification
+  flips the federation to phase 2 via the ordinary channels (situation,
+  registry, slices); from then on, docket/bill act on the platform
+  directly (issues/PRs).
 
 ## The one end-to-end picture
 

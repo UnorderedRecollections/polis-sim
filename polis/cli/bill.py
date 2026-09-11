@@ -69,7 +69,10 @@ def introduce(
     results = enact(plan, isomorphism)
     if not isomorphism:
         matter = results[-1] if results else None
-        matter_id = getattr(matter, "id", None)
+        if isinstance(matter, dict):                  # platform PR (phase 2)
+            matter_id = f"PR #{matter.get('number')}"
+        else:                                         # matter-store entry (phase 1)
+            matter_id = getattr(matter, "id", None)
         console.print(f"[green]bill introduced[/green] — {matter_id or 'the petition'} is before the federation")
 
 

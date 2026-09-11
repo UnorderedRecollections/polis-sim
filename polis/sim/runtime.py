@@ -55,12 +55,16 @@ class Runtime:
     def enact(self, actor: str, action: str, plan, params: dict,
               anchors_extra: Optional[dict] = None,
               chamber: Optional[Chamber] = None,
-              write_back: Optional[Callable[[], dict]] = None) -> EnactResult:
+              write_back: Optional[Callable[[], dict]] = None,
+              machinery_effect: Optional[Callable[[], dict]] = None) -> EnactResult:
         """Execute one legal act as ONE journal entry.
 
         plan: a legislation Plan (already built for the actor's chamber).
         write_back: optional callable applied after the machinery succeeds,
         returning situation-delta anchors (e.g. norm status transitions).
+        machinery_effect: optional callable recording the act's effect on
+        the machinery itself (e.g. the phase flip at a transition) — runs
+        in the same transaction, anchored under `machinery`.
         """
         before = _head(chamber.repo_dir, "main") if chamber else ""
         outputs = plan.execute()
@@ -75,6 +79,9 @@ class Runtime:
             result["id"] = outputs[-1].id
         if write_back is not None:
             anchors["situation"] = write_back()
+            self._save_situation()
+        if machinery_effect is not None:
+            anchors["machinery"] = machinery_effect()
             self._save_situation()
         entry = JournalEntry(
             seq=self.journal.next_seq(), ts=_utcnow(),
@@ -144,9 +151,12 @@ class Runtime:
 
     def ratify(self, chamber: Chamber, bill: str,
                new_norm: Optional[Norm] = None,
-               supersedes: Optional[str] = None) -> EnactResult:
+               supersedes: Optional[str] = None,
+               machinery_effect: Optional[Callable[[], dict]] = None) -> EnactResult:
         """Enactment + situation write-back: `new_norm` enters (source=statute,
-        source_ref=the bill's matter id); `supersedes` marks the old norm."""
+        source_ref=the bill's matter id); `supersedes` marks the old norm.
+        `machinery_effect` (e.g. the phase flip at a transition) runs in the
+        same transaction, anchored under `machinery`."""
         def write_back() -> dict:
             delta: dict[str, Any] = {}
             if self.situation is None:
@@ -167,6 +177,7 @@ class Runtime:
             params={"bill": bill, "supersedes": supersedes,
                     "new_norm": new_norm.id if new_norm else None},
             chamber=chamber, write_back=write_back if self.situation is not None else None,
+            machinery_effect=machinery_effect,
         )
         return res
 

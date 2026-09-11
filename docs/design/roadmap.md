@@ -131,6 +131,26 @@ the transition*:
   through the ordinary channels, then per-sim phase-2 provisioning and
   the proceedings-backend swap.
 
+**Delivered (task 0038; CI deferred to 0038b).** `polis sim transition
+<run>` (explicit command, proxies into the operator container) plays the
+phase_transition story: petition → the three authored acts + their
+instruments (CODEOWNERS at the root, branch-protection.md in
+constitution/, woodpecker.yml at the root) drafted/amended/introduced →
+Constitutional Council review → three ratifications — the third flips
+the federation to phase 2 in the same transaction (situation.yaml gains
+`federation: {phase: 2}`, world.json's `federation.phase` flips — the
+operator's world mount became writable for exactly this — and the sim's
+city slices flip) → the `codified-machinery` edition is promulgated.
+Requires a gitea-hosted sim (re-provision with `--platform gitea`).
+Afterwards the proceedings truly move into the platform: petitions are
+gitea issues, bills are PRs (city repos are now forks on gitea —
+cross-repo PRs require it), ratification merges via the platform API.
+Probed quirks: the merge API auto-closes the PR (the order is not
+PATCH-closed again); container-mode chambers derive the API client's
+base URL from the slice origin. `tests/transition-demo.sh` covers the
+transition + a full phase-2 PR flow (**passing**). 0038b remains:
+per-sim woodpecker + OAuth + the Mechanical Magistrate's pipeline.
+
 ## 6. LLM integration (task 0039, then MCP)
 
 Seams already exist; add one provider boundary, OFF by default:

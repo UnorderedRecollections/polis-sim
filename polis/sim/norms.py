@@ -79,10 +79,12 @@ class Norm(BaseModel):
 class NormSet(BaseModel):
     """A situation document: norms and holdings together (holdings cite the
     norms they exist under and must never drift apart). One format, seed or
-    snapshot alike."""
+    snapshot alike. The optional `federation` block carries machinery state
+    (e.g. phase) so a transition is recorded in the situation itself."""
     norms: list[Norm] = []
     holdings: list[Holding] = []
     description: str = ""
+    federation: Optional[dict] = None   # machinery state, e.g. {"phase": 2}
 
     # --- queries -----------------------------------------------------------
     def get(self, norm_id: str) -> Norm:

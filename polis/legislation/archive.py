@@ -108,13 +108,20 @@ def lodge(chamber: Chamber, ref: str = "main") -> Plan:
 
 def promulgate(chamber: Chamber, name: str, message: str, ref: str = "main") -> Plan:
     """A named authoritative edition is proclaimed (tag, §1)."""
+    author_name, author_email = chamber.author
+
     def run():
         _require_power(chamber, "tag:create", f"promulgate the edition “{name}”")
-        gitcmd.run(chamber.repo_dir, "tag", "-a", name, "-m", message, ref)
+        gitcmd.run(chamber.repo_dir,
+                   "-c", f"user.name={author_name}", "-c", f"user.email={author_email}",
+                   "tag", "-a", name, "-m", message, ref)
 
     plan = Plan(act=f"promulgate the edition “{name}”", actor=chamber.actor_label)
     plan.add(
-        machinery=gitcmd.cmd_string(chamber.repo_dir, "tag", "-a", name, "-m", message, ref),
+        machinery=gitcmd.cmd_string(chamber.repo_dir,
+                                    "-c", f"user.name={author_name}",
+                                    "-c", f"user.email={author_email}",
+                                    "tag", "-a", name, "-m", message, ref),
         legal="a named authoritative edition of the corpus is proclaimed (§1)",
         run=run,
     )

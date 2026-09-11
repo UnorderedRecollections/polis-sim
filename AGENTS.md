@@ -155,9 +155,28 @@ Cities") whose legislative life runs on real local infrastructure.
   stories.json, matters.json). Host-side `sim drive` proxies into the
   **operator container** (`polis-operator-<sim>`, always created by
   `provision up`: sim dir at `/sim` rw, whole `data/world` at
-  `/polis-data/world` ro, env `POLIS_DATA_DIR POLIS_SIM_DIR=/sim
+  `/polis-data/world` **rw since 0038** — the phase transition writes the
+  civil registry from inside the operator — env `POLIS_DATA_DIR POLIS_SIM_DIR=/sim
   POLIS_MATTERS_FILE=/sim/matters.json`); `--local` runs in-process.
   Demo: `tests/director-demo.sh` (**passing**).
+- **The phase transition** (`polis/sim/transition.py`, task 0038):
+  `polis sim transition <run>` (explicit command; proxies like drive)
+  plays the `phase_transition` story — petition → the three authored acts
+  + instruments from `data/world/legal/transition/` (CODEOWNERS → root,
+  branch-protection.md → constitution/, woodpecker.yml → root) introduced
+  and ratified through the customary procedure; the THIRD ratification
+  flips the federation to phase 2 in the same transaction (situation.yaml
+  `federation.phase: 2`, world.json `federation.phase`, the sim's city
+  slices — the Keeper's archival act, never a hand edit) → the
+  `codified-machinery` edition promulgated. Requires a gitea-hosted sim
+  (`provision up --platform gitea`); one-time (a run with an enacted
+  phase_transition story refuses). Post-transition the proceedings truly
+  move into the platform: issues/PRs (gitea city repos are **forks** —
+  cross-repo PRs require the fork relationship; the merge API auto-closes
+  PRs, so the order is not PATCH-closed again; container-mode chambers
+  derive the API client's base URL from the slice origin). CI (woodpecker
+  per sim + the Magistrate's pipeline) is 0038b.
+  Demo: `tests/transition-demo.sh` (**passing**).
 - **Facts the director relies on**: the Keeper's `federal-archivist` office
   never enters city slices — container-mode chambers must be told of it
   explicitly (director appends it); ratify fetches the bill branch from the
@@ -176,7 +195,9 @@ Cities") whose legislative life runs on real local infrastructure.
   commit** (`_founding_repo` — all repos must share history or the Keeper's
   enactment pushes are non-fast-forward), per-sim slices (carrying
   `federation.platform` = the product; tokens keyed by product), inventory
-  `provision.json` (records `platform`). Secrets in `data/sims/<sim>/secrets.json`
+  `provision.json` (records `platform`). Gitea city repos are **forks** of
+  the archive (cross-repo PRs, task 0038); gogs city repos stay plain
+  (no forks API). Secrets in `data/sims/<sim>/secrets.json`
   (**never world.json** — provisioning must not mutate the civil registry;
   `polis world cleanup` removes legacy `gogs@<sim>` residue). Slices/remotes
   use the in-network URL `http://<sim>-<platform>:3000`; the host port is for

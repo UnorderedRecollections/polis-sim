@@ -131,6 +131,15 @@ class GiteaClient:
             "POST", path, json={"name": name, "private": private, "auto_init": False}
         ).json()
 
+    def create_fork(self, owner: str, repo: str, organization: str) -> dict:
+        """Fork a repo into an organization (cross-repo PRs require the head
+        repo to be a real fork of the base — the city archives are forks of
+        the federal archive)."""
+        return self._request(
+            "POST", f"/api/v1/repos/{owner}/{repo}/forks",
+            json={"organization": organization},
+        ).json()
+
     def delete_repo(self, owner: str, name: str) -> None:
         self._request("DELETE", f"/api/v1/repos/{owner}/{name}")
 

@@ -107,7 +107,13 @@ class Chamber:
                 "provision the platforms first (or set POLIS_PLATFORM_TOKEN)"
             )
         cls = GogsClient if self.platform == "gogs" else GiteaClient
-        return cls(token=self.token)
+        if self.operator_mode:
+            # host side: config resolves the platform URL (sim secrets etc.)
+            return cls(token=self.token)
+        # container mode: the in-network host from the slice's origin —
+        # config's defaults point at the dev rig, unreachable from here
+        u = urlparse(self.origin)
+        return cls(token=self.token, base_url=f"{u.scheme}://{u.netloc}")
 
 
 def _load_slice(city: str | None) -> tuple[dict, bool, list[dict]]:

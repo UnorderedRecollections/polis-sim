@@ -177,6 +177,44 @@ def tick(
 
 
 @app.command()
+def transition(
+    run_id: Optional[str] = typer.Argument(None, help="Run to transition (default: POLIS_PROVISIONED_SIM)."),
+    local: bool = typer.Option(False, "--local",
+                               help="Execute in-process (used inside the operator container)."),
+) -> None:
+    """Enact the phase transition (task 0038): the three acts of the
+    codified machinery (data/world/legal/transition/) are introduced and
+    ratified through the customary procedure; the third ratification flips
+    the federation to phase 2 (situation + registry + slices). Requires a
+    gitea-hosted sim (`provision up --platform gitea`).
+    """
+    run_id = _run_id(run_id)
+    if not local:
+        from ..clients import podman
+        name = f"polis-operator-{run_id}"
+        if podman.container_running(name):
+            import subprocess
+            proc = subprocess.run(
+                ["podman", "exec", name, "polis", "sim", "transition", run_id,
+                 "--local"])
+            raise typer.Exit(proc.returncode)
+        console.print("[yellow]no operator container running — executing locally[/yellow]")
+    from ..sim import transition as transition_mod
+    try:
+        story = transition_mod.transition(run_id)
+    except transition_mod.DirectorError as e:
+        die(str(e))
+    style = {"enacted": "green", "failed": "red"}.get(story.status, "white")
+    console.print(f"[{style}]{story.id}: {story.status}[/{style}] "
+                  f"acts: {', '.join(story.bindings.get('acts', []))}")
+    if story.error:
+        console.print(f"  [red]{story.error}[/red]")
+    else:
+        console.print(f"[bold]the federation now operates in phase 2[/bold] "
+                      f"(edition: {story.bindings.get('edition', '')})")
+
+
+@app.command()
 def submit(
     feature: str = typer.Argument(..., help="Path to a .feature file (one scenario)."),
     run_id: Optional[str] = typer.Option(None, "--run", help="Target run (default: POLIS_PROVISIONED_SIM)."),
