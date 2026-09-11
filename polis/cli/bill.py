@@ -159,6 +159,10 @@ def list_(
         chamber = get_chamber(as_user, city, repo_dir)
         prs = bills.list_bills(chamber, state=state)
     else:
+        from .. import store as store_mod
+        if store_mod.load_world().federation.phase == 2:
+            die("phase 2 — bills are platform PRs: "
+                "pass --as <user> --city <city>")
         from .. import matters as matters_mod
         store = matters_mod.load_matters()
         ms = [m for m in store.matters if m.kind == "bill"]

@@ -61,6 +61,10 @@ def list_(
         chamber = get_chamber(as_user, city, repo_dir)
         petitions = docket.list_petitions(chamber, state=state)
     else:
+        from .. import store
+        if store.load_world().federation.phase == 2:
+            die("phase 2 — the docket lives on the platform: "
+                "pass --as <user> --city <city>")
         from .. import matters as matters_mod
         store = matters_mod.load_matters()
         ms = [m for m in store.matters if m.kind == "petition"]
@@ -99,6 +103,10 @@ def show(
         except Exception as e:
             die(str(e))
     else:
+        from .. import store
+        if store.load_world().federation.phase == 2:
+            die("phase 2 — the docket lives on the platform: "
+                "pass --as <user> --city <city>")
         from .. import matters as matters_mod
         store = matters_mod.load_matters()
         m = next((m for m in store.matters if m.id == matter), None)
