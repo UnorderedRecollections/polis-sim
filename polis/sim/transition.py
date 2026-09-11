@@ -20,9 +20,10 @@ import json
 import random
 from typing import Any
 
-from .. import config, store
+from .. import config, matters as matters_mod, store
 from ..legislation import archive as archive_mod
 from ..legislation import bill as bill_mod
+from ..legislation import gitcmd
 from .director import DirectorError, RunConfig, Story, _Cast, _chamber, load_stories, _save_stories
 from .journal import Journal, JournalEntry, _utcnow, run_dir
 from .norms import load_norm_file
@@ -109,6 +110,41 @@ def _flip_effect(rt: Runtime, run_id: str, act_titles: list[str]) -> Any:
     return effect
 
 
+def _leftovers(run_id: str) -> list[str]:
+    """Artifacts of a previous, failed transition attempt. A retry with
+    them present would collide (the same act titles → the same branches →
+    the same matter entries), so the transition refuses and names them.
+    The failed attempt itself stays in the record — a retry is a new
+    proceeding, and it needs a clean slate."""
+    leftovers: list[str] = []
+    rd = run_dir(run_id)
+    clone = rd / "common-law"
+    branches = [bill_mod.branch_of(act[1]) for act in ACTS]
+    if (clone / ".git").exists():
+        for branch in branches:
+            try:
+                gitcmd.run(clone, "show-ref", "--verify", "--quiet",
+                           f"refs/heads/{branch}")
+                leftovers.append(f"local branch {branch}")
+            except Exception:
+                pass
+        try:
+            gitcmd.run(clone, "rev-parse", "--verify", "--quiet",
+                       f"refs/tags/{EDITION_NAME}")
+            leftovers.append(f"tag {EDITION_NAME}")
+        except Exception:
+            pass
+    try:
+        store = matters_mod.load_matters()
+        for branch in branches:
+            m = store.find_by_branch(branch)
+            if m is not None:
+                leftovers.append(f"matter {m.id} ({m.status}) for {branch}")
+    except Exception:
+        pass
+    return leftovers
+
+
 def transition(run_id: str) -> Story:
     cfg = RunConfig.load(run_id)
     rd = run_dir(run_id)
@@ -122,6 +158,16 @@ def transition(run_id: str) -> Story:
         raise DirectorError(
             f"run '{run_id}' has already enacted the phase transition "
             "(a one-time event — see `polis sim stories`)")
+    leftovers = _leftovers(run_id)
+    if leftovers:
+        raise DirectorError(
+            "a previous transition attempt left artifacts, and a retry would "
+            "collide with them (same act titles, same branches, same matters):\n"
+            "    " + "\n    ".join(leftovers) + "\n"
+            f"remove the branches (and the matters.json entries naming them) "
+            f"before retrying — or start fresh: "
+            f"`polis provision destroy {run_id} --yes` and re-run the recipe. "
+            "The failed attempt remains part of the record either way.")
     sit_path = rd / "situation.yaml"
     if not sit_path.exists():
         raise DirectorError(f"run '{run_id}' has no situation.yaml — `polis sim new` first")
