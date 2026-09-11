@@ -144,7 +144,10 @@ def transition(run_id: str) -> Story:
 
     try:
         rng = random.Random(f"{cfg.seed}:transition")
-        proposer_city = rng.choice(sorted(cast.citizens))
+        # only real cities propose — the magistrate's institutional
+        # membership is not a city (no legislators there)
+        cities = sorted(c.id for c in cast.world.cities)
+        proposer_city = rng.choice(cities)
         petitioner = cast.legislator(proposer_city, n)
         jurist = cast.jurist(n)
         keeper = cast.keeper

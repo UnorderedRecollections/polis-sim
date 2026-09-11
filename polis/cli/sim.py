@@ -221,11 +221,13 @@ def transition(
     console.print(f"[{style}]{story.id}: {story.status}[/{style}] "
                   f"acts: {', '.join(story.bindings.get('acts', []))}")
     if story.error:
+        console.print(f"[bold red]the transition did not happen[/bold red] — "
+                      f"the federation remains in phase 1:")
         console.print(f"  [red]{story.error}[/red]")
-    else:
-        console.print(f"[bold]the federation now operates in phase 2[/bold] "
-                      f"(edition: {story.bindings.get('edition', '')})")
-        _erect_ci(run_id)
+        raise typer.Exit(1)
+    console.print(f"[bold]the federation now operates in phase 2[/bold] "
+                  f"(edition: {story.bindings.get('edition', '')})")
+    _erect_ci(run_id)
 
 
 def _erect_ci(run_id: str) -> None:
@@ -316,7 +318,10 @@ def stories(
                          ["id", "status", "template", "title", "matter", "cast"])
     for s in stories_:
         cast = ", ".join(f"{k}={v}" for k, v in s.cast.items())
-        table.add_row(s.id, s.status, s.template,
+        status = {"enacted": "[green]enacted[/green]",
+                  "failed": "[red]failed[/red]",
+                  "skipped": "[yellow]skipped[/yellow]"}.get(s.status, s.status)
+        table.add_row(s.id, status, s.template,
                       s.bindings.get("title", ""), s.matter or "—", cast)
     console.print(table)
 
