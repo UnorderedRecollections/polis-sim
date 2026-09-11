@@ -146,13 +146,18 @@ def drive(
     if not local:
         from ..clients import podman
         name = f"polis-operator-{run_id}"
-        if podman.container_running(name):
+        try:
+            proxied = podman.container_running(name)
+        except Exception:
+            proxied = False          # podman hiccup — degrade, never crash
+        if proxied:
             import subprocess
             proc = subprocess.run(
                 ["podman", "exec", name, "polis", "sim", "drive", run_id,
                  "--steps", str(steps), "--local"])
             raise typer.Exit(proc.returncode)
-        console.print("[yellow]no operator container running — executing locally[/yellow]")
+        console.print("[yellow]no operator container running — executing locally "
+                      "(host-swapped URLs)[/yellow]")
     from ..sim import director
     try:
         stories = director.drive(run_id, steps)
@@ -193,7 +198,11 @@ def transition(
     if not local:
         from ..clients import podman
         name = f"polis-operator-{run_id}"
-        if podman.container_running(name):
+        try:
+            proxied = podman.container_running(name)
+        except Exception:
+            proxied = False          # podman hiccup — degrade, never crash
+        if proxied:
             import subprocess
             proc = subprocess.run(
                 ["podman", "exec", name, "polis", "sim", "transition", run_id,
@@ -201,7 +210,8 @@ def transition(
             if proc.returncode == 0:
                 _erect_ci(run_id)
             raise typer.Exit(proc.returncode)
-        console.print("[yellow]no operator container running — executing locally[/yellow]")
+        console.print("[yellow]no operator container running — executing locally "
+                      "(host-swapped URLs)[/yellow]")
     from ..sim import transition as transition_mod
     try:
         story = transition_mod.transition(run_id)

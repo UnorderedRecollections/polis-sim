@@ -8,6 +8,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SIM="dir-demo-01"
 set -a; source "$ROOT/.env"; set +a
+# the demo drives phase-1 stories — pin the registry to phase 1 (the
+# transition demo flips it; this one must not inherit that)
+(cd "$ROOT" && uv run python -c "from polis import store; w = store.load_world(); w.federation.phase = 1; store.save_world(w)")
 sim_gogs() {  # the sim's own gogs (available after provisioning)
   python3 -c "import json; print(json.load(open('$ROOT/data/sims/$SIM/secrets.json'))['gogs_url_external'])"
 }

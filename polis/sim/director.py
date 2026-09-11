@@ -131,10 +131,14 @@ class _Cast:
 # --- chambers ---------------------------------------------------------------------
 
 def _chamber(run_id: str, username: str, city: str) -> Chamber:
-    """A chamber inside the sim: the sim slice (container mode — no
-    host-swap) and the run's shared working clone."""
+    """A chamber on the run's shared working clone. Inside the operator
+    container (POLIS_SIM_DIR) the sim slice pins the chamber to container
+    mode — the in-network URLs are reachable there. On the host (the
+    --local fallback) the chamber stays in operator mode: the sim-context
+    slices apply and the URLs host-swap to the published ports."""
     rd = run_dir(run_id)
-    os.environ["POLIS_CITY_CONFIG"] = str(rd / "cities" / f"{city}.json")
+    if os.environ.get("POLIS_SIM_DIR"):
+        os.environ["POLIS_CITY_CONFIG"] = str(rd / "cities" / f"{city}.json")
     return load_chamber(as_user=username, city=city,
                         repo_dir=str(rd / "common-law"))
 

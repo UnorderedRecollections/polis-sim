@@ -138,7 +138,9 @@ class Runtime:
             chamber=chamber,
         )
         matter = res.outputs[-1] if res.outputs else None
-        if hasattr(matter, "id"):
+        if isinstance(matter, dict):                      # platform PR (phase 2)
+            res.entry.anchors["matter"] = f"#{matter.get('number')}"
+        elif hasattr(matter, "id"):                       # matter-store entry
             res.entry.anchors["matter"] = matter.id
         return res
 
