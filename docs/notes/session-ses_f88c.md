@@ -23,13 +23,13 @@ The user wants me to read synopsis.md in the working directory to understand wha
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/synopsis.md"
+  "filePath": "<PROJECT>/synopsis.md"
 }
 ```
 
 **Output:**
 ```
-<path>/Users/angr/workspace/articles/git-law-isomorphism-implementation/synopsis.md</path>
+<path><PROJECT>/synopsis.md</path>
 <type>file</type>
 <content>
 1: ## Git / CI-CD as a Legal-Political System
@@ -633,13 +633,13 @@ Let me look at the current setup to understand what's running.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-gogs.sh"
+  "filePath": "<PROJECT>/run-gogs.sh"
 }
 ```
 
 **Output:**
 ```
-<path>/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-gogs.sh</path>
+<path><PROJECT>/run-gogs.sh</path>
 <type>file</type>
 <content>
 1: podman run -d \
@@ -647,7 +647,7 @@ Let me look at the current setup to understand what's running.
 3:   --network gogs-local \
 4:   -p 10022:2222 \
 5:   -p 10880:3000 \
-6:   -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/gogs:/data \
+6:   -v <PROJECT>/gogs:/data \
 7:   gogs/gogs:next-latest
 
 (End of file - total 7 lines)
@@ -659,13 +659,13 @@ Let me look at the current setup to understand what's running.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-gitea.sh"
+  "filePath": "<PROJECT>/run-gitea.sh"
 }
 ```
 
 **Output:**
 ```
-<path>/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-gitea.sh</path>
+<path><PROJECT>/run-gitea.sh</path>
 <type>file</type>
 <content>
 1: podman run -d \
@@ -680,7 +680,7 @@ Let me look at the current setup to understand what's running.
 10:   -e GITEA__database__NAME=gitea \
 11:   -e GITEA__database__USER=gitea \
 12:   -e GITEA__database__PASSWD=gitea \
-13:   -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/gitea:/data \
+13:   -v <PROJECT>/gitea:/data \
 14:   docker.gitea.com/gitea:latest
 
 (End of file - total 14 lines)
@@ -692,19 +692,19 @@ Let me look at the current setup to understand what's running.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-postgres.sh"
+  "filePath": "<PROJECT>/run-postgres.sh"
 }
 ```
 
 **Output:**
 ```
-<path>/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-postgres.sh</path>
+<path><PROJECT>/run-postgres.sh</path>
 <type>file</type>
 <content>
 1: podman run -d \
 2:   --name postgres-gogs \
 3:   --network gogs-local \
-4:   -v /Users/angr/local/postgres-instances/gogs:/var/lib/postgresql/data \
+4:   -v <HOME>/local/postgres-instances/gogs:/var/lib/postgresql/data \
 5:   -e POSTGRES_USER=gogs \
 6:   -e POSTGRES_PASSWORD=GogulE \
 7:   -e POSTGRES_DB=gogs \
@@ -719,20 +719,20 @@ Let me look at the current setup to understand what's running.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-woodpecker.sh"
+  "filePath": "<PROJECT>/run-woodpecker.sh"
 }
 ```
 
 **Output:**
 ```
-<path>/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-woodpecker.sh</path>
+<path><PROJECT>/run-woodpecker.sh</path>
 <type>file</type>
 <content>
 1: podman run -d \
 2:   --name woodpecker-server \
 3:   --network gogs-local \
 4:   -p 10890:8000 \
-5:   -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/server:/var/lib/woodpecker \
+5:   -v <PROJECT>/woodpecker/server:/var/lib/woodpecker \
 6:   -e WOODPECKER_OPEN=true \
 7:   -e WOODPECKER_HOST="http://localhost:10890" \
 8:   -e WOODPECKER_AGENT_SECRET="w00000d" \
@@ -748,7 +748,7 @@ Let me look at the current setup to understand what's running.
 18: podman run -d \
 19:   --name woodpecker-agent \
 20:   --network gogs-local \
-21:   -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \
+21:   -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \
 22:   -e WOODPECKER_SERVER="wodpecker-server:9000" \
 23:   -e WOODPECKER_AGENT_SECRET="w00000d" \
 24:   -e WOODPECKER_BACKEND_DOCKER_NETWORK="gogs-local" \
@@ -903,10 +903,10 @@ Confirmed — the typo `wodpecker-server` in the agent's `WOODPECKER_SERVER` cau
 
 **Output:**
 ```
-/var/folders/rs/p_13bdbx1g56_f1hwnych_lr0000gn/T/podman/podman-machine-default-api.sock
+<TMPDIR>/podman/podman-machine-default-api.sock
 Name                         URI                                                         Identity                                                    Default     ReadWrite
-podman-machine-default       ssh://core@127.0.0.1:50501/run/user/501/podman/podman.sock  /Users/angr/.local/share/containers/podman/machine/machine  true        true
-podman-machine-default-root  ssh://root@127.0.0.1:50501/run/podman/podman.sock           /Users/angr/.local/share/containers/podman/machine/machine  false       true
+podman-machine-default       ssh://core@127.0.0.1:50501/run/user/501/podman/podman.sock  <HOME>/.local/share/containers/podman/machine/machine  true        true
+podman-machine-default-root  ssh://root@127.0.0.1:50501/run/podman/podman.sock           <HOME>/.local/share/containers/podman/machine/machine  false       true
 
 ```
 
@@ -916,7 +916,7 @@ podman-machine-default-root  ssh://root@127.0.0.1:50501/run/podman/podman.sock  
 
 _Thinking:_
 
-The Podman API socket on macOS host is at `/var/folders/rs/p_13bdbx1g56_f1hwnych_lr0000gn/T/podman/podman-machine-default-api.sock`.
+The Podman API socket on macOS host is at `<TMPDIR>/podman/podman-machine-default-api.sock`.
 
 For the woodpecker-agent to use the docker backend with podman, I need to mount this socket into the agent container and set `DOCKER_HOST=unix:///var/run/docker.sock` (or wherever it's mounted).
 
@@ -936,7 +936,7 @@ Now fix the script:
 
 Then remove the exited agent container and re-run just the agent part.
 
-Let me edit the script. Also note the path has spaces? No — `/var/folders/rs/p_13bdbx1g56_f1hwnych_lr0000gn/T/podman/podman-machine-default-api.sock` has no spaces. Good.
+Let me edit the script. Also note the path has spaces? No — `<TMPDIR>/podman/podman-machine-default-api.sock` has no spaces. Good.
 
 One consideration: this socket path is machine-specific and ephemeral (temp dir, may change across podman machine restarts). Since the user said "haphazard" is fine for now and we'll refactor later, hardcoding is acceptable, but I could make the script discover it dynamically:
 
@@ -962,9 +962,9 @@ Let me make the edit.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-woodpecker.sh",
-  "oldString": "podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \\\n  -e WOODPECKER_SERVER=\"wodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent",
-  "newString": "podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \\\n  -v \"$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')\":/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent"
+  "filePath": "<PROJECT>/run-woodpecker.sh",
+  "oldString": "podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \\\n  -e WOODPECKER_SERVER=\"wodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent",
+  "newString": "podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \\\n  -v \"$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')\":/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent"
 }
 ```
 
@@ -986,14 +986,14 @@ Now recreate the agent container (server is already running fine, so only recrea
 **Input:**
 ```json
 {
-  "command": "podman rm -f woodpecker-agent && podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \\\n  -v \"$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')\":/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent"
+  "command": "podman rm -f woodpecker-agent && podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \\\n  -v \"$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')\":/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent"
 }
 ```
 
 **Output:**
 ```
 woodpecker-agent
-Error: statfs /var/folders/rs/p_13bdbx1g56_f1hwnych_lr0000gn/T/podman/podman-machine-default-api.sock: operation not supported
+Error: statfs <TMPDIR>/podman/podman-machine-default-api.sock: operation not supported
 
 ```
 
@@ -1007,9 +1007,9 @@ Mounting a socket directly doesn't work with podman machine on macOS (statfs on 
 
 Options:
 1. Use a TCP forward: run `podman system service` on a TCP port... but that would be on the host.
-2. Mount the socket from *inside* the podman machine VM: the VM has its own socket at `/run/user/501/podman/podman.sock` (rootless) or `/run/podman/podman.sock` (rootful). But containers we create run inside the VM — so mounting the VM's own socket path into a container works! The catch: `podman run` on macOS resolves bind-mount sources on the *host* filesystem... Actually no — bind mount sources are interpreted inside the VM (that's why mounting `/Users/angr/...` works — podman machine sets up virtiofs shares for `/Users`). The VM path `/run/user/501/podman/podman.sock` — is that accessible from the container? Since mount sources are resolved in the VM, `-v /run/user/501/podman/podman.sock:/var/run/docker.sock` should mount the VM's rootless podman socket into the container. That works for Linux hosts and also for macOS because the path is looked up in the VM.
+2. Mount the socket from *inside* the podman machine VM: the VM has its own socket at `/run/user/501/podman/podman.sock` (rootless) or `/run/podman/podman.sock` (rootful). But containers we create run inside the VM — so mounting the VM's own socket path into a container works! The catch: `podman run` on macOS resolves bind-mount sources on the *host* filesystem... Actually no — bind mount sources are interpreted inside the VM (that's why mounting `<HOME>/...` works — podman machine sets up virtiofs shares for `/Users`). The VM path `/run/user/501/podman/podman.sock` — is that accessible from the container? Since mount sources are resolved in the VM, `-v /run/user/501/podman/podman.sock:/var/run/docker.sock` should mount the VM's rootless podman socket into the container. That works for Linux hosts and also for macOS because the path is looked up in the VM.
 
-Wait, but actually on macOS, `-v /Users/...` works because of the virtiofs share. And `-v /run/...` would be resolved in the VM's own filesystem. Mounting a socket file from the VM filesystem into a container inside the same VM should be fine (it's just a bind mount of a socket, supported on Linux).
+Wait, but actually on macOS, `-v <HOME>/...` works because of the virtiofs share. And `-v /run/...` would be resolved in the VM's own filesystem. Mounting a socket file from the VM filesystem into a container inside the same VM should be fine (it's just a bind mount of a socket, supported on Linux).
 
 But there's a subtlety: with rootless podman socket (`/run/user/501/podman/podman.sock`), containers spawned via that socket would be rootless containers — siblings on the same network. That should be fine.
 
@@ -1022,7 +1022,7 @@ Let me try that.
 **Input:**
 ```json
 {
-  "command": "podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \\\n  -v /run/user/501/podman/podman.sock:/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent"
+  "command": "podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \\\n  -v /run/user/501/podman/podman.sock:/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent"
 }
 ```
 
@@ -1081,7 +1081,7 @@ Let me try.
 **Input:**
 ```json
 {
-  "command": "podman rm -f woodpecker-agent && podman run -d \\\n  --name woodpecker-agent \\\n  --user 0:0 \\\n  --network gogs-local \\\n  -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \\\n  -v /run/user/501/podman/podman.sock:/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent && sleep 3 && podman logs woodpecker-agent 2>&1 | tail -6"
+  "command": "podman rm -f woodpecker-agent && podman run -d \\\n  --name woodpecker-agent \\\n  --user 0:0 \\\n  --network gogs-local \\\n  -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \\\n  -v /run/user/501/podman/podman.sock:/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent && sleep 3 && podman logs woodpecker-agent 2>&1 | tail -6"
 }
 ```
 
@@ -1208,7 +1208,7 @@ Let me just test with label=disable.
 **Input:**
 ```json
 {
-  "command": "podman rm -f woodpecker-agent && podman run -d \\\n  --name woodpecker-agent \\\n  --user 0:0 \\\n  --security-opt label=disable \\\n  --network gogs-local \\\n  -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \\\n  -v /run/user/501/podman/podman.sock:/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent && sleep 3 && podman logs woodpecker-agent 2>&1 | tail -6"
+  "command": "podman rm -f woodpecker-agent && podman run -d \\\n  --name woodpecker-agent \\\n  --user 0:0 \\\n  --security-opt label=disable \\\n  --network gogs-local \\\n  -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \\\n  -v /run/user/501/podman/podman.sock:/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent && sleep 3 && podman logs woodpecker-agent 2>&1 | tail -6"
 }
 ```
 
@@ -1278,9 +1278,9 @@ All five containers are up. Now let me sync the working configuration back into 
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-woodpecker.sh",
-  "oldString": "podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \\\n  -v \"$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')\":/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent",
-  "newString": "# Notes for podman-machine on macOS:\n# - The podman socket must be the VM-internal rootless socket (/run/user/501/...);\n#   mounting the host-forwarded socket from /var/folders fails (virtiofs can't mount sockets).\n# - --user 0:0: container root maps to the VM's core user (uid 501), owner of the socket.\n# - label=disable: SELinux on the CoreOS VM would otherwise deny access to the socket.\npodman run -d \\\n  --name woodpecker-agent \\\n  --user 0:0 \\\n  --security-opt label=disable \\\n  --network gogs-local \\\n  -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \\\n  -v /run/user/501/podman/podman.sock:/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent"
+  "filePath": "<PROJECT>/run-woodpecker.sh",
+  "oldString": "podman run -d \\\n  --name woodpecker-agent \\\n  --network gogs-local \\\n  -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \\\n  -v \"$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')\":/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent",
+  "newString": "# Notes for podman-machine on macOS:\n# - The podman socket must be the VM-internal rootless socket (/run/user/501/...);\n#   mounting the host-forwarded socket from /var/folders fails (virtiofs can't mount sockets).\n# - --user 0:0: container root maps to the VM's core user (uid 501), owner of the socket.\n# - label=disable: SELinux on the CoreOS VM would otherwise deny access to the socket.\npodman run -d \\\n  --name woodpecker-agent \\\n  --user 0:0 \\\n  --security-opt label=disable \\\n  --network gogs-local \\\n  -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \\\n  -v /run/user/501/podman/podman.sock:/var/run/docker.sock \\\n  -e DOCKER_HOST=\"unix:///var/run/docker.sock\" \\\n  -e WOODPECKER_SERVER=\"woodpecker-server:9000\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_BACKEND_DOCKER_NETWORK=\"gogs-local\" \\\n  woodpeckerci/woodpecker-agent:v3 \\\n  agent"
 }
 ```
 
@@ -3666,20 +3666,20 @@ Then venv + scaffold. Let me get moving — do the healthz probe and server recr
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-woodpecker.sh"
+  "filePath": "<PROJECT>/run-woodpecker.sh"
 }
 ```
 
 **Output:**
 ```
-<path>/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-woodpecker.sh</path>
+<path><PROJECT>/run-woodpecker.sh</path>
 <type>file</type>
 <content>
 1: podman run -d \
 2:   --name woodpecker-server \
 3:   --network gogs-local \
 4:   -p 10890:8000 \
-5:   -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/server:/var/lib/woodpecker \
+5:   -v <PROJECT>/woodpecker/server:/var/lib/woodpecker \
 6:   -e WOODPECKER_OPEN=true \
 7:   -e WOODPECKER_HOST="http://localhost:10890" \
 8:   -e WOODPECKER_AGENT_SECRET="w00000d" \
@@ -3702,7 +3702,7 @@ Then venv + scaffold. Let me get moving — do the healthz probe and server recr
 25:   --user 0:0 \
 26:   --security-opt label=disable \
 27:   --network gogs-local \
-28:   -v /Users/angr/workspace/articles/git-law-isomorphism-implementation/woodpecker/agent/01:/etc/woodpecker \
+28:   -v <PROJECT>/woodpecker/agent/01:/etc/woodpecker \
 29:   -v /run/user/501/podman/podman.sock:/var/run/docker.sock \
 30:   -e DOCKER_HOST="unix:///var/run/docker.sock" \
 31:   -e WOODPECKER_SERVER="woodpecker-server:9000" \
@@ -3724,7 +3724,7 @@ Then venv + scaffold. Let me get moving — do the healthz probe and server recr
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/run-woodpecker.sh",
+  "filePath": "<PROJECT>/run-woodpecker.sh",
   "oldString": "  -e WOODPECKER_OPEN=true \\\n  -e WOODPECKER_HOST=\"http://localhost:10890\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\",
   "newString": "  -e WOODPECKER_OPEN=true \\\n  -e WOODPECKER_HOST=\"http://localhost:10890\" \\\n  -e WOODPECKER_AGENT_SECRET=\"w00000d\" \\\n  -e WOODPECKER_ADMIN=\"agros\" \\"
 }
@@ -4352,7 +4352,7 @@ Recon done. Now scaffolding the package — first the project metadata, config, 
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/pyproject.toml",
+  "filePath": "<PROJECT>/pyproject.toml",
   "content": "[build-system]\nrequires = [\"setuptools>=68\"]\nbuild-backend = \"setuptools.build_meta\"\n\n[project]\nname = \"polis\"\nversion = \"0.1.0\"\ndescription = \"Operator's tool for the git-law federation simulation\"\nrequires-python = \">=3.10\"\ndependencies = [\n    \"typer>=0.12\",\n    \"httpx>=0.27\",\n    \"pydantic>=2.7\",\n    \"rich>=13\",\n]\n\n[project.scripts]\npolis = \"polis.cli.main:app\"\n\n[tool.setuptools.packages.find]\ninclude = [\"polis*\"]\n"
 }
 ```
@@ -4367,7 +4367,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/__init__.py",
+  "filePath": "<PROJECT>/polis/__init__.py",
   "content": "\"\"\"polis — operator's tool for the git-law federation simulation.\n\nTwo command families:\n  * domain commands (world/city/person/office/assign) model the federation;\n  * component commands (gogs/gitea/woodpecker/citynode/health) operate the\n    technical apparatus the federation runs on.\n\"\"\"\n\n__version__ = \"0.1.0\"\n"
 }
 ```
@@ -4382,7 +4382,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/config.py",
+  "filePath": "<PROJECT>/polis/config.py",
   "content": "\"\"\"Locations, endpoints and credentials for the local apparatus.\n\nEverything is overridable via POLIS_* environment variables so the tool can\nlater be pointed at the refactored, portable deployment without code changes.\n\"\"\"\nfrom __future__ import annotations\n\nimport os\nfrom pathlib import Path\n\nPROJECT_ROOT = Path(__file__).resolve().parent.parent\nWORLD_DIR = PROJECT_ROOT / \"world\"\nWORLD_FILE = WORLD_DIR / \"world.json\"\nCITIES_DIR = WORLD_DIR / \"cities\"\n\nGOGS_URL = os.environ.get(\"POLIS_GOGS_URL\", \"http://localhost:10880\")\nGITEA_URL = os.environ.get(\"POLIS_GITEA_URL\", \"http://localhost:3001\")\nWOODPECKER_URL = os.environ.get(\"POLIS_WOODPECKER_URL\", \"http://localhost:10890\")\n\nPODMAN_NETWORK = os.environ.get(\"POLIS_NETWORK\", \"gogs-local\")\nPOSTGRES_CONTAINER = os.environ.get(\"POLIS_POSTGRES_CONTAINER\", \"postgres-gogs\")\nCITY_CONTAINER_PREFIX = os.environ.get(\"POLIS_CITY_PREFIX\", \"polis-city-\")\n\n\ndef _read_key(filename: str) -> str:\n    path = PROJECT_ROOT / filename\n    if not path.exists():\n        raise RuntimeError(f\"Missing API key file: {path}\")\n    return path.read_text(encoding=\"utf-8\").strip()\n\n\ndef gogs_token() -> str:\n    return _read_key(\"gogs.api-key\")\n\n\ndef gitea_token() -> str:\n    return _read_key(\"gitea.api-key\")\n\n\ndef woodpecker_token() -> str:\n    return _read_key(\"woodpecker.api-key\")\n"
 }
 ```
@@ -4397,7 +4397,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/models.py",
+  "filePath": "<PROJECT>/polis/models.py",
   "content": "\"\"\"Domain model of the federation.\n\nTwo orthogonal dimensions on every person:\n  * member_of  — where the person exists politically (a city), or, for the\n                 Mechanical Magistrate, the federal institution it belongs to;\n  * occupies   — the offices the person holds; offices grant powers.\n\nThree kinds of agency:\n  * political  — citizens who want things (legislators, delegates);\n  * juridical  — officers exercising delegated legal authority\n                 (experts, jurists, archivists);\n  * mechanical — software executing rules (the Mechanical Magistrate).\n\"\"\"\nfrom __future__ import annotations\n\nfrom datetime import datetime, timezone\nfrom typing import Literal, Optional\n\nfrom pydantic import BaseModel, Field\n\nAgency = Literal[\"political\", \"juridical\", \"mechanical\"]\n\nPOLITICAL_ROLES = (\"citizen-legislator\", \"local-delegate\")\n\nDEFAULT_DOMAINS = [\"taxation\", \"maritime\", \"criminal\", \"commerce\", \"civic\", \"succession\"]\n\n\ndef _utcnow() -> datetime:\n    return datetime.now(timezone.utc)\n\n\nclass Membership(BaseModel):\n    type: Literal[\"city\", \"institution\"]\n    id: str  # city slug, or institution body id (e.g. \"federal-magistracy\")\n\n\nclass GitIdentity(BaseModel):\n    author_name: str\n    author_email: str\n\n\nclass Credentials(BaseModel):\n    password: str\n    api_tokens: dict[str, str] = {}  # per-platform tokens, filled at provisioning\n    ssh_private_key: Optional[str] = None\n    ssh_public_key: Optional[str] = None\n\n\nclass Person(BaseModel):\n    username: str\n    display_name: str\n    email: str\n    agency: Agency\n    member_of: Membership\n    roles: list[str] = []      # political roles (subset of POLITICAL_ROLES)\n    occupies: list[str] = []   # office ids\n    git: GitIdentity\n    credentials: Credentials\n    created_at: datetime = Field(default_factory=_utcnow)\n\n\nclass Office(BaseModel):\n    id: str                    # e.g. \"federal-archivist\", \"local-archivist-cogswich\"\n    title: str                 # e.g. \"Keeper of the Federal Rolls\"\n    body: str                  # e.g. \"federal-archive\", \"domain:taxation\"\n    kind: Literal[\"juridical\", \"mechanical\"]\n    scope: str                 # \"federal\" or \"city:<slug>\"\n    powers: list[str] = []     # e.g. \"merge:main\", \"merge:municipal/cogswich/**\"\n    occupant: Optional[str] = None  # username\n    created_at: datetime = Field(default_factory=_utcnow)\n\n\nclass City(BaseModel):\n    id: str                    # slug, e.g. \"cogswich\"\n    display_name: str\n    created_at: datetime = Field(default_factory=_utcnow)\n\n\nclass Federation(BaseModel):\n    name: str = \"The Concord of the Nine Cities\"\n    archive_org: str = \"the-archive\"\n    repo: str = \"common-law\"\n    domains: list[str] = Field(default_factory=lambda: list(DEFAULT_DOMAINS))\n    phase: int = 1             # 1 = customary machinery (gogs), 2 = automated (gitea+CI)\n\n\nclass World(BaseModel):\n    federation: Federation = Field(default_factory=Federation)\n    cities: list[City] = []\n    offices: list[Office] = []\n    persons: list[Person] = []\n    created_at: datetime = Field(default_factory=_utcnow)\n\n    # --- lookups -----------------------------------------------------------\n    def find_city(self, city_id: str) -> City:\n        for c in self.cities:\n            if c.id == city_id:\n                return c\n        raise KeyError(f\"unknown city '{city_id}'\")\n\n    def find_person(self, username: str) -> Person:\n        for p in self.persons:\n            if p.username == username:\n                return p\n        raise KeyError(f\"unknown person '{username}'\")\n\n    def find_office(self, office_id: str) -> Office:\n        for o in self.offices:\n            if o.id == office_id:\n                return o\n        raise KeyError(f\"unknown office '{office_id}'\")\n\n    def city_persons(self, city_id: str) -> list[Person]:\n        return [p for p in self.persons if p.member_of.type == \"city\" and p.member_of.id == city_id]\n\n    def office_of(self, person: Person, office_id: str) -> Office | None:\n        return self.find_office(office_id) if office_id in person.occupies else None\n"
 }
 ```
@@ -4422,7 +4422,7 @@ Now the store, name generation, and the genesis roster builder:
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/store.py",
+  "filePath": "<PROJECT>/polis/store.py",
   "content": "\"\"\"Persistence of the world state (world.json) and per-city container slices.\"\"\"\nfrom __future__ import annotations\n\nimport json\nfrom pathlib import Path\n\nfrom . import config\nfrom .models import World\n\n\ndef world_exists() -> bool:\n    return config.WORLD_FILE.exists()\n\n\ndef load_world() -> World:\n    \"\"\"Load world.json; return an empty world if none exists yet.\"\"\"\n    if not world_exists():\n        return World()\n    return World.model_validate_json(config.WORLD_FILE.read_text(encoding=\"utf-8\"))\n\n\ndef save_world(world: World) -> Path:\n    config.WORLD_DIR.mkdir(parents=True, exist_ok=True)\n    config.WORLD_FILE.write_text(\n        world.model_dump_json(indent=2), encoding=\"utf-8\"\n    )\n    return config.WORLD_FILE\n\n\ndef city_slice(world: World, city_id: str) -> dict:\n    \"\"\"The configuration slice handed to one city container.\n\n    Contains the city's own citizens (with credentials), its locally-scoped\n    offices, and the git remotes through which it reaches the apparatus.\n    Federal officers' credentials are never included.\n    \"\"\"\n    city = world.find_city(city_id)\n    fed = world.federation\n    host = \"gitea\" if fed.phase == 2 else \"gogs\"\n    port = 3000  # in-network port of the platform container\n    return {\n        \"city\": city.model_dump(),\n        \"federation\": {\"name\": fed.name, \"phase\": fed.phase},\n        \"git\": {\n            \"default_branch\": \"main\",\n            \"remotes\": {\n                \"origin\": f\"http://{host}:{port}/{city.id}/{fed.repo}.git\",\n                \"upstream\": f\"http://{host}:{port}/{fed.archive_org}/{fed.repo}.git\",\n            },\n        },\n        \"citizens\": [p.model_dump() for p in world.city_persons(city.id)],\n        \"local_offices\": [\n            o.model_dump() for o in world.offices if o.scope == f\"city:{city.id}\"\n        ],\n    }\n\n\ndef export_city(world: World, city_id: str) -> Path:\n    config.CITIES_DIR.mkdir(parents=True, exist_ok=True)\n    path = config.CITIES_DIR / f\"{city_id}.json\"\n    path.write_text(json.dumps(city_slice(world, city_id), indent=2), encoding=\"utf-8\")\n    return path\n\n\ndef export_all_cities(world: World) -> list[Path]:\n    return [export_city(world, c.id) for c in world.cities]\n"
 }
 ```
@@ -4437,7 +4437,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/names.py",
+  "filePath": "<PROJECT>/polis/names.py",
   "content": "\"\"\"Fictional name generation — weird-fiction / steampunk flavour.\"\"\"\nfrom __future__ import annotations\n\nimport random\nimport re\nimport string\n\nCITY_NAMES = [\n    \"Cogswich\",\n    \"Brasshaven\",\n    \"Aetherquay\",\n    \"Thornwick\",\n    \"Cindercog\",\n    \"Gloamingate\",\n    \"Hushpoole\",\n    \"Chimefall\",\n    \"Vapourmouth\",\n]\n\nFIRST_NAMES = [\n    \"Ambrose\", \"Edwina\", \"Thaddeus\", \"Morwen\", \"Septimus\", \"Odile\",\n    \"Bartholomew\", \"Ingrid\", \"Casimir\", \"Vera\", \"Ezekiel\", \"Honoria\",\n    \"Silas\", \"Petronella\", \"Reginald\", \"Drusilla\", \"Obadiah\", \"Thomasina\",\n    \"Ephraim\", \"Leonora\", \"Gideon\", \"Ursula\", \"Phineas\", \"Millicent\",\n    \"Tobias\", \"Wilhelmina\", \"Cornelius\", \"Beatrice\", \"Josiah\", \"Evadne\",\n    \"Roderick\", \"Clementine\", \"Algernon\", \"Mercy\", \"Eustace\", \"Ophelia\",\n    \"Barnaby\", \"Temperance\", \"Leopold\", \"Hester\", \"Maximilian\", \"Prudence\",\n    \"Nathaniel\", \"Georgiana\", \"Percival\", \"Rowena\", \"Ebenezer\", \"Sophronia\",\n    \"Archibald\", \"Lavinia\", \"Horace\", \"Emmeline\",\n]\n\nLAST_NAMES = [\n    \"Vane\", \"Morrow\", \"Cogswell\", \"Brassington\", \"Quill\", \"Featherstone\",\n    \"Halloway\", \"Grimsbane\", \"Thistledown\", \"Marrowbone\", \"Kettleblack\",\n    \"Sallow\", \"Nightingale\", \"Ashcroft\", \"Bellwether\", \"Crankshaw\",\n    \"Duskwater\", \"Emberly\", \"Fallowfield\", \"Grimshaw\", \"Hartwell\",\n    \"Ironmonger\", \"Jackdaw\", \"Kestrel\", \"Lovelace\", \"Munderby\",\n    \"Nettlebed\", \"Oxbow\", \"Pargeter\", \"Rookwood\", \"Sable\", \"Tallow\",\n    \"Underhill\", \"Vexley\", \"Wormwood\", \"Yarborough\", \"Zelwick\",\n    \"Thackery\", \"Pembleton\", \"Starling\", \"Goodenough\", \"Hollowfax\",\n    \"Marlborough\", \"Dreever\",\n]\n\n\ndef slugify(text: str) -> str:\n    \"\"\"'Aether Quay' -> 'aetherquay'; keeps only lowercase ascii letters/digits.\"\"\"\n    return re.sub(r\"[^a-z0-9]+\", \"\", text.lower())\n\n\ndef make_display_name(rng: random.Random, taken: set[str]) -> str:\n    for _ in range(1000):\n        name = f\"{rng.choice(FIRST_NAMES)} {rng.choice(LAST_NAMES)}\"\n        if name not in taken:\n            taken.add(name)\n            return name\n    raise RuntimeError(\"name pool exhausted\")\n\n\ndef make_username(display_name: str, taken: set[str]) -> str:\n    \"\"\"'Edwina Vane' -> 'e.vane' (digits appended on collision).\"\"\"\n    parts = display_name.split()\n    base = f\"{parts[0][0]}.{slugify(parts[-1])}\"\n    username = base\n    n = 2\n    while username in taken:\n        username = f\"{base}{n}\"\n        n += 1\n    taken.add(username)\n    return username\n\n\ndef make_password(rng: random.Random, length: int = 18) -> str:\n    alphabet = string.ascii_letters + string.digits\n    return \"\".join(rng.choices(alphabet, k=length))\n"
 }
 ```
@@ -4452,7 +4452,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/genesis.py",
+  "filePath": "<PROJECT>/polis/genesis.py",
   "content": "\"\"\"Genesis — generate the founding population of the federation.\n\nRoster (see design discussion):\n  * per city: 3 citizen-legislators, 2 local delegates, 1 local archivist;\n  * federal superstructure: 6 domain experts, 3 constitutional jurists,\n    1 Federal Archivist (a local archivist elevated, dual office),\n    1 Mechanical Magistrate (service account, not a person).\n\nSeparation rule: no person holds both a political role and a juridical\noffice. Experts and jurists are citizens of cities, but their citizenship\ngrants no powers — only their offices do.\n\"\"\"\nfrom __future__ import annotations\n\nimport random\n\nfrom .models import (\n    Agency,\n    City,\n    Credentials,\n    Federation,\n    GitIdentity,\n    Membership,\n    Office,\n    Person,\n    World,\n)\nfrom .names import CITY_NAMES, make_display_name, make_password, make_username\n\nLEGISLATORS_PER_CITY = 3\nDELEGATES_PER_CITY = 2\n\nARCHIVE_POWERS_FEDERAL = [\"merge:main\", \"revert:main\", \"tag:create\", \"branch:manage\"]\nMAGISTRATE_POWERS = [\"execute:formal-checks\", \"report:commit-status\"]\n\n\ndef _expert_powers(domain: str) -> list[str]:\n    return [f\"review:{domain}/**\", f\"jurisdiction:{domain}\"]\n\n\ndef _local_archivist_powers(city_id: str) -> list[str]:\n    return [f\"merge:municipal/{city_id}/**\", f\"maintain:city-archive:{city_id}\"]\n\n\nCOUNCIL_POWERS = [\"review:required\", \"veto:incompatibility\"]\n\n\nclass _RosterBuilder:\n    def __init__(self, seed: int):\n        self.rng = random.Random(seed)\n        self.taken_names: set[str] = set()\n        self.taken_usernames: set[str] = set()\n        self.persons: list[Person] = []\n        self.offices: list[Office] = []\n\n    def new_person(\n        self,\n        agency: Agency,\n        city_id: str | None,\n        roles: list[str] | None = None,\n        institution: str | None = None,\n    ) -> Person:\n        display = make_display_name(self.rng, self.taken_names)\n        username = make_username(display, self.taken_usernames)\n        if city_id is not None:\n            member_of = Membership(type=\"city\", id=city_id)\n            email = f\"{username}@{city_id}.invalid\"\n        else:\n            member_of = Membership(type=\"institution\", id=institution or \"federal-magistracy\")\n            email = f\"{username}@{member_of.id}.invalid\"\n        person = Person(\n            username=username,\n            display_name=display,\n            email=email,\n            agency=agency,\n            member_of=member_of,\n            roles=roles or [],\n            git=GitIdentity(author_name=display, author_email=email),\n            credentials=Credentials(password=make_password(self.rng)),\n        )\n        self.persons.append(person)\n        return person\n\n    def new_office(\n        self,\n        office_id: str,\n        title: str,\n        body: str,\n        kind: str,\n        scope: str,\n        powers: list[str],\n        occupant: Person | None,\n    ) -> Office:\n        office = Office(\n            id=office_id, title=title, body=body, kind=kind,  # type: ignore[arg-type]\n            scope=scope, powers=powers,\n            occupant=occupant.username if occupant else None,\n        )\n        self.offices.append(office)\n        if occupant is not None:\n            occupant.occupies.append(office.id)\n        return office\n\n\ndef build_world(seed: int = 42) -> World:\n    b = _RosterBuilder(seed)\n    cities = [City(id=name.lower().replace(\" \", \"\"), display_name=name) for name in CITY_NAMES]\n\n    # --- municipal layer ---------------------------------------------------\n    local_archivists: dict[str, Person] = {}\n    for city in cities:\n        for _ in range(LEGISLATORS_PER_CITY):\n            b.new_person(\"political\", city.id, roles=[\"citizen-legislator\"])\n        for _ in range(DELEGATES_PER_CITY):\n            b.new_person(\"political\", city.id, roles=[\"local-delegate\"])\n        archivist = b.new_person(\"juridical\", city.id)\n        local_archivists[city.id] = archivist\n        b.new_office(\n            office_id=f\"local-archivist-{city.id}\",\n            title=f\"Archivist of {city.display_name}\",\n            body=\"local-archive\",\n            kind=\"juridical\",\n            scope=f\"city:{city.id}\",\n            powers=_local_archivist_powers(city.id),\n            occupant=archivist,\n        )\n\n    # --- federal superstructure --------------------------------------------\n    fed = Federation()\n\n    # Domain experts — one per legal domain; citizens of the first six cities.\n    for domain, city in zip(fed.domains, cities):\n        expert = b.new_person(\"juridical\", city.id)\n        b.new_office(\n            office_id=f\"expert-{domain}\",\n            title=f\" jurisdictional expert — {domain}\".strip().title().replace(\"—\", \"—\"),\n            body=f\"domain:{domain}\",\n            kind=\"juridical\",\n            scope=\"federal\",\n            powers=_expert_powers(domain),\n            occupant=expert,\n        )\n\n    # Constitutional jurists — citizens of the remaining three cities, so that\n    # every city is home to exactly one federal officer.\n    for i, city in enumerate(cities[len(fed.domains):], start=1):\n        jurist = b.new_person(\"juridical\", city.id)\n        b.new_office(\n            office_id=f\"council-jurist-{i}\",\n            title=f\"Jurist of the Constitutional Council, Seat {i}\",\n            body=\"constitutional-council\",\n            kind=\"juridical\",\n            scope=\"federal\",\n            powers=list(COUNCIL_POWERS),\n            occupant=jurist,\n        )\n\n    # Federal Archivist — the first city's local archivist, elevated (dual office).\n    b.new_office(\n        office_id=\"federal-archivist\",\n        title=\"Keeper of the Federal Rolls\",\n        body=\"federal-archive\",\n        kind=\"juridical\",\n        scope=\"federal\",\n        powers=list(ARCHIVE_POWERS_FEDERAL),\n        occupant=local_archivists[cities[0].id],\n    )\n\n    # The Mechanical Magistrate — software, not a person; belongs to the\n    # institution, not to any city. Dormant in phase 1, active in phase 2.\n    magistrate = b.new_person(\"mechanical\", None, institution=\"federal-magistracy\")\n    magistrate.display_name = \"The Mechanical Magistrate\"\n    magistrate.username = \"mechanical-magistrate\"\n    magistrate.email = \"magistrate@federal-magistracy.invalid\"\n    magistrate.git = GitIdentity(author_name=\"Mechanical Magistrate\", author_email=magistrate.email)\n    b.new_office(\n        office_id=\"mechanical-magistrate\",\n        title=\"The Mechanical Magistrate\",\n        body=\"federal-magistracy\",\n        kind=\"mechanical\",\n        scope=\"federal\",\n        powers=list(MAGISTRATE_POWERS),\n        occupant=magistrate,\n    )\n\n    return World(federation=fed, cities=cities, offices=b.offices, persons=b.persons)\n"
 }
 ```
@@ -4485,7 +4485,7 @@ Fix the expert title line.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/genesis.py",
+  "filePath": "<PROJECT>/polis/genesis.py",
   "oldString": "            title=f\" jurisdictional expert — {domain}\".strip().title().replace(\"—\", \"—\"),",
   "newString": "            title=f\"Jurisdictional Expert of {domain.title()}\","
 }
@@ -4507,7 +4507,7 @@ Now the platform clients (gogs, gitea, woodpecker, podman):
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/clients/__init__.py",
+  "filePath": "<PROJECT>/polis/clients/__init__.py",
   "content": "\"\"\"HTTP/system clients for the technical apparatus.\"\"\"\n"
 }
 ```
@@ -4522,7 +4522,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/clients/gogs.py",
+  "filePath": "<PROJECT>/polis/clients/gogs.py",
   "content": "\"\"\"Client for the gogs instance (phase-1 platform of the institutional apparatus).\n\nNote: this gogs build (\"next\") answers most of the gitea-shaped v1 API, but\nsome read-only admin routes (e.g. GET /api/v1/admin/users) 404 while the\ncorresponding POST/DELETE routes work. User listing therefore goes through\n/users/search.\n\"\"\"\nfrom __future__ import annotations\n\nfrom typing import Any\n\nimport httpx\n\nfrom .. import config\n\n\nclass GogsError(RuntimeError):\n    pass\n\n\nclass GogsClient:\n    name = \"gogs\"\n\n    def __init__(self, token: str | None = None):\n        self.http = httpx.Client(\n            base_url=config.GOGS_URL,\n            headers={\"Authorization\": f\"token {token or config.gogs_token()}\"},\n            timeout=10.0,\n        )\n\n    def _request(self, method: str, path: str, **kw: Any) -> httpx.Response:\n        try:\n            r = self.http.request(method, path, **kw)\n        except httpx.HTTPError as e:\n            raise GogsError(f\"gogs unreachable at {config.GOGS_URL}: {e}\") from e\n        if r.status_code >= 400:\n            raise GogsError(f\"{method} {path} -> {r.status_code}: {r.text[:300]}\")\n        return r\n\n    # --- introspection -----------------------------------------------------\n    def whoami(self) -> dict:\n        return self._request(\"GET\", \"/api/v1/user\").json()\n\n    def search_users(self, query: str = \"\", limit: int = 200) -> list[dict]:\n        data = self._request(\n            \"GET\", \"/api/v1/users/search\", params={\"q\": query, \"limit\": limit}\n        ).json()\n        return data.get(\"data\", []) if isinstance(data, dict) else data\n\n    def list_orgs(self) -> list[dict]:\n        return self._request(\"GET\", \"/api/v1/user/orgs\").json()\n\n    def list_repos(self, limit: int = 200) -> list[dict]:\n        data = self._request(\"GET\", \"/api/v1/repos/search\", params={\"limit\": limit}).json()\n        return data.get(\"data\", []) if isinstance(data, dict) else data\n\n    # --- administration ------------------------------------------------------\n    def create_user(self, username: str, email: str, password: str, full_name: str = \"\") -> dict:\n        return self._request(\n            \"POST\",\n            \"/api/v1/admin/users\",\n            json={\n                \"username\": username,\n                \"email\": email,\n                \"password\": password,\n                \"full_name\": full_name,\n                \"must_change_password\": False,\n                \"send_notify\": False,\n            },\n        ).json()\n\n    def delete_user(self, username: str) -> None:\n        self._request(\"DELETE\", f\"/api/v1/admin/users/{username}\")\n\n    def create_org(self, username: str, full_name: str = \"\") -> dict:\n        return self._request(\n            \"POST\", \"/api/v1/orgs\", json={\"username\": username, \"full_name\": full_name}\n        ).json()\n\n    def delete_org(self, username: str) -> None:\n        self._request(\"DELETE\", f\"/api/v1/orgs/{username}\")\n"
 }
 ```
@@ -4537,7 +4537,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/clients/gitea.py",
+  "filePath": "<PROJECT>/polis/clients/gitea.py",
   "content": "\"\"\"Client for the gitea instance (phase-2 platform of the apparatus).\"\"\"\nfrom __future__ import annotations\n\nfrom typing import Any\n\nimport httpx\n\nfrom .. import config\n\n\nclass GiteaError(RuntimeError):\n    pass\n\n\nclass GiteaClient:\n    name = \"gitea\"\n\n    def __init__(self, token: str | None = None):\n        self.http = httpx.Client(\n            base_url=config.GITEA_URL,\n            headers={\"Authorization\": f\"token {token or config.gitea_token()}\"},\n            timeout=10.0,\n        )\n\n    def _request(self, method: str, path: str, **kw: Any) -> httpx.Response:\n        try:\n            r = self.http.request(method, path, **kw)\n        except httpx.HTTPError as e:\n            raise GiteaError(f\"gitea unreachable at {config.GITEA_URL}: {e}\") from e\n        if r.status_code >= 400:\n            raise GiteaError(f\"{method} {path} -> {r.status_code}: {r.text[:300]}\")\n        return r\n\n    # --- introspection -----------------------------------------------------\n    def version(self) -> str:\n        return self._request(\"GET\", \"/api/v1/version\").json()[\"version\"]\n\n    def whoami(self) -> dict:\n        return self._request(\"GET\", \"/api/v1/user\").json()\n\n    def admin_users(self, limit: int = 200) -> list[dict]:\n        return self._request(\"GET\", \"/api/v1/admin/users\", params={\"limit\": limit}).json()\n\n    def search_users(self, query: str = \"\", limit: int = 200) -> list[dict]:\n        data = self._request(\n            \"GET\", \"/api/v1/users/search\", params={\"q\": query, \"limit\": limit}\n        ).json()\n        return data.get(\"data\", []) if isinstance(data, dict) else data\n\n    def list_orgs(self) -> list[dict]:\n        return self._request(\"GET\", \"/api/v1/user/orgs\").json()\n\n    def list_repos(self, limit: int = 200) -> list[dict]:\n        data = self._request(\"GET\", \"/api/v1/repos/search\", params={\"limit\": limit}).json()\n        return data.get(\"data\", []) if isinstance(data, dict) else data\n\n    # --- administration ------------------------------------------------------\n    def create_user(self, username: str, email: str, password: str, full_name: str = \"\") -> dict:\n        return self._request(\n            \"POST\",\n            \"/api/v1/admin/users\",\n            json={\n                \"username\": username,\n                \"email\": email,\n                \"password\": password,\n                \"full_name\": full_name,\n                \"must_change_password\": False,\n                \"send_notify\": False,\n            },\n        ).json()\n\n    def delete_user(self, username: str) -> None:\n        self._request(\"DELETE\", f\"/api/v1/admin/users/{username}\")\n\n    def create_org(self, username: str, full_name: str = \"\") -> dict:\n        return self._request(\n            \"POST\", \"/api/v1/orgs\", json={\"username\": username, \"full_name\": full_name}\n        ).json()\n\n    def delete_org(self, username: str) -> None:\n        self._request(\"DELETE\", f\"/api/v1/orgs/{username}\")\n"
 }
 ```
@@ -4552,7 +4552,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/clients/woodpecker.py",
+  "filePath": "<PROJECT>/polis/clients/woodpecker.py",
   "content": "\"\"\"Client for the woodpecker CI server (the Mechanical Magistrate's engine room).\n\nAPI base is /api (unversioned); authentication via Bearer token.\n\"\"\"\nfrom __future__ import annotations\n\nimport time\nfrom typing import Any\n\nimport httpx\n\nfrom .. import config\n\n\nclass WoodpeckerError(RuntimeError):\n    pass\n\n\nclass WoodpeckerClient:\n    name = \"woodpecker\"\n\n    def __init__(self, token: str | None = None):\n        self.http = httpx.Client(\n            base_url=config.WOODPECKER_URL,\n            headers={\"Authorization\": f\"Bearer {token or config.woodpecker_token()}\"},\n            timeout=10.0,\n        )\n\n    def _request(self, method: str, path: str, **kw: Any) -> httpx.Response:\n        try:\n            r = self.http.request(method, path, **kw)\n        except httpx.HTTPError as e:\n            raise WoodpeckerError(f\"woodpecker unreachable at {config.WOODPECKER_URL}: {e}\") from e\n        if r.status_code >= 400:\n            raise WoodpeckerError(f\"{method} {path} -> {r.status_code}: {r.text[:300]}\")\n        return r\n\n    def healthz(self) -> bool:\n        try:\n            return self.http.get(\"/healthz\").status_code == 204\n        except httpx.HTTPError:\n            return False\n\n    def whoami(self) -> dict:\n        return self._request(\"GET\", \"/api/user\").json()\n\n    def list_agents(self) -> list[dict]:\n        return self._request(\"GET\", \"/api/agents\").json()\n\n    def delete_agent(self, agent_id: int) -> None:\n        self._request(\"DELETE\", f\"/api/agents/{agent_id}\")\n\n    def live_agents(self, max_silence_seconds: int = 300) -> list[dict]:\n        \"\"\"Agents that have contacted the server recently.\"\"\"\n        now = int(time.time())\n        return [\n            a for a in self.list_agents()\n            if a.get(\"last_contact\") and now - a[\"last_contact\"] < max_silence_seconds\n        ]\n"
 }
 ```
@@ -4567,7 +4567,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/clients/podman.py",
+  "filePath": "<PROJECT>/polis/clients/podman.py",
   "content": "\"\"\"Thin wrapper around the podman CLI for container/network introspection.\"\"\"\nfrom __future__ import annotations\n\nimport json\nimport subprocess\n\n\nclass PodmanError(RuntimeError):\n    pass\n\n\ndef _run(args: list[str], check: bool = True) -> subprocess.CompletedProcess:\n    try:\n        proc = subprocess.run(\n            [\"podman\", *args], capture_output=True, text=True, timeout=20\n        )\n    except FileNotFoundError as e:\n        raise PodmanError(\"podman CLI not found on PATH\") from e\n    except subprocess.TimeoutExpired as e:\n        raise PodmanError(f\"podman {' '.join(args)} timed out\") from e\n    if check and proc.returncode != 0:\n        raise PodmanError(f\"podman {' '.join(args)} failed: {proc.stderr.strip()[:300]}\")\n    return proc\n\n\ndef containers(all_: bool = True) -> list[dict]:\n    args = [\"ps\", \"--format\", \"json\"]\n    if all_:\n        args.insert(1, \"-a\")\n    out = _run(args).stdout.strip()\n    return json.loads(out) if out else []\n\n\ndef container(name: str) -> dict | None:\n    for c in containers():\n        names = c.get(\"Names\") or ([c[\"Name\"]] if c.get(\"Name\") else [])\n        if name in names:\n            return c\n    return None\n\n\ndef container_running(name: str) -> bool:\n    c = container(name)\n    return bool(c and c.get(\"State\") == \"running\")\n\n\ndef network_exists(name: str) -> bool:\n    proc = _run([\"network\", \"exists\", name], check=False)\n    return proc.returncode == 0\n\n\ndef machine_state() -> str:\n    out = _run([\"machine\", \"inspect\", \"--format\", \"{{.State}}\"], check=False)\n    return out.stdout.strip() or \"unknown\"\n\n\ndef exec_ok(container_name: str, args: list[str]) -> tuple[bool, str]:\n    proc = _run([\"exec\", container_name, *args], check=False)\n    return proc.returncode == 0, (proc.stdout + proc.stderr).strip()\n"
 }
 ```
@@ -4592,7 +4592,7 @@ Now the CLI — domain commands first (world, city, person, office, assign):
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/__init__.py",
+  "filePath": "<PROJECT>/polis/cli/__init__.py",
   "content": ""
 }
 ```
@@ -4607,7 +4607,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/common.py",
+  "filePath": "<PROJECT>/polis/cli/common.py",
   "content": "\"\"\"Shared helpers for CLI commands.\"\"\"\nfrom __future__ import annotations\n\nimport typer\nfrom rich.console import Console\nfrom rich.table import Table\n\nfrom ..models import World\nfrom ..store import load_world\n\nconsole = Console()\nerr_console = Console(stderr=True)\n\n\ndef die(message: str) -> None:\n    err_console.print(f\"[bold red]error:[/bold red] {message}\")\n    raise typer.Exit(code=1)\n\n\ndef get_world() -> World:\n    return load_world()\n\n\ndef lookup(world: World, kind: str, finder, key: str):\n    try:\n        return finder(key)\n    except KeyError as e:\n        die(f\"{kind} not found: {e.args[0]}\")\n\n\ndef status_table(title: str, columns: list[str]) -> Table:\n    table = Table(title=title, header_style=\"bold cyan\", title_justify=\"left\")\n    for col in columns:\n        table.add_column(col)\n    return table\n"
 }
 ```
@@ -4622,7 +4622,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/world.py",
+  "filePath": "<PROJECT>/polis/cli/world.py",
   "content": "\"\"\"polis world — genesis and inspection of the whole federation.\"\"\"\nfrom __future__ import annotations\n\nfrom typing import Optional\n\nimport typer\n\nfrom .. import config, genesis, store\nfrom .common import console, die, get_world, status_table\n\napp = typer.Typer(no_args_is_help=True, help=\"Genesis and inspection of the federation.\")\n\n\n@app.command()\ndef genesis(\n    seed: int = typer.Option(42, help=\"Deterministic seed for names/passwords.\"),\n    force: bool = typer.Option(False, \"--force\", help=\"Overwrite an existing world.\"),\n) -> None:\n    \"\"\"Generate the founding population: 9 cities, 63 persons, all offices.\"\"\"\n    if store.world_exists() and not force:\n        die(f\"a world already exists at {config.WORLD_FILE} — use --force to overwrite\")\n    world = genesis.build_world(seed=seed)\n    path = store.save_world(world)\n    exported = store.export_all_cities(world)\n    console.print(f\"[green]world created[/green] (seed={seed}) -> {path}\")\n    console.print(f\"  cities:  {len(world.cities)}\")\n    console.print(f\"  persons: {len(world.persons)}\")\n    console.print(f\"  offices: {len(world.offices)}\")\n    console.print(f\"  city slices exported: {len(exported)} -> {config.CITIES_DIR}\")\n\n\n@app.command()\ndef show() -> None:\n    \"\"\"Print a summary of the current world.\"\"\"\n    if not store.world_exists():\n        die(f\"no world yet — run `polis world genesis` (expected at {config.WORLD_FILE})\")\n    world = get_world()\n    fed = world.federation\n    console.print(f\"[bold]{fed.name}[/bold]  (phase {fed.phase}, repo {fed.archive_org}/{fed.repo})\")\n\n    cities = status_table(\"Cities\", [\"id\", \"display name\", \"persons\", \"local offices\"])\n    for c in world.cities:\n        persons = world.city_persons(c.id)\n        offices = [o for o in world.offices if o.scope == f\"city:{c.id}\"]\n        cities.add_row(c.id, c.display_name, str(len(persons)), str(len(offices)))\n    console.print(cities)\n\n    offices = status_table(\"Offices\", [\"id\", \"title\", \"kind\", \"scope\", \"occupant\"])\n    for o in world.offices:\n        offices.add_row(o.id, o.title, o.kind, o.scope, o.occupant or \"[dim]vacant[/dim]\")\n    console.print(offices)\n\n    by_agency: dict[str, int] = {}\n    for p in world.persons:\n        by_agency[p.agency] = by_agency.get(p.agency, 0) + 1\n    console.print(\"persons by agency: \" + \", \".join(f\"{k}={v}\" for k, v in sorted(by_agency.items())))\n\n\n@app.command()\ndef path() -> None:\n    \"\"\"Print the location of world.json.\"\"\"\n    console.print(config.WORLD_FILE)\n\n\n@app.command(name=\"export\")\ndef export(\n    city: Optional[str] = typer.Argument(None, help=\"City id to export (all if omitted).\"),\n) -> None:\n    \"\"\"Export per-city container configuration slices to world/cities/.\"\"\"\n    world = get_world()\n    if city:\n        try:\n            world.find_city(city)\n        except KeyError as e:\n            die(e.args[0])\n        console.print(store.export_city(world, city))\n    else:\n        for p in store.export_all_cities(world):\n            console.print(p)\n"
 }
 ```
@@ -4637,7 +4637,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/city.py",
+  "filePath": "<PROJECT>/polis/cli/city.py",
   "content": "\"\"\"polis city — create and inspect the polities of the federation.\"\"\"\nfrom __future__ import annotations\n\nfrom typing import Optional\n\nimport typer\n\nfrom .. import store\nfrom ..models import City\nfrom ..names import slugify\nfrom .common import console, die, get_world, lookup, status_table\n\napp = typer.Typer(no_args_is_help=True, help=\"Cities: the polities of the federation.\")\n\n\n@app.command()\ndef create(\n    name: str = typer.Option(..., \"--name\", help=\"Display name, e.g. 'Cogswich'.\"),\n    city_id: Optional[str] = typer.Option(None, \"--id\", help=\"Slug id (default: derived from name).\"),\n) -> None:\n    \"\"\"Found a new city.\"\"\"\n    world = get_world()\n    cid = city_id or slugify(name)\n    if not cid:\n        die(\"could not derive a city id — pass --id explicitly\")\n    if any(c.id == cid for c in world.cities):\n        die(f\"city '{cid}' already exists\")\n    world.cities.append(City(id=cid, display_name=name))\n    store.save_world(world)\n    console.print(f\"[green]city founded:[/green] {name} (id={cid})\")\n\n\n@app.command(name=\"list\")\ndef list_() -> None:\n    \"\"\"List all cities.\"\"\"\n    world = get_world()\n    table = status_table(\"Cities\", [\"id\", \"display name\", \"persons\", \"local offices\"])\n    for c in world.cities:\n        persons = world.city_persons(c.id)\n        offices = [o for o in world.offices if o.scope == f\"city:{c.id}\"]\n        table.add_row(c.id, c.display_name, str(len(persons)), str(len(offices)))\n    console.print(table)\n\n\n@app.command()\ndef show(city_id: str = typer.Argument(..., help=\"City id, e.g. cogswich.\")) -> None:\n    \"\"\"Show one city: its citizens and its locally-scoped offices.\"\"\"\n    world = get_world()\n    city = lookup(world, \"city\", world.find_city, city_id)\n    console.print(f\"[bold]{city.display_name}[/bold] (id={city.id})\")\n\n    persons = world.city_persons(city.id)\n    table = status_table(\"Citizens\", [\"username\", \"display name\", \"agency\", \"roles\", \"offices\"])\n    for p in persons:\n        table.add_row(p.username, p.display_name, p.agency, \", \".join(p.roles), \", \".join(p.occupies))\n    console.print(table)\n\n    offices = [o for o in world.offices if o.scope == f\"city:{city.id}\"]\n    if offices:\n        otable = status_table(\"Local offices\", [\"id\", \"title\", \"occupant\"])\n        for o in offices:\n            otable.add_row(o.id, o.title, o.occupant or \"[dim]vacant[/dim]\")\n        console.print(otable)\n"
 }
 ```
@@ -4656,7 +4656,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/person.py",
+  "filePath": "<PROJECT>/polis/cli/person.py",
   "content": "\"\"\"polis person — create and inspect persons (citizens and officers).\"\"\"\nfrom __future__ import annotations\n\nimport secrets\nfrom typing import Optional\n\nimport typer\n\nfrom .. import store\nfrom ..models import POLITICAL_ROLES, Credentials, GitIdentity, Membership, Person\nfrom ..names import make_username\nfrom .common import console, die, get_world, lookup, status_table\n\napp = typer.Typer(no_args_is_help=True, help=\"Persons: citizens, delegates and officers of the law.\")\n\n\n@app.command()\ndef create(\n    name: str = typer.Option(..., \"--name\", help=\"Display name, e.g. 'Edwina Vane'.\"),\n    city: Optional[str] = typer.Option(None, \"--city\", help=\"City id the person is a citizen of.\"),\n    role: Optional[list[str]] = typer.Option(\n        None, \"--role\", help=f\"Political role (repeatable): {', '.join(POLITICAL_ROLES)}.\"\n    ),\n    agency: Optional[str] = typer.Option(\n        None, \"--agency\", help=\"political | juridical | mechanical. Default: political if --role given, else juridical.\"\n    ),\n    institution: Optional[str] = typer.Option(\n        None, \"--institution\", help=\"Institutional body id, for persons without citizenship (e.g. federal-magistracy).\"\n    ),\n    username: Optional[str] = typer.Option(None, \"--username\", help=\"Login name (default: derived).\"),\n    email: Optional[str] = typer.Option(None, \"--email\", help=\"Email (default: derived).\"),\n) -> None:\n    \"\"\"Bring a person into the federation.\"\"\"\n    world = get_world()\n    roles = role or []\n\n    for r in roles:\n        if r not in POLITICAL_ROLES:\n            die(f\"unknown political role '{r}' (choose from: {', '.join(POLITICAL_ROLES)})\")\n\n    if agency is None:\n        agency = \"political\" if roles else \"juridical\"\n    if agency not in (\"political\", \"juridical\", \"mechanical\"):\n        die(f\"unknown agency '{agency}'\")\n    if agency == \"political\" and not roles:\n        die(\"a political person needs at least one --role\")\n    if roles and agency != \"political\":\n        die(\"political roles require --agency political\")\n    if agency == \"mechanical\" and city:\n        die(\"a mechanical agent belongs to an institution, not to a city\")\n\n    if agency == \"mechanical\" or (city is None and institution):\n        if not institution:\n            die(\"--institution is required for a person without citizenship\")\n        member_of = Membership(type=\"institution\", id=institution)\n        default_email_domain = f\"{institution}.invalid\"\n    else:\n        if not city:\n            die(\"--city is required for citizens and officers\")\n        lookup(world, \"city\", world.find_city, city)\n        member_of = Membership(type=\"city\", id=city)\n        default_email_domain = f\"{city}.invalid\"\n\n    taken = {p.username for p in world.persons}\n    uname = username or make_username(name, taken)\n    if uname in taken:\n        die(f\"username '{uname}' already taken\")\n    mail = email or f\"{uname}@{default_email_domain}\"\n\n    person = Person(\n        username=uname,\n        display_name=name,\n        email=mail,\n        agency=agency,  # type: ignore[arg-type]\n        member_of=member_of,\n        roles=roles,\n        git=GitIdentity(author_name=name, author_email=mail),\n        credentials=Credentials(password=secrets.token_urlsafe(12)),\n    )\n    world.persons.append(person)\n    store.save_world(world)\n    console.print(f\"[green]person created:[/green] {person.display_name} ({person.username}, {person.agency})\")\n\n\n@app.command(name=\"list\")\ndef list_(\n    city: Optional[str] = typer.Option(None, \"--city\", help=\"Only citizens of this city.\"),\n    agency: Optional[str] = typer.Option(None, \"--agency\", help=\"Filter by agency kind.\"),\n) -> None:\n    \"\"\"List persons.\"\"\"\n    world = get_world()\n    persons = world.persons\n    if city:\n        persons = [p for p in persons if p.member_of.type == \"city\" and p.member_of.id == city]\n    if agency:\n        persons = [p for p in persons if p.agency == agency]\n    table = status_table(\"Persons\", [\"username\", \"display name\", \"agency\", \"member of\", \"roles\", \"occupies\"])\n    for p in persons:\n        table.add_row(\n            p.username, p.display_name, p.agency,\n            f\"{p.member_of.type}:{p.member_of.id}\",\n            \", \".join(p.roles), \", \".join(p.occupies),\n        )\n    console.print(table)\n\n\n@app.command()\ndef show(username: str = typer.Argument(...)) -> None:\n    \"\"\"Show one person in full (credentials partially masked).\"\"\"\n    world = get_world()\n    p = lookup(world, \"person\", world.find_person, username)\n    console.print(f\"[bold]{p.display_name}[/bold] ({p.username})\")\n    console.print(f\"  agency:     {p.agency}\")\n    console.print(f\"  member of:  {p.member_of.type}:{p.member_of.id}\")\n    console.print(f\"  roles:      {', '.join(p.roles) or '—'}\")\n    console.print(f\"  occupies:   {', '.join(p.occupies) or '—'}\")\n    console.print(f\"  email:      {p.email}\")\n    console.print(f\"  git author: {p.git.author_name} <{p.git.author_email}>\")\n    console.print(f\"  password:   {p.credentials.password}\")\n    tokens = {k: (v[:6] + \"…\" if v else None) for k, v in p.credentials.api_tokens.items()}\n    console.print(f\"  api tokens: {tokens or '—'}\")\n"
 }
 ```
@@ -4671,7 +4671,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/office.py",
+  "filePath": "<PROJECT>/polis/cli/office.py",
   "content": "\"\"\"polis office — create and inspect offices (jurisdictional authorities).\"\"\"\nfrom __future__ import annotations\n\nfrom typing import Optional\n\nimport typer\n\nfrom .. import store\nfrom ..models import Office\nfrom .common import console, die, get_world, lookup, status_table\n\napp = typer.Typer(no_args_is_help=True, help=\"Offices: jurisdictional authorities that grant powers.\")\n\n\n@app.command()\ndef create(\n    office_id: str = typer.Option(..., \"--id\", help=\"Office id, e.g. 'local-archivist-cogswich'.\"),\n    title: str = typer.Option(..., \"--title\", help=\"Human title, e.g. 'Archivist of Cogswich'.\"),\n    body: str = typer.Option(..., \"--body\", help=\"Institutional body, e.g. 'local-archive', 'domain:taxation'.\"),\n    kind: str = typer.Option(\"juridical\", \"--kind\", help=\"juridical | mechanical.\"),\n    scope: str = typer.Option(\"federal\", \"--scope\", help=\"'federal' or 'city:<id>'.\"),\n    power: Optional[list[str]] = typer.Option(\n        None, \"--power\", help=\"Granted power (repeatable), e.g. 'merge:municipal/cogswich/**'.\"\n    ),\n) -> None:\n    \"\"\"Establish a new office.\"\"\"\n    world = get_world()\n    if kind not in (\"juridical\", \"mechanical\"):\n        die(f\"unknown office kind '{kind}'\")\n    if any(o.id == office_id for o in world.offices):\n        die(f\"office '{office_id}' already exists\")\n    if scope.startswith(\"city:\"):\n        lookup(world, \"city\", world.find_city, scope.split(\":\", 1)[1])\n    office = Office(\n        id=office_id, title=title, body=body, kind=kind,  # type: ignore[arg-type]\n        scope=scope, powers=power or [],\n    )\n    world.offices.append(office)\n    store.save_world(world)\n    console.print(f\"[green]office established:[/green] {title} (id={office_id})\")\n\n\n@app.command(name=\"list\")\ndef list_(\n    vacant: bool = typer.Option(False, \"--vacant\", help=\"Only offices without an occupant.\"),\n    scope: Optional[str] = typer.Option(None, \"--scope\", help=\"Filter by scope, e.g. 'federal' or 'city:cogswich'.\"),\n) -> None:\n    \"\"\"List offices.\"\"\"\n    world = get_world()\n    offices = world.offices\n    if vacant:\n        offices = [o for o in offices if o.occupant is None]\n    if scope:\n        offices = [o for o in offices if o.scope == scope]\n    table = status_table(\"Offices\", [\"id\", \"title\", \"kind\", \"scope\", \"occupant\"])\n    for o in offices:\n        table.add_row(o.id, o.title, o.kind, o.scope, o.occupant or \"[dim]vacant[/dim]\")\n    console.print(table)\n\n\n@app.command()\ndef show(office_id: str = typer.Argument(...)) -> None:\n    \"\"\"Show one office: its powers and occupant.\"\"\"\n    world = get_world()\n    o = lookup(world, \"office\", world.find_office, office_id)\n    console.print(f\"[bold]{o.title}[/bold] ({o.id})\")\n    console.print(f\"  body:     {o.body}\")\n    console.print(f\"  kind:     {o.kind}\")\n    console.print(f\"  scope:    {o.scope}\")\n    console.print(f\"  occupant: {o.occupant or '— (vacant)'}\")\n    console.print(\"  powers:\")\n    for p in o.powers:\n        console.print(f\"    - {p}\")\n\n\n@app.command()\ndef vacate(office_id: str = typer.Argument(..., help=\"Office to vacate.\")) -> None:\n    \"\"\"Remove the occupant of an office (the office itself persists).\"\"\"\n    world = get_world()\n    office = lookup(world, \"office\", world.find_office, office_id)\n    if office.occupant is None:\n        die(f\"office '{office_id}' is already vacant\")\n    person = world.find_person(office.occupant)\n    person.occupies.remove(office_id)\n    former = office.occupant\n    office.occupant = None\n    store.save_world(world)\n    console.print(f\"[green]office vacated:[/green] {office_id} (formerly {former})\")\n"
 }
 ```
@@ -4686,7 +4686,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/assign.py",
+  "filePath": "<PROJECT>/polis/cli/assign.py",
   "content": "\"\"\"polis assign — the two dimensions: citizenship and office-holding.\n\nSeparation rule: a political person (legislator/delegate) may not occupy a\njuridical office, and a juridical person may not hold political roles.\nElevation of a local archivist to Federal Archivist is permitted because\nboth offices are juridical.\n\"\"\"\nfrom __future__ import annotations\n\nimport typer\n\nfrom .. import store\nfrom ..models import Person\nfrom .common import console, die, get_world, lookup\n\napp = typer.Typer(no_args_is_help=True, help=\"Assign persons to cities (membership) and offices (authority).\")\n\n\ndef _check_office_compatible(person: Person, office_kind: str, office_id: str) -> None:\n    if person.agency == \"political\":\n        die(\n            f\"{person.username} exercises political agency ({', '.join(person.roles)}) and \"\n            \"may not occupy an office — that would fuse the powers the constitution separates\"\n        )\n    if person.agency == \"mechanical\" and office_kind != \"mechanical\":\n        die(f\"a mechanical agent may only occupy a mechanical office, not '{office_id}'\")\n    if person.agency == \"juridical\" and office_kind == \"mechanical\":\n        die(f\"a person may not occupy the mechanical office '{office_id}' — it belongs to software\")\n\n\n@app.command()\ndef citizenship(\n    username: str = typer.Argument(..., help=\"Person to (re)assign.\"),\n    city_id: str = typer.Argument(..., help=\"City the person becomes a citizen of.\"),\n) -> None:\n    \"\"\"Grant a person citizenship of a city (political membership).\"\"\"\n    world = get_world()\n    person = lookup(world, \"person\", world.find_person, username)\n    lookup(world, \"city\", world.find_city, city_id)\n    if person.agency == \"mechanical\":\n        die(\"a mechanical agent belongs to an institution, not to a city\")\n    person.member_of = person.member_of.model_copy(update={\"type\": \"city\", \"id\": city_id})\n    person.email = f\"{person.username}@{city_id}.invalid\"\n    person.git.author_email = person.email\n    store.save_world(world)\n    console.print(f\"[green]citizenship assigned:[/green] {username} is now a citizen of {city_id}\")\n\n\n@app.command()\ndef office(\n    username: str = typer.Argument(..., help=\"Person to appoint.\"),\n    office_id: str = typer.Argument(..., help=\"Office to occupy.\"),\n) -> None:\n    \"\"\"Appoint a person to an office (jurisdictional authority).\"\"\"\n    world = get_world()\n    person = lookup(world, \"person\", world.find_person, username)\n    office = lookup(world, \"office\", world.find_office, office_id)\n    if office.occupant is not None:\n        die(f\"office '{office_id}' is occupied by {office.occupant} — vacate it first\")\n    _check_office_compatible(person, office.kind, office_id)\n    office.occupant = person.username\n    person.occupies.append(office_id)\n    store.save_world(world)\n    console.print(f\"[green]office occupied:[/green] {username} now holds '{office_id}'\")\n"
 }
 ```
@@ -4711,7 +4711,7 @@ Now the component CLIs (gogs, gitea, woodpecker, citynode) and health:
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/gogs.py",
+  "filePath": "<PROJECT>/polis/cli/gogs.py",
   "content": "\"\"\"polis gogs — operate the phase-1 platform (customary machinery).\"\"\"\nfrom __future__ import annotations\n\nfrom typing import Optional\n\nimport typer\n\nfrom ..clients.gogs import GogsClient, GogsError\nfrom .common import console, die, status_table\n\napp = typer.Typer(no_args_is_help=True, help=\"Gogs: the phase-1 institutional apparatus.\")\nusers_app = typer.Typer(no_args_is_help=True, help=\"User accounts on gogs.\")\norgs_app = typer.Typer(no_args_is_help=True, help=\"Organizations on gogs.\")\nrepos_app = typer.Typer(no_args_is_help=True, help=\"Repositories on gogs.\")\napp.add_typer(users_app, name=\"users\")\napp.add_typer(orgs_app, name=\"orgs\")\napp.add_typer(repos_app, name=\"repos\")\n\n\ndef _client() -> GogsClient:\n    try:\n        return GogsClient()\n    except RuntimeError as e:\n        die(str(e))\n\n\n@app.command()\ndef whoami() -> None:\n    \"\"\"Show which identity the configured API key authenticates as.\"\"\"\n    try:\n        user = _client().whoami()\n    except GogsError as e:\n        die(str(e))\n    console.print(f\"{user.get('login')} <{user.get('email')}> (id={user.get('id')})\")\n\n\n@app.command()\ndef status() -> None:\n    \"\"\"Quick overview: identity, org and repo counts.\"\"\"\n    client = _client()\n    try:\n        user = client.whoami()\n        orgs = client.list_orgs()\n        repos = client.list_repos()\n    except GogsError as e:\n        die(str(e))\n    console.print(f\"[green]gogs up[/green] — authenticated as {user.get('login')}\")\n    console.print(f\"  orgs:  {len(orgs)}\")\n    console.print(f\"  repos: {len(repos)}\")\n\n\n@users_app.command(name=\"list\")\ndef users_list(query: str = typer.Option(\"\", \"--query\", help=\"Filter substring.\")) -> None:\n    \"\"\"List user accounts.\"\"\"\n    try:\n        users = _client().search_users(query)\n    except GogsError as e:\n        die(str(e))\n    table = status_table(\"gogs users\", [\"id\", \"username\", \"full name\", \"email\"])\n    for u in users:\n        table.add_row(str(u.get(\"id\")), u.get(\"username\", \"\"), u.get(\"full_name\", \"\"), u.get(\"email\", \"\"))\n    console.print(table)\n\n\n@users_app.command(name=\"create\")\ndef users_create(\n    username: str = typer.Option(...),\n    email: str = typer.Option(...),\n    password: str = typer.Option(...),\n    full_name: str = typer.Option(\"\", \"--full-name\"),\n) -> None:\n    \"\"\"Create a user account (admin operation).\"\"\"\n    try:\n        user = _client().create_user(username, email, password, full_name)\n    except GogsError as e:\n        die(str(e))\n    console.print(f\"[green]created gogs user:[/green] {user.get('username', username)}\")\n\n\n@users_app.command(name=\"delete\")\ndef users_delete(\n    username: str = typer.Argument(...),\n    yes: bool = typer.Option(False, \"--yes\", help=\"Confirm deletion.\"),\n) -> None:\n    \"\"\"Delete a user account (admin operation).\"\"\"\n    if not yes:\n        die(\"refusing without --yes\")\n    try:\n        _client().delete_user(username)\n    except GogsError as e:\n        die(str(e))\n    console.print(f\"[green]deleted gogs user:[/green] {username}\")\n\n\n@orgs_app.command(name=\"list\")\ndef orgs_list() -> None:\n    \"\"\"List organizations visible to the configured identity.\"\"\"\n    try:\n        orgs = _client().list_orgs()\n    except GogsError as e:\n        die(str(e))\n    table = status_table(\"gogs orgs\", [\"id\", \"username\", \"full name\"])\n    for o in orgs:\n        table.add_row(str(o.get(\"id\")), o.get(\"username\", \"\"), o.get(\"full_name\", \"\"))\n    console.print(table)\n\n\n@orgs_app.command(name=\"create\")\ndef orgs_create(\n    username: str = typer.Option(...),\n    full_name: str = typer.Option(\"\", \"--full-name\"),\n) -> None:\n    \"\"\"Create an organization.\"\"\"\n    try:\n        org = _client().create_org(username, full_name)\n    except GogsError as e:\n        die(str(e))\n    console.print(f\"[green]created gogs org:[/green] {org.get('username', username)}\")\n\n\n@repos_app.command(name=\"list\")\ndef repos_list() -> None:\n    \"\"\"List repositories.\"\"\"\n    try:\n        repos = _client().list_repos()\n    except GogsError as e:\n        die(str(e))\n    table = status_table(\"gogs repos\", [\"id\", \"full name\", \"private\", \"fork\"])\n    for r in repos:\n        table.add_row(\n            str(r.get(\"id\")), r.get(\"full_name\", \"\"),\n            str(r.get(\"private\", \"\")), str(r.get(\"fork\", \"\")),\n        )\n    console.print(table)\n"
 }
 ```
@@ -4726,7 +4726,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/gitea.py",
+  "filePath": "<PROJECT>/polis/cli/gitea.py",
   "content": "\"\"\"polis gitea — operate the phase-2 platform (codified machinery).\"\"\"\nfrom __future__ import annotations\n\nimport typer\n\nfrom ..clients.gitea import GiteaClient, GiteaError\nfrom .common import console, die, status_table\n\napp = typer.Typer(no_args_is_help=True, help=\"Gitea: the phase-2 institutional apparatus.\")\nusers_app = typer.Typer(no_args_is_help=True, help=\"User accounts on gitea.\")\norgs_app = typer.Typer(no_args_is_help=True, help=\"Organizations on gitea.\")\nrepos_app = typer.Typer(no_args_is_help=True, help=\"Repositories on gitea.\")\napp.add_typer(users_app, name=\"users\")\napp.add_typer(orgs_app, name=\"orgs\")\napp.add_typer(repos_app, name=\"repos\")\n\n\ndef _client() -> GiteaClient:\n    try:\n        return GiteaClient()\n    except RuntimeError as e:\n        die(str(e))\n\n\n@app.command()\ndef whoami() -> None:\n    \"\"\"Show which identity the configured API key authenticates as.\"\"\"\n    try:\n        user = _client().whoami()\n    except GiteaError as e:\n        die(str(e))\n    admin = \" [cyan](admin)[/cyan]\" if user.get(\"is_admin\") else \"\"\n    console.print(f\"{user.get('login')} <{user.get('email')}> (id={user.get('id')}){admin}\")\n\n\n@app.command()\ndef status() -> None:\n    \"\"\"Quick overview: version, identity, org and repo counts.\"\"\"\n    client = _client()\n    try:\n        version = client.version()\n        user = client.whoami()\n        orgs = client.list_orgs()\n        repos = client.list_repos()\n    except GiteaError as e:\n        die(str(e))\n    console.print(f\"[green]gitea up[/green] (v{version}) — authenticated as {user.get('login')}\")\n    console.print(f\"  orgs:  {len(orgs)}\")\n    console.print(f\"  repos: {len(repos)}\")\n\n\n@users_app.command(name=\"list\")\ndef users_list(\n    query: str = typer.Option(\"\", \"--query\", help=\"Filter substring.\"),\n    admin: bool = typer.Option(False, \"--admin\", help=\"Use the admin endpoint (includes inactive).\"),\n) -> None:\n    \"\"\"List user accounts.\"\"\"\n    try:\n        users = _client().admin_users() if admin else _client().search_users(query)\n    except GiteaError as e:\n        die(str(e))\n    table = status_table(\"gitea users\", [\"id\", \"username\", \"full name\", \"email\", \"admin\"])\n    for u in users:\n        table.add_row(\n            str(u.get(\"id\")), u.get(\"login\", u.get(\"username\", \"\")),\n            u.get(\"full_name\", \"\"), u.get(\"email\", \"\"), \"yes\" if u.get(\"is_admin\") else \"\",\n        )\n    console.print(table)\n\n\n@users_app.command(name=\"create\")\ndef users_create(\n    username: str = typer.Option(...),\n    email: str = typer.Option(...),\n    password: str = typer.Option(...),\n    full_name: str = typer.Option(\"\", \"--full-name\"),\n) -> None:\n    \"\"\"Create a user account (admin operation).\"\"\"\n    try:\n        user = _client().create_user(username, email, password, full_name)\n    except GiteaError as e:\n        die(str(e))\n    console.print(f\"[green]created gitea user:[/green] {user.get('login', username)}\")\n\n\n@users_app.command(name=\"delete\")\ndef users_delete(\n    username: str = typer.Argument(...),\n    yes: bool = typer.Option(False, \"--yes\", help=\"Confirm deletion.\"),\n) -> None:\n    \"\"\"Delete a user account (admin operation).\"\"\"\n    if not yes:\n        die(\"refusing without --yes\")\n    try:\n        _client().delete_user(username)\n    except GiteaError as e:\n        die(str(e))\n    console.print(f\"[green]deleted gitea user:[/green] {username}\")\n\n\n@orgs_app.command(name=\"list\")\ndef orgs_list() -> None:\n    \"\"\"List organizations visible to the configured identity.\"\"\"\n    try:\n        orgs = _client().list_orgs()\n    except GiteaError as e:\n        die(str(e))\n    table = status_table(\"gitea orgs\", [\"id\", \"username\", \"full name\"])\n    for o in orgs:\n        table.add_row(str(o.get(\"id\")), o.get(\"username\", \"\"), o.get(\"full_name\", \"\"))\n    console.print(table)\n\n\n@orgs_app.command(name=\"create\")\ndef orgs_create(\n    username: str = typer.Option(...),\n    full_name: str = typer.Option(\"\", \"--full-name\"),\n) -> None:\n    \"\"\"Create an organization.\"\"\"\n    try:\n        org = _client().create_org(username, full_name)\n    except GiteaError as e:\n        die(str(e))\n    console.print(f\"[green]created gitea org:[/green] {org.get('username', username)}\")\n\n\n@repos_app.command(name=\"list\")\ndef repos_list() -> None:\n    \"\"\"List repositories.\"\"\"\n    try:\n        repos = _client().list_repos()\n    except GiteaError as e:\n        die(str(e))\n    table = status_table(\"gitea repos\", [\"id\", \"full name\", \"private\", \"fork\"])\n    for r in repos:\n        table.add_row(\n            str(r.get(\"id\")), r.get(\"full_name\", \"\"),\n            str(r.get(\"private\", \"\")), str(r.get(\"fork\", \"\")),\n        )\n    console.print(table)\n"
 }
 ```
@@ -4741,7 +4741,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/woodpecker.py",
+  "filePath": "<PROJECT>/polis/cli/woodpecker.py",
   "content": "\"\"\"polis woodpecker — operate the CI server (the Magistrate's engine room).\"\"\"\nfrom __future__ import annotations\n\nimport time\n\nimport typer\n\nfrom ..clients.woodpecker import WoodpeckerClient, WoodpeckerError\nfrom .common import console, die, status_table\n\napp = typer.Typer(no_args_is_help=True, help=\"Woodpecker CI: the automatic formal-legality machinery.\")\nagents_app = typer.Typer(no_args_is_help=True, help=\"Build agents registered with the server.\")\napp.add_typer(agents_app, name=\"agents\")\n\n\ndef _client() -> WoodpeckerClient:\n    try:\n        return WoodpeckerClient()\n    except RuntimeError as e:\n        die(str(e))\n\n\n@app.command()\ndef whoami() -> None:\n    \"\"\"Show which identity the configured API key authenticates as.\"\"\"\n    try:\n        user = _client().whoami()\n    except WoodpeckerError as e:\n        die(str(e))\n    console.print(f\"{user.get('login')} <{user.get('email')}> (id={user.get('id')})\")\n\n\n@agents_app.command(name=\"list\")\ndef agents_list() -> None:\n    \"\"\"List registered agents and whether they are alive.\"\"\"\n    try:\n        agents = _client().list_agents()\n    except WoodpeckerError as e:\n        die(str(e))\n    now = int(time.time())\n    table = status_table(\"woodpecker agents\", [\"id\", \"name\", \"platform\", \"backend\", \"last contact\", \"state\"])\n    for a in agents:\n        last = a.get(\"last_contact\") or 0\n        silence = now - last if last else None\n        alive = silence is not None and silence < 300\n        table.add_row(\n            str(a.get(\"id\")), a.get(\"name\") or \"[dim]—[/dim]\",\n            a.get(\"platform\") or \"?\", a.get(\"backend\") or \"?\",\n            f\"{silence}s ago\" if silence is not None else \"never\",\n            \"[green]live[/green]\" if alive else \"[red]stale[/red]\",\n        )\n    console.print(table)\n\n\n@agents_app.command(name=\"delete\")\ndef agents_delete(\n    agent_id: int = typer.Argument(...),\n    yes: bool = typer.Option(False, \"--yes\", help=\"Confirm deletion.\"),\n) -> None:\n    \"\"\"De-register an agent (e.g. a stale record).\"\"\"\n    if not yes:\n        die(\"refusing without --yes\")\n    try:\n        _client().delete_agent(agent_id)\n    except WoodpeckerError as e:\n        die(str(e))\n    console.print(f\"[green]deleted agent:[/green] {agent_id}\")\n"
 }
 ```
@@ -4756,7 +4756,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/citynode.py",
+  "filePath": "<PROJECT>/polis/cli/citynode.py",
   "content": "\"\"\"polis citynode — the city containers (each one a polity with its own archive).\n\nCity containers are named polis-city-<city-id>. They do not exist yet in\nphase 0; these commands report their absence honestly.\n\"\"\"\nfrom __future__ import annotations\n\nfrom typing import Optional\n\nimport typer\n\nfrom .. import config\nfrom ..clients import podman\nfrom ..store import world_exists\nfrom .common import console, die, get_world, status_table\n\napp = typer.Typer(no_args_is_help=True, help=\"City containers: the simulated polities.\")\n\n\ndef container_name(city_id: str) -> str:\n    return f\"{config.CITY_CONTAINER_PREFIX}{city_id}\"\n\n\n@app.command(name=\"list\")\ndef list_() -> None:\n    \"\"\"List all federation cities and the state of their container, if any.\"\"\"\n    if not world_exists():\n        die(\"no world yet — run `polis world genesis` first\")\n    world = get_world()\n    try:\n        running = {c[\"Names\"][0]: c for c in podman.containers() if c.get(\"Names\")}\n    except podman.PodmanError as e:\n        die(str(e))\n    table = status_table(\"city nodes\", [\"city\", \"container\", \"state\"])\n    for city in world.cities:\n        name = container_name(city.id)\n        c = running.get(name)\n        state = c[\"State\"] if c else \"[dim]not created[/dim]\"\n        table.add_row(city.id, name, state)\n    console.print(table)\n\n\n@app.command()\ndef status(\n    city_id: str = typer.Argument(..., help=\"City id, e.g. cogswich.\"),\n) -> None:\n    \"\"\"Show the container state of one city.\"\"\"\n    name = container_name(city_id)\n    try:\n        c = podman.container(name)\n    except podman.PodmanError as e:\n        die(str(e))\n    if c is None:\n        console.print(f\"[yellow]{name}: not created[/yellow] (city container images are not built yet)\")\n        raise typer.Exit(code=1)\n    console.print(f\"{name}: {c.get('State')} (image: {c.get('Image')})\")\n"
 }
 ```
@@ -4804,7 +4804,7 @@ Finally the health commands and the root app:
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/health.py",
+  "filePath": "<PROJECT>/polis/cli/health.py",
   "content": "\"\"\"polis health — quick diagnosis of every technical subsystem.\n\nEach check reports ok / warn / fail. `polis health` (no subcommand) runs all\nsubsystems and exits non-zero if anything fails, so it can be wired into\nscripts.\n\"\"\"\nfrom __future__ import annotations\n\nfrom dataclasses import dataclass\nfrom typing import Callable\n\nimport typer\n\nfrom .. import config\nfrom ..clients import podman\nfrom ..clients.gitea import GiteaClient\nfrom ..clients.gogs import GogsClient\nfrom ..clients.woodpecker import WoodpeckerClient\nfrom ..store import world_exists\nfrom .common import console, get_world, status_table\n\napp = typer.Typer(\n    invoke_without_command=True,\n    help=\"Health checks for gogs, gitea, woodpecker, postgres, podman and city nodes.\",\n)\n\n\n@dataclass\nclass Check:\n    name: str\n    ok: bool\n    detail: str = \"\"\n    warn: bool = False  # not-ok renders as a warning instead of a failure\n\n\n# --- subsystem check suites -------------------------------------------------\n\ndef check_gogs() -> list[Check]:\n    checks = [Check(\"gogs: container running\", podman.container_running(\"gogs\"),\n                    \"container 'gogs' should be up\")]\n    try:\n        client = GogsClient()\n        user = client.whoami()\n        checks.append(Check(\"gogs: API token valid\", True, f\"authenticated as {user.get('login')}\"))\n        repos = client.list_repos()\n        checks.append(Check(\"gogs: repo search reachable\", True, f\"{len(repos)} repos\"))\n    except Exception as e:\n        checks.append(Check(\"gogs: API token valid\", False, str(e)[:200]))\n    return checks\n\n\ndef check_gitea() -> list[Check]:\n    checks = [Check(\"gitea: container running\", podman.container_running(\"gitea\"),\n                    \"container 'gitea' should be up\")]\n    try:\n        client = GiteaClient()\n        checks.append(Check(\"gitea: version\", True, f\"v{client.version()}\"))\n        user = client.whoami()\n        checks.append(Check(\"gitea: API token valid\", True, f\"authenticated as {user.get('login')}\"))\n        users = client.admin_users()\n        checks.append(Check(\"gitea: admin access\", True, f\"{len(users)} users visible\"))\n    except Exception as e:\n        checks.append(Check(\"gitea: API token valid\", False, str(e)[:200]))\n    return checks\n\n\ndef check_woodpecker() -> list[Check]:\n    checks = [\n        Check(\"woodpecker: server container running\", podman.container_running(\"woodpecker-server\"),\n              \"container 'woodpecker-server' should be up\"),\n        Check(\"woodpecker: agent container running\", podman.container_running(\"woodpecker-agent\"),\n              \"container 'woodpecker-agent' should be up\"),\n    ]\n    try:\n        client = WoodpeckerClient()\n        checks.append(Check(\"woodpecker: /healthz\", client.healthz()))\n        user = client.whoami()\n        checks.append(Check(\"woodpecker: API token valid\", True, f\"authenticated as {user.get('login')}\"))\n        live = client.live_agents()\n        checks.append(Check(\"woodpecker: agent connected\", len(live) > 0,\n                            f\"{len(live)} live agent(s)\" if live else \"no agent contacted the server recently\"))\n    except Exception as e:\n        checks.append(Check(\"woodpecker: API token valid\", False, str(e)[:200]))\n    return checks\n\n\ndef check_postgres() -> list[Check]:\n    name = config.POSTGRES_CONTAINER\n    checks = [Check(\"postgres: container running\", podman.container_running(name),\n                    f\"container '{name}' should be up\")]\n    if not checks[0].ok:\n        return checks\n    ready, out = podman.exec_ok(name, [\"pg_isready\", \"-U\", \"gogs\"])\n    checks.append(Check(\"postgres: pg_isready\", ready, out))\n    for db in (\"gogs\", \"gitea\"):\n        ok, out = podman.exec_ok(name, [\"psql\", \"-U\", \"gogs\", \"-d\", db, \"-tAc\", \"SELECT 1\"])\n        checks.append(Check(f\"postgres: database '{db}' queryable\", ok, out))\n    return checks\n\n\ndef check_podman() -> list[Check]:\n    try:\n        state = podman.machine_state()\n        machine_ok = state.lower() == \"running\"\n        return [\n            Check(\"podman: machine running\", machine_ok, f\"state: {state}\"),\n            Check(\"podman: network exists\", podman.network_exists(config.PODMAN_NETWORK),\n                  f\"network '{config.PODMAN_NETWORK}'\"),\n        ]\n    except podman.PodmanError as e:\n        return [Check(\"podman: CLI usable\", False, str(e))]\n\n\ndef check_citynodes() -> list[Check]:\n    if not world_exists():\n        return [Check(\"citynodes: world exists\", False, \"run `polis world genesis` first\")]\n    world = get_world()\n    checks = []\n    for city in world.cities:\n        name = f\"{config.CITY_CONTAINER_PREFIX}{city.id}\"\n        checks.append(Check(\n            f\"citynode: {city.id} container\", podman.container_running(name),\n            f\"'{name}' not built yet\", warn=True,\n        ))\n    return checks\n\n\nSUITES: dict[str, Callable[[], list[Check]]] = {\n    \"gogs\": check_gogs,\n    \"gitea\": check_gitea,\n    \"woodpecker\": check_woodpecker,\n    \"postgres\": check_postgres,\n    \"podman\": check_podman,\n    \"citynodes\": check_citynodes,\n}\n\n\ndef _render(suite_name: str, checks: list[Check]) -> bool:\n    table = status_table(f\"health: {suite_name}\", [\"check\", \"status\", \"detail\"])\n    failed = False\n    for c in checks:\n        if c.ok:\n            status = \"[green]ok[/green]\"\n        elif c.warn:\n            status = \"[yellow]warn[/yellow]\"\n        else:\n            status = \"[red]FAIL[/red]\"\n            failed = True\n        table.add_row(c.name, status, c.detail)\n    console.print(table)\n    return failed\n\n\ndef _run_suite(name: str) -> None:\n    failed = _render(name, SUITES[name]())\n    if failed:\n        raise typer.Exit(code=1)\n\n\n@app.callback()\ndef all_(ctx: typer.Context) -> None:\n    \"\"\"Run every subsystem's checks (default when no subcommand is given).\"\"\"\n    if ctx.invoked_subcommand is not None:\n        return\n    any_failed = False\n    for name in SUITES:\n        any_failed |= _render(name, SUITES[name]())\n    if any_failed:\n        raise typer.Exit(code=1)\n\n\n@app.command()\ndef gogs() -> None:\n    \"\"\"Checks for the phase-1 platform.\"\"\"\n    _run_suite(\"gogs\")\n\n\n@app.command()\ndef gitea() -> None:\n    \"\"\"Checks for the phase-2 platform.\"\"\"\n    _run_suite(\"gitea\")\n\n\n@app.command()\ndef woodpecker() -> None:\n    \"\"\"Checks for the CI server and its agent.\"\"\"\n    _run_suite(\"woodpecker\")\n\n\n@app.command()\ndef postgres() -> None:\n    \"\"\"Checks for the database backing the platforms.\"\"\"\n    _run_suite(\"postgres\")\n\n\n@app.command()\ndef podman_() -> None:\n    \"\"\"Checks for the container runtime and network.\"\"\"\n    _run_suite(\"podman\")\n\n\n@app.command(name=\"podman\")\ndef podman_command() -> None:\n    _run_suite(\"podman\")\n\n\n@app.command()\ndef citynodes() -> None:\n    \"\"\"Checks for the city containers (expected absent in phase 0).\"\"\"\n    _run_suite(\"citynodes\")\n"
 }
 ```
@@ -4819,7 +4819,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/main.py",
+  "filePath": "<PROJECT>/polis/cli/main.py",
   "content": "\"\"\"polis — operator's tool for the git-law federation simulation.\"\"\"\nfrom __future__ import annotations\n\nimport typer\n\nfrom . import (\n    assign,\n    city,\n    citynode,\n    gitea,\n    gogs,\n    health,\n    office,\n    person,\n    woodpecker,\n    world,\n)\n\napp = typer.Typer(\n    name=\"polis\",\n    help=(\n        \"Model the federation (world/city/person/office/assign) and operate the \"\n        \"institutional apparatus it runs on (gogs/gitea/woodpecker/citynode/health).\"\n    ),\n    no_args_is_help=True,\n)\n\n# domain commands — the conceptual operations\napp.add_typer(world.app, name=\"world\")\napp.add_typer(city.app, name=\"city\")\napp.add_typer(person.app, name=\"person\")\napp.add_typer(office.app, name=\"office\")\napp.add_typer(assign.app, name=\"assign\")\n\n# component commands — the technical subsystems\napp.add_typer(gogs.app, name=\"gogs\")\napp.add_typer(gitea.app, name=\"gitea\")\napp.add_typer(woodpecker.app, name=\"woodpecker\")\napp.add_typer(citynode.app, name=\"citynode\")\napp.add_typer(health.app, name=\"health\")\n\nif __name__ == \"__main__\":\n    app()\n"
 }
 ```
@@ -4848,7 +4848,7 @@ Fixing a duplicated `podman` command in health.py:
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/health.py",
+  "filePath": "<PROJECT>/polis/cli/health.py",
   "oldString": "@app.command()\ndef podman_() -> None:\n    \"\"\"Checks for the container runtime and network.\"\"\"\n    _run_suite(\"podman\")\n\n\n@app.command(name=\"podman\")\ndef podman_command() -> None:\n    _run_suite(\"podman\")",
   "newString": "@app.command(name=\"podman\")\ndef podman_command() -> None:\n    \"\"\"Checks for the container runtime and network.\"\"\"\n    _run_suite(\"podman\")"
 }
@@ -5026,7 +5026,7 @@ Let me run genesis first.
 **Output:**
 ```
 ╭───────────────────── Traceback (most recent call last) ──────────────────────╮
-│ /Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/ │
+│ <PROJECT>/polis/cli/ │
 │ world.py:22 in genesis                                                       │
 │                                                                              │
 │   19 │   """Generate the founding population: 9 cities, 63 persons, all      │
@@ -5059,7 +5059,7 @@ Name collision — the `genesis` command shadows the `genesis` module import. Fi
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/world.py",
+  "filePath": "<PROJECT>/polis/cli/world.py",
   "oldString": "from .. import config, genesis, store\nfrom .common import console, die, get_world, status_table",
   "newString": "from .. import config, store\nfrom ..genesis import build_world\nfrom .common import console, die, get_world, status_table"
 }
@@ -5079,7 +5079,7 @@ Edit applied successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/world.py",
+  "filePath": "<PROJECT>/polis/cli/world.py",
   "oldString": "    world = genesis.build_world(seed=seed)",
   "newString": "    world = build_world(seed=seed)"
 }
@@ -5106,7 +5106,7 @@ Edit applied successfully.
 **Output:**
 ```
 ╭───────────────────── Traceback (most recent call last) ──────────────────────╮
-│ /Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/cli/ │
+│ <PROJECT>/polis/cli/ │
 │ world.py:25 in genesis                                                       │
 │                                                                              │
 │   22 │   │   die(f"a world already exists at {config.WORLD_FILE} — use       │
@@ -5119,7 +5119,7 @@ Edit applied successfully.
 │   27 │   console.print(f"  cities:  {len(world.cities)}")                    │
 │   28 │   console.print(f"  persons: {len(world.persons)}")                   │
 │                                                                              │
-│ /Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/stor │
+│ <PROJECT>/polis/stor │
 │ e.py:66 in export_all_cities                                                 │
 │                                                                              │
 │   63                                                                         │
@@ -5128,7 +5128,7 @@ Edit applied successfully.
 │ ❱ 66 │   return [export_city(world, c.id) for c in world.cities]             │
 │   67                                                                         │
 │                                                                              │
-│ /Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/stor │
+│ <PROJECT>/polis/stor │
 │ e.py:61 in export_city                                                       │
 │                                                                              │
 │   58 def export_city(world: World, city_id: str) -> Path:                    │
@@ -5140,7 +5140,7 @@ Edit applied successfully.
 │   63                                                                         │
 │   64                                                                         │
 │                                                                              │
-│ /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions │
+│ <PYTHON>/3.14.7/Frameworks/Python.framework/Versions │
 │ /3.14/lib/python3.14/json/__init__.py:242 in dumps                           │
 │                                                                              │
 │   239 │   │   skipkeys=skipkeys, ensure_ascii=ensure_ascii,                  │
@@ -5153,7 +5153,7 @@ Edit applied successfully.
 │   245 _default_decoder = JSONDecoder(object_hook=None,                       │
 │       object_pairs_hook=None)                                                │
 │                                                                              │
-│ /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions │
+│ <PYTHON>/3.14.7/Frameworks/Python.framework/Versions │
 │ /3.14/lib/python3.14/json/encoder.py:202 in encode                           │
 │                                                                              │
 │   199 │   │   # This doesn't pass the iterator directly to ''.join() because │
@@ -5166,7 +5166,7 @@ Edit applied successfully.
 │   204 │   │   │   chunks = list(chunks)                                      │
 │   205 │   │   return ''.join(chunks)                                         │
 │                                                                              │
-│ /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions │
+│ <PYTHON>/3.14.7/Frameworks/Python.framework/Versions │
 │ /3.14/lib/python3.14/json/encoder.py:263 in iterencode                       │
 │                                                                              │
 │   260 │   │   │   │   markers, self.default, _encoder, indent, floatstr,     │
@@ -5179,7 +5179,7 @@ Edit applied successfully.
 │   266 │   │   _key_separator, _item_separator, _sort_keys, _skipkeys,        │
 │       _one_shot,                                                             │
 │                                                                              │
-│ /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions │
+│ <PYTHON>/3.14.7/Frameworks/Python.framework/Versions │
 │ /3.14/lib/python3.14/json/encoder.py:182 in default                          │
 │                                                                              │
 │   179 │   │   │   │   return super().default(o)                              │
@@ -5209,7 +5209,7 @@ The city_slice uses `city.model_dump()` (python dict with datetime objects) and 
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/store.py",
+  "filePath": "<PROJECT>/polis/store.py",
   "oldString": "    return {\n        \"city\": city.model_dump(),\n        \"federation\": {\"name\": fed.name, \"phase\": fed.phase},\n        \"git\": {\n            \"default_branch\": \"main\",\n            \"remotes\": {\n                \"origin\": f\"http://{host}:{port}/{city.id}/{fed.repo}.git\",\n                \"upstream\": f\"http://{host}:{port}/{fed.archive_org}/{fed.repo}.git\",\n            },\n        },\n        \"citizens\": [p.model_dump() for p in world.city_persons(city.id)],\n        \"local_offices\": [\n            o.model_dump() for o in world.offices if o.scope == f\"city:{city.id}\"\n        ],\n    }",
   "newString": "    return {\n        \"city\": city.model_dump(mode=\"json\"),\n        \"federation\": {\"name\": fed.name, \"phase\": fed.phase},\n        \"git\": {\n            \"default_branch\": \"main\",\n            \"remotes\": {\n                \"origin\": f\"http://{host}:{port}/{city.id}/{fed.repo}.git\",\n                \"upstream\": f\"http://{host}:{port}/{fed.archive_org}/{fed.repo}.git\",\n            },\n        },\n        \"citizens\": [p.model_dump(mode=\"json\") for p in world.city_persons(city.id)],\n        \"local_offices\": [\n            o.model_dump(mode=\"json\") for o in world.offices if o.scope == f\"city:{city.id}\"\n        ],\n    }"
 }
@@ -5236,13 +5236,13 @@ Edit applied successfully.
 **Output:**
 ```
 world created (seed=42) -> 
-/Users/angr/workspace/articles/git-law-isomorphism-implementation/world/world.js
+<PROJECT>/world/world.js
 on
   cities:  9
   persons: 64
   offices: 20
   city slices exported: 9 -> 
-/Users/angr/workspace/articles/git-law-isomorphism-implementation/world/cities
+<PROJECT>/world/cities
 =====
 The Concord of the Nine Cities  (phase 1, repo the-archive/common-law)
 Cities                                                  
@@ -5420,7 +5420,7 @@ slugify already lowercases last name.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/names.py",
+  "filePath": "<PROJECT>/polis/names.py",
   "oldString": "    parts = display_name.split()\n    base = f\"{parts[0][0]}.{slugify(parts[-1])}\"",
   "newString": "    parts = display_name.split()\n    base = f\"{parts[0][0].lower()}.{slugify(parts[-1])}\""
 }
@@ -5815,7 +5815,7 @@ DELETE /api/v1/orgs/probe-org -> 404
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/gitea.api-key",
+  "filePath": "<PROJECT>/gitea.api-key",
   "content": "dddae421df9c6e3aeabc042607f72041ea7174ed\n"
 }
 ```
@@ -5880,7 +5880,7 @@ DELETE 1
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/clients/gogs.py",
+  "filePath": "<PROJECT>/polis/clients/gogs.py",
   "oldString": "    def create_org(self, username: str, full_name: str = \"\") -> dict:\n        return self._request(\n            \"POST\", \"/api/v1/orgs\", json={\"username\": username, \"full_name\": full_name}\n        ).json()\n\n    def delete_org(self, username: str) -> None:\n        self._request(\"DELETE\", f\"/api/v1/orgs/{username}\")",
   "newString": "    def create_org(self, username: str, full_name: str = \"\", owner: str | None = None) -> dict:\n        # this gogs build has no POST /api/v1/orgs; orgs are created through the\n        # admin route, owned by the given (or the authenticated) admin user.\n        owner = owner or self.whoami()[\"login\"]\n        return self._request(\n            \"POST\",\n            f\"/api/v1/admin/users/{owner}/orgs\",\n            json={\"username\": username, \"full_name\": full_name},\n        ).json()\n\n    def delete_org(self, username: str) -> None:\n        raise GogsError(\n            \"this gogs build exposes no org-deletion route; remove the org via \"\n            \"the web UI or directly in the database\"\n        )"
 }
@@ -5973,13 +5973,13 @@ All primitives work on both platforms now. Final verification — pristine regen
 **Output:**
 ```
 world created (seed=42) -> 
-/Users/angr/workspace/articles/git-law-isomorphism-implementation/world/world.js
+<PROJECT>/world/world.js
 on
   cities:  9
   persons: 64
   offices: 20
   city slices exported: 9 -> 
-/Users/angr/workspace/articles/git-law-isomorphism-implementation/world/cities
+<PROJECT>/world/cities
 city: Cogswich
 remotes: {'origin': 'http://gogs:3000/cogswich/common-law.git', 'upstream': 'http://gogs:3000/the-archive/common-law.git'}
 citizens: 7
@@ -7022,7 +7022,7 @@ On it. The `--isomorphism` flag becomes a first-class convention: every legislat
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/legislation/__init__.py",
+  "filePath": "<PROJECT>/polis/legislation/__init__.py",
   "content": "\"\"\"The legislative machinery: docket, bill and archive operations.\n\nEvery operation builds a Plan — a list of machinery steps (git commands,\nplatform API calls) annotated with their legal meaning. Every CLI command\nexposes --isomorphism, which renders the plan instead of executing it.\n\nCONVENTION: all subsequent command families must build Plans and expose\n--isomorphism, so the legal act <-> machinery mapping is always inspectable.\n\"\"\"\n"
 }
 ```
@@ -7037,7 +7037,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/legislation/plan.py",
+  "filePath": "<PROJECT>/polis/legislation/plan.py",
   "content": "\"\"\"Plan/Step — the isomorphism engine.\n\nA Plan is the legal act expressed as machinery. Rendering it shows exactly\nwhich git commands and API calls constitute the legal act; executing it\nperforms them. This is the project's thesis made operational.\n\"\"\"\nfrom __future__ import annotations\n\nfrom dataclasses import dataclass, field\nfrom typing import Any, Callable, Optional\n\nfrom rich.console import Console\nfrom rich.panel import Panel\n\nconsole = Console()\n\n\n@dataclass\nclass Step:\n    machinery: str                          # the git/API operation, as a string\n    legal: str = \"\"                         # its meaning in legal language\n    run: Optional[Callable[[], Any]] = None  # executor (None = display-only step)\n\n\n@dataclass\nclass Plan:\n    act: str                       # legal name of the act, e.g. \"introduce a bill\"\n    actor: str                     # who performs it\n    steps: list[Step] = field(default_factory=list)\n\n    def add(self, machinery: str, legal: str = \"\", run: Optional[Callable[[], Any]] = None) -> \"Plan\":\n        self.steps.append(Step(machinery=machinery, legal=legal, run=run))\n        return self\n\n    def render_isomorphism(self) -> None:\n        lines = []\n        for i, s in enumerate(self.steps, 1):\n            lines.append(f\"[cyan]{i}.[/cyan] [bold]{s.machinery}[/bold]\")\n            if s.legal:\n                lines.append(f\"   [dim]{s.legal}[/dim]\")\n        console.print(Panel(\n            \"\\n\".join(lines),\n            title=f\"isomorphism — {self.act}\",\n            subtitle=f\"performed by: {self.actor}\",\n            title_justify=\"left\",\n            subtitle_justify=\"left\",\n            border_style=\"cyan\",\n        ))\n\n    def execute(self) -> list[Any]:\n        results = []\n        for s in self.steps:\n            if s.run is not None:\n                results.append(s.run())\n        return results\n"
 }
 ```
@@ -7052,7 +7052,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/legislation/gitcmd.py",
+  "filePath": "<PROJECT>/polis/legislation/gitcmd.py",
   "content": "\"\"\"Thin git wrapper: every invocation is produced both as a displayable\ncommand string (for --isomorphism) and as an executable call.\"\"\"\nfrom __future__ import annotations\n\nimport shlex\nimport subprocess\nfrom pathlib import Path\n\n\nclass GitError(RuntimeError):\n    pass\n\n\ndef cmd_string(repo_dir: Path | None, *args: str) -> str:\n    parts = [\"git\"]\n    if repo_dir is not None:\n        parts += [\"-C\", str(repo_dir)]\n    parts += [shlex.quote(a) for a in args]\n    return \" \".join(parts)\n\n\ndef run(repo_dir: Path | None, *args: str) -> str:\n    argv = [\"git\"]\n    if repo_dir is not None:\n        argv += [\"-C\", str(repo_dir)]\n    argv += list(args)\n    proc = subprocess.run(argv, capture_output=True, text=True)\n    if proc.returncode != 0:\n        raise GitError(f\"{cmd_string(repo_dir, *args)}\\n{proc.stderr.strip()}\")\n    return proc.stdout.strip()\n"
 }
 ```
@@ -7071,7 +7071,7 @@ Wrote file successfully.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/legislation/chamber.py",
+  "filePath": "<PROJECT>/polis/legislation/chamber.py",
   "content": "\"\"\"Chamber — the working context of a legislative act.\n\nResolves: who acts (a person from the city slice), through which platform\n(gogs in phase 1), against which remotes (origin = the city's lodged copy,\nupstream = the federal archive), and in which local clone.\n\nTwo modes:\n  * container mode — POLIS_CITY_CONFIG (or /etc/polis/city.json) present:\n    the slice is read directly;\n  * operator mode — otherwise: world.json is loaded and --city selects the\n    slice; URLs are host-swapped to the locally reachable platform address.\n\nTesting hooks (env): POLIS_PLATFORM_TOKEN overrides the actor's token;\nPOLIS_ORIGIN_URL / POLIS_UPSTREAM_URL override the slice remotes.\n\"\"\"\nfrom __future__ import annotations\n\nimport json\nimport os\nfrom dataclasses import dataclass\nfrom pathlib import Path\nfrom urllib.parse import urlparse, urlunparse\n\nfrom .. import config, store\nfrom ..clients.gitea import GiteaClient\nfrom ..clients.gogs import GogsClient\n\n\nclass ChamberError(RuntimeError):\n    pass\n\n\n@dataclass\nclass Chamber:\n    platform: str            # \"gogs\" | \"gitea\"\n    city_id: str\n    actor: dict              # person dict from the slice\n    origin: str              # remote URL of the city's lodged copy\n    upstream: str            # remote URL of the federal archive\n    repo_dir: Path\n    operator_mode: bool\n    token: str | None\n\n    # --- actor -------------------------------------------------------------\n    @property\n    def actor_username(self) -> str:\n        return self.actor[\"username\"]\n\n    @property\n    def actor_label(self) -> str:\n        roles = \", \".join(self.actor.get(\"roles\") or self.actor.get(\"occupies\") or [])\n        return f\"{self.actor['display_name']} ({self.actor_username}{', ' + roles if roles else ''})\"\n\n    @property\n    def author(self) -> tuple[str, str]:\n        git = self.actor[\"git\"]\n        return git[\"author_name\"], git[\"author_email\"]\n\n    # --- remotes -------------------------------------------------------------\n    @staticmethod\n    def owner_repo(url: str) -> tuple[str, str]:\n        parts = urlparse(url).path.strip(\"/\").removesuffix(\".git\").split(\"/\")\n        if len(parts) < 2:\n            raise ChamberError(f\"cannot parse owner/repo from remote URL: {url}\")\n        return parts[-2], parts[-1]\n\n    def origin_owner_repo(self) -> tuple[str, str]:\n        return self.owner_repo(self.origin)\n\n    def upstream_owner_repo(self) -> tuple[str, str]:\n        return self.owner_repo(self.upstream)\n\n    def _host_swap(self, url: str) -> str:\n        \"\"\"In operator mode the in-network URL (gogs:3000) is unreachable;\n        swap the host for the locally published one (localhost:10880).\"\"\"\n        if not self.operator_mode:\n            return url\n        platform_url = config.GOGS_URL if self.platform == \"gogs\" else config.GITEA_URL\n        u, p = urlparse(url), urlparse(platform_url)\n        return urlunparse(u._replace(scheme=p.scheme, netloc=p.netloc))\n\n    def git_remote_url(self, remote: str, masked: bool = False) -> str:\n        \"\"\"Remote URL usable from here, with the actor's token embedded for\n        authentication (masked in --isomorphism output).\"\"\"\n        url = self._host_swap(self.origin if remote == \"origin\" else self.upstream)\n        if masked or not self.token:\n            return url\n        u = urlparse(url)\n        return urlunparse(u._replace(netloc=f\"{self.token}@{u.netloc}\"))\n\n    # --- platform client -----------------------------------------------------\n    def client(self) -> GogsClient | GiteaClient:\n        if not self.token:\n            raise ChamberError(\n                f\"{self.actor_username} has no {self.platform} token yet — \"\n                \"provision the platforms first (or set POLIS_PLATFORM_TOKEN)\"\n            )\n        cls = GogsClient if self.platform == \"gogs\" else GiteaClient\n        return cls(token=self.token)\n\n\ndef _load_slice(city: str | None) -> tuple[dict, bool]:\n    cfg = os.environ.get(\"POLIS_CITY_CONFIG\")\n    if cfg:\n        return json.loads(Path(cfg).read_text(encoding=\"utf-8\")), False\n    etc = Path(\"/etc/polis/city.json\")\n    if etc.exists():\n        return json.loads(etc.read_text(encoding=\"utf-8\")), False\n    world = store.load_world()\n    if not world.cities:\n        raise ChamberError(\"no world yet — run `polis world genesis` first\")\n    if not city:\n        raise ChamberError(\"operator mode: --city is required (or set POLIS_CITY_CONFIG)\")\n    try:\n        return store.city_slice(world, city), True\n    except KeyError as e:\n        raise ChamberError(e.args[0]) from e\n\n\ndef load_chamber(\n    as_user: str,\n    city: str | None = None,\n    repo_dir: str | None = None,\n) -> Chamber:\n    slice_, operator_mode = _load_slice(city)\n    actor = next(\n        (p for p in slice_[\"citizens\"] if p[\"username\"] == as_user), None\n    )\n    if actor is None:\n        raise ChamberError(\n            f\"'{as_user}' is not a citizen of {slice_['city']['id']} \"\n            \"(officers of the institution act from the operator side)\"\n        )\n    platform = \"gitea\" if slice_[\"federation\"].get(\"phase\") == 2 else \"gogs\"\n    remotes = slice_[\"git\"][\"remotes\"]\n    token = (\n        (actor.get(\"credentials\", {}).get(\"api_tokens\") or {}).get(platform)\n        or os.environ.get(\"POLIS_PLATFORM_TOKEN\")\n    )\n    return Chamber(\n        platform=platform,\n        city_id=slice_[\"city\"][\"id\"],\n        actor=actor,\n        origin=os.environ.get(\"POLIS_ORIGIN_URL\") or remotes[\"origin\"],\n        upstream=os.environ.get(\"POLIS_UPSTREAM_URL\") or remotes[\"upstream\"],\n        repo_dir=Path(repo_dir or os.environ.get(\"POLIS_REPO_DIR\") or f\"./{store.config and 'common-law'}\"),\n        operator_mode=operator_mode,\n        token=token,\n    )\n"
 }
 ```
@@ -7094,7 +7094,7 @@ Bug in the last line of chamber.py: `repo_dir=Path(repo_dir or os.environ.get("P
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/legislation/chamber.py",
+  "filePath": "<PROJECT>/polis/legislation/chamber.py",
   "oldString": "        repo_dir=Path(repo_dir or os.environ.get(\"POLIS_REPO_DIR\") or f\"./{store.config and 'common-law'}\"),",
   "newString": "        repo_dir=Path(repo_dir or os.environ.get(\"POLIS_REPO_DIR\") or \"./common-law\"),"
 }
@@ -7122,7 +7122,7 @@ Now the legislation modules: docket.py, bill.py, archive.py.
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/legislation/docket.py",
+  "filePath": "<PROJECT>/polis/legislation/docket.py",
   "content": "\"\"\"The docket — grievances entering the institutional record (§16).\n\nAn issue says \"there is a problem\"; it proposes no remedy. Petitions are\nfiled against the federal archive (the upstream repo's issue tracker).\n\"\"\"\nfrom __future__ import annotations\n\nimport json\n\nfrom .chamber import Chamber\nfrom .plan import Plan\n\n\ndef file_petition(chamber: Chamber, title: str, body: str) -> Plan:\n    \"\"\"A recognized problem, request or dispute enters the docket.\"\"\"\n    owner, repo = chamber.upstream_owner_repo()\n    payload = {\"title\": title, \"body\": body}\n\n    def run():\n        return chamber.client()._request(\"POST\", f\"/api/v1/repos/{owner}/{repo}/issues\", json=payload).json()\n\n    return Plan(act=\"file a petition\", actor=chamber.actor_label).add(\n        machinery=f\"POST /api/v1/repos/{owner}/{repo}/issues  {json.dumps(payload)}\",\n        legal=\"a grievance enters the institutional docket of the federal archive\",\n        run=run,\n    )\n\n\ndef list_petitions(chamber: Chamber, state: str = \"open\") -> list[dict]:\n    owner, repo = chamber.upstream_owner_repo()\n    return chamber.client()._request(\n        \"GET\", f\"/api/v1/repos/{owner}/{repo}/issues\", params={\"state\": state, \"type\": \"issues\"}\n    ).json()\n\n\ndef comment_petition(chamber: Chamber, number: int, body: str) -> Plan:\n    owner, repo = chamber.upstream_owner_repo()\n    payload = {\"body\": body}\n\n    def run():\n        return chamber.client()._request(\n            \"POST\", f\"/api/v1/repos/{owner}/{repo}/issues/{number}/comments\", json=payload\n        ).json()\n\n    return Plan(act=f\"speak on petition #{number}\", actor=chamber.actor_label).add(\n        machinery=f\"POST /api/v1/repos/{owner}/{repo}/issues/{number}/comments  {json.dumps(payload)}\",\n        legal=\"a voice is heard on a docketed grievance\",\n        run=run,\n    )\n\n\ndef dismiss_petition(chamber: Chamber, number: int) -> Plan:\n    owner, repo = chamber.upstream_owner_repo()\n\n    def run():\n        return chamber.client()._request(\n            \"PATCH\", f\"/api/v1/repos/{owner}/{repo}/issues/{number}\", json={\"state\": \"closed\"}\n        ).json()\n\n    return Plan(act=f\"dismiss petition #{number}\", actor=chamber.actor_label).add(\n        machinery=f\"PATCH /api/v1/repos/{owner}/{repo}/issues/{number}  {{\\\"state\\\": \\\"closed\\\"}}\",\n        legal=\"the grievance is denied further hearing (the record remains)\",\n        run=run,\n    )\n"
 }
 ```
@@ -7147,7 +7147,7 @@ Wait — I just wrote docket.py in the previous message. The flow got a bit out 
 **Input:**
 ```json
 {
-  "filePath": "/Users/angr/workspace/articles/git-law-isomorphism-implementation/polis/legislation/bill.py",
+  "filePath": "<PROJECT>/polis/legislation/bill.py",
   "content": "\"\"\"Bills — proposed enactments moving through the legislative machinery.\n\nLife cycle (§3, §5, §6, §10, §11):\n  draft      — a branch opens: an alternative line of legal development\n  amend      — commits: archival acts recording changes, with justification\n  introduce  — a pull request: the formal petition for incorporation\n  debate     — comments: deliberation\n  scrutinize — reviews: institutional scrutiny (customary, phase 1)\n  ratify     — merge: enactment into the authoritative history\n  consolidate— squash merge: a messy process codified into one coherent act\n  reject     — close unmerged: the petition fails\n\nRatification is jurisdiction-checked: a Local Archivist may ratify only\nbills touching municipal/<city>/**; cross-city bills require the Keeper of\nthe Federal Rolls.\n\"\"\"\nfrom __future__ import annotations\n\nimport json\nimport re\n\nfrom ..clients.gogs import GogsError\nfrom . import gitcmd\nfrom .chamber import Chamber, ChamberError\nfrom .plan import Plan\n\n\ndef branch_of(title: str) -> str:\n    slug = re.sub(r\"-+\", \"-\", re.sub(r\"[^a-z0-9]+\", \"-\", title.lower())).strip(\"-\")\n    return f\"bill/{slug}\"\n\n\ndef _find_pr(chamber: Chamber, branch: str) -> dict | None:\n    owner, repo = chamber.upstream_owner_repo()\n    prs = chamber.client()._request(\n        \"GET\", f\"/api/v1/repos/{owner}/{repo}/pulls\", params={\"state\": \"open\", \"limit\": 50}\n    ).json()\n    for pr in prs if isinstance(prs, list) else []:\n        head = pr.get(\"head\") or {}\n        if head.get(\"ref\") == branch or str(head.get(\"label\", \"\")).endswith(f\":{branch}\"):\n            return pr\n    return None\n\n\ndef _require_pr(chamber: Chamber, branch: str) -> dict:\n    pr = _find_pr(chamber, branch)\n    if pr is None:\n        raise ChamberError(f\"no open petition found for '{branch}' — has the bill been introduced?\")\n    return pr\n\n\n# --- drafting ---------------------------------------------------------------\n\ndef draft(chamber: Chamber, title: str, base: str = \"main\") -> Plan:\n    branch = branch_of(title)\n    plan = Plan(act=f\"draft the bill “{title}”\", actor=chamber.actor_label)\n    plan.add(\n        machinery=gitcmd.cmd_string(chamber.repo_dir, \"checkout\", \"-b\", branch, base),\n        legal=\"a line of legal development opens — an alternative history diverging \"\n              \"from the recognized corpus (§3)\",\n        run=lambda: gitcmd.run(chamber.repo_dir, \"checkout\", \"-b\", branch, base),\n    )\n    return plan\n\n\ndef amend(chamber: Chamber, bill: str, files: list[str], justification: str, all_files: bool = False) -> Plan:\n    name, email = chamber.author\n    plan = Plan(act=f\"amend the bill “{bill}”\", actor=chamber.actor_label)\n    plan.add(\n        machinery=gitcmd.cmd_string(chamber.repo_dir, \"checkout\", bill),\n        legal=\"return to the bill's line of development\",\n        run=lambda: gitcmd.run(chamber.repo_dir, \"checkout\", bill),\n    )\n    add_args = (\"add\", \"-A\") if all_files else (\"add\", \"--\", *files)\n    plan.add(\n        machinery=gitcmd.cmd_string(chamber.repo_dir, *add_args),\n        legal=\"the proposed text is presented for the record\",\n        run=lambda: gitcmd.run(chamber.repo_dir, *add_args),\n    )\n    commit_args = (\"-c\", f\"user.name={name}\", \"-c\", f\"user.email={email}\", \"commit\", \"-m\", justification)\n    plan.add(\n        machinery=gitcmd.cmd_string(chamber.repo_dir, *commit_args),\n        legal=\"a formal archival act records the change, with its justification (§1)\",\n        run=lambda: gitcmd.run(chamber.repo_dir, *commit_args),\n    )\n    return plan\n\n\n# --- petition ---------------------------------------------------------------\n\ndef introduce(chamber: Chamber, bill: str, title: str, body: str) -> Plan:\n    origin_owner, _ = chamber.origin_owner_repo()\n    up_owner, up_repo = chamber.upstream_owner_repo()\n    head = bill if origin_owner == up_owner else f\"{origin_owner}:{bill}\"\n    payload = {\"head\": head, \"base\": \"main\", \"title\": title, \"body\": body}\n\n    def run_push():\n        gitcmd.run(chamber.repo_dir, \"push\", chamber.git_remote_url(\"origin\"), f\"{bill}:{bill}\")\n\n    def run_pr():\n        return chamber.client()._request(\n            \"POST\", f\"/api/v1/repos/{up_owner}/{up_repo}/pulls\", json=payload\n        ).json()\n\n    plan = Plan(act=f\"introduce the bill “{title}”\", actor=chamber.actor_label)\n    plan.add(\n        machinery=f\"git -C {chamber.repo_dir} push origin {bill}:{bill}\",\n        legal=\"the draft is lodged with the city's archive\",\n        run=run_push,\n    )\n    plan.add(\n        machinery=f\"POST /api/v1/repos/{up_owner}/{up_repo}/pulls  {json.dumps(payload)}\",\n        legal=\"a formal petition asks that this line of development be incorporated \"\n              \"into the authoritative legal corpus (§5)\",\n        run=run_pr,\n    )\n    return plan\n\n\ndef debate(chamber: Chamber, bill: str, body: str) -> Plan:\n    def run():\n        pr = _require_pr(chamber, bill)\n        owner, repo = chamber.upstream_owner_repo()\n        return chamber.client()._request(\n            \"POST\", f\"/api/v1/repos/{owner}/{repo}/issues/{pr['number']}/comments\", json={\"body\": body}\n        ).json()\n\n    return Plan(act=f\"debate the bill “{bill}”\", actor=chamber.actor_label).add(\n        machinery=f\"POST …/issues/<pr>/comments  {json.dumps({'body': body})}\",\n        legal=\"deliberation upon the petition\",\n        run=run,\n    )\n\n\ndef scrutinize(chamber: Chamber, bill: str, verdict: str, body: str) -> Plan:\n    \"\"\"Institutional scrutiny. Phase 1 is customary: the finding is recorded\n    as a structured comment (gogs has no formal review machinery — which is\n    historically accurate for this era).\"\"\"\n    if verdict not in (\"approve\", \"request-changes\"):\n        raise ChamberError(\"verdict must be 'approve' or 'request-changes'\")\n    stamp = \"SCRUTINY — APPROVED\" if verdict == \"approve\" else \"SCRUTINY — CHANGES REQUESTED\"\n    text = f\"{stamp}\\n\\n{body}\" if body else stamp\n\n    def run():\n        pr = _require_pr(chamber, bill)\n        owner, repo = chamber.upstream_owner_repo()\n        return chamber.client()._request(\n            \"POST\", f\"/api/v1/repos/{owner}/{repo}/issues/{pr['number']}/comments\",\n            json={\"body\": text},\n        ).json()\n\n    return Plan(act=f\"scrutinize the bill “{bill}” ({verdict})\", actor=chamber.actor_label).add(\n        machinery=f\"POST …/issues/<pr>/comments  {json.dumps({'body': text})}\",\n        legal=\"institutional scrutiny of the proposed legislation, recorded by custom (§6)\",\n        run=run,\n    )\n\n\n# --- ratification -------------------------------------------------------------\n\ndef _merge_powers(chamber: Chamber) -> list[str]:\n    \"\"\"Path patterns the actor may ratify, from the offices they hold.\"\"\"\n    patterns: list[str] = []\n    held = {o[\"id\"]: o for o in chamber.actor.get(\"offices_held\", [])}\n    for office_id in chamber.actor.get(\"occupies\", []):\n        for power in (held.get(office_id) or {}).get(\"powers\", []):\n            if power == \"merge:main\":\n                patterns.append(\"**\")  # the Keeper may ratify cross-city law\n            elif power.startswith(\"merge:\"):\n                patterns.append(power.removeprefix(\"merge:\"))\n    return patterns\n\n\ndef _check_jurisdiction(chamber: Chamber, changed_files: list[str]) -> None:\n    patterns = _merge_powers(chamber)\n    if not patterns:\n        raise ChamberError(\n            f\"{chamber.actor_username} holds no archival office — ratification is a \"\n            \"jurisdictional act, not a political one\"\n        )\n    if \"**\" in patterns:\n        return\n    for f in changed_files:\n        if not any(f == p or (p.endswith(\"/**\") and f.startswith(p[:-3]) + \"\") and f.startswith(p[:-3]) or (p.endswith(\"/**\") and f.startswith(p[:-3])) for p in patterns):\n            raise ChamberError(\n                f\"ultra vires: '{f}' lies outside the jurisdiction of \"\n                f\"{chamber.actor_username}'s office ({', '.join(patterns)}) — \"\n                \"only the Keeper of the Federal Rolls may ratify cross-city law\"\n            )\n\n\ndef _changed_files(chamber: Chamber, bill: str) -> list[str]:\n    out = gitcmd.run(chamber.repo_dir, \"diff\", \"--name-only\", \"main...\" + bill)\n    return [f for f in out.splitlines() if f]\n\n\ndef _merge_via_api(chamber: Chamber, pr_index: int, method: str) -> None:\n    owner, repo = chamber.upstream_owner_repo()\n    chamber.client()._request(\n        \"POST\", f\"/api/v1/repos/{owner}/{repo}/pulls/{pr_index}/merge\", json={\"Do\": method}\n    )\n\n\ndef ratify(chamber: Chamber, bill: str) -> Plan:\n    def run():\n        gitcmd.run(chamber.repo_dir, \"fetch\", chamber.git_remote_url(\"origin\"), bill)\n        gitcmd.run(chamber.repo_dir, \"fetch\", chamber.git_remote_url(\"upstream\"), \"main\")\n        _check_jurisdiction(chamber, _changed_files(chamber, bill))\n        pr = _require_pr(chamber, bill)\n        try:\n            _merge_via_api(chamber, pr[\"number\"], \"merge\")\n        except GogsError:\n            # platform lacks the merge route: the archivist incorporates locally\n            gitcmd.run(chamber.repo_dir, \"checkout\", \"main\")\n            gitcmd.run(chamber.repo_dir, \"merge\", \"--no-ff\", f\"origin/{bill}\")\n            gitcmd.run(chamber.repo_dir, \"push\", chamber.git_remote_url(\"upstream\"), \"main\")\n        return pr[\"number\"]\n\n    plan = Plan(act=f\"ratify the bill “{bill}”\", actor=chamber.actor_label)\n    plan.add(machinery=f\"git -C {chamber.repo_dir} fetch origin {bill} && git fetch upstream main\",\n             legal=\"the line of development is examined\")\n    plan.add(machinery=f\"git -C {chamber.repo_dir} diff --name-only main...{bill}\",\n             legal=\"jurisdiction is verified: does every amended path lie within the \"\n                   \"archivist's authority?\")\n    plan.add(machinery=f\"POST …/pulls/<pr>/merge  {{\\\"Do\\\": \\\"merge\\\"}}\",\n             legal=\"formal incorporation of the proposed development into the \"\n                   \"authoritative history — enactment (§10)\",\n             run=run)\n    return plan\n\n\ndef consolidate(chamber: Chamber, bill: str, act_title: str) -> Plan:\n    def run():\n        gitcmd.run(chamber.repo_dir, \"fetch\", chamber.git_remote_url(\"origin\"), bill)\n        _check_jurisdiction(chamber, _changed_files(chamber, bill))\n        pr = _require_pr(chamber, bill)\n        try:\n            _merge_via_api(chamber, pr[\"number\"], \"squash\")\n        except GogsError:\n            gitcmd.run(chamber.repo_dir, \"checkout\", \"main\")\n            gitcmd.run(chamber.repo_dir, \"merge\", \"--squash\", f\"origin/{bill}\")\n            name, email = chamber.author\n            gitcmd.run(chamber.repo_dir,\n                       \"-c\", f\"user.name={name}\", \"-c\", f\"user.email={email}\",\n                       \"commit\", \"-m\", act_title)\n            gitcmd.run(chamber.repo_dir, \"push\", chamber.git_remote_url(\"upstream\"), \"main\")\n        return pr[\"number\"]\n\n    plan = Plan(act=f\"codify the bill “{bill}” as “{act_title}”\", actor=chamber.actor_label)\n    plan.add(machinery=f\"POST …/pulls/<pr>/merge  {{\\\"Do\\\": \\\"squash\\\"}}\",\n             legal=\"a messy legislative process is consolidated into a single coherent \"\n                   \"legal act — codification (§11)\",\n             run=run)\n    return plan\n\n\ndef reject(chamber: Chamber, bill: str) -> Plan:\n    def run():\n        pr = _require_pr(chamber, bill)\n        owner, repo = chamber.upstream_owner_repo()\n        return chamber.client()._request(\n            \"PATCH\", f\"/api/v1/repos/{owner}/{repo}/pulls/{pr['number']}\", json={\"state\": \"closed\"}\n        ).json()\n\n    return Plan(act=f\"reject the bill “{bill}”\", actor=chamber.actor_label).add(\n        machinery=\"PATCH …/pulls/<pr>  {\\\"state\\\": \\\"closed\\\"}\",\n        legal=\"the petition fails; the proposed history is not incorporated\",\n        run=run,\n    )\n\n\n# --- inspection ---------------------------------------------------------------\n\ndef list_bills(chamber: Chamber, state: str = \"open\") -> list[dict]:\n    owner, repo = chamber.upstream_owner_repo()\n    prs = chamber.client()._request(\n        \"GET\", f\"/api/v1/repos/{owner}/{repo}/pulls\", params={\"state\": state, \"limit\": 50}\n    ).json()\n    return prs if isinstance(prs, list) else []\n"
 }
 ```
@@ -7252,7 +7252,7 @@ Let me extract all the key details:
 **Objective**: Build a simulation of the git/CI-CD as legal-political system isomorphism. Currently: implement legislative machinery commands (docket, bill, archive) in the `polis` Typer CLI, each with a `--isomorphism` flag that prints the equivalent git/API commands instead of executing.
 
 **Important details**:
-- Working dir: /Users/angr/workspace/articles/git-law-isomorphism-implementation
+- Working dir: <PROJECT>
 - The polis tool is at polis/ package, installed editable in .venv, entry point .venv/bin/polis
 - Domain model: two dimensions (member_of city/institution, occupies offices), three agency kinds (political, juridical, mechanical)
 - 9 cities (Cogswich, Brasshaven, Aetherquay, Thornwick, Cindercog, Gloamingate, Hushpoole, Chimefall, Vapourmouth), 64 persons (63 + Mechanical Magistrate), 20 offices
@@ -7293,7 +7293,7 @@ Blocked: (none really)
 2. Then docket.py, bill.py, archive.py + CLI wrappers + wire into main.py, then end-to-end test against probe repo on gogs
 
 **Relevant files**:
-- /Users/angr/workspace/articles/git-law-isomorphism-implementation/synopsis.md
+- <PROJECT>/synopsis.md
 - polis/ package files
 - world/world.json, world/cities/*.json
 - run-woodpecker.sh (modified)
@@ -7307,7 +7307,7 @@ Let me write the summary now, terse bullets.
 - Build a simulation of the "Git/CI-CD as legal-political system" isomorphism (see synopsis.md): 9 fictional cities enacting law via git. Current task: implement the legislative machinery commands (`docket`, `bill`, `archive`) in the `polis` Typer CLI, where **every subcommand gets a `--isomorphism` flag** that prints the equivalent git/API machinery instead of executing (a convention for all subsequent subcommands).
 
 ## Important Details
-- Project root: `/Users/angr/workspace/articles/git-law-isomorphism-implementation`; CLI installed editable: `.venv/bin/polis` (Python 3.14, typer/httpx/pydantic/rich).
+- Project root: `<PROJECT>`; CLI installed editable: `.venv/bin/polis` (Python 3.14, typer/httpx/pydantic/rich).
 - Domain model: persons have `member_of` (city or institution) + `occupies` (offices granting powers); three agency kinds: political / juridical / mechanical. Separation rule enforced: political persons may not hold juridical offices.
 - World (seed 42): 9 cities (Cogswich, Brasshaven, Aetherquay, Thornwick, Cindercog, Gloamingate, Hushpoole, Chimefall, Vapourmouth), 64 persons (63 + Mechanical Magistrate service account), 20 offices. `e.vexley` of Cogswich holds dual office `local-archivist-cogswich` + `federal-archivist`.
 - **No database** (decided): `world/*.json` = civil registry, git history = legal archive; a DB of legal events would break the isomorphism.
