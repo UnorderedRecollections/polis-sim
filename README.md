@@ -11,6 +11,8 @@ whose legislative life runs on real local infrastructure. Every legal act is a
 real git operation; every institution is a real account, office and permission;
 the fiction and the machinery are the same object seen twice.
 
+![Screenshot](docs/images/concord-map.png)
+
 The core idea: [docs/isomorphism/synopsis.md](docs/isomorphism/synopsis.md).
 
 ## The three stores (no database, deliberately)

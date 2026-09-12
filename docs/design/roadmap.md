@@ -184,3 +184,16 @@ httpx only, no SDK lock-in; absent config = today's mechanical text.
 0035 close behind (feeds BDD and sims), then 0036/0037 in parallel,
 0038 once both land, 0039 whenever — it's isolated by the provider
 boundary.
+
+## Addendum (2026-09-10): law in effect
+
+The theoretical detour (docs/isomorphism/law-in-effect.md): CI is the
+normative layer, but delivery decomposes — ratify → promulgate →
+receive → apply — and law in force ≠ law in effect needs the L0–L5
+stack. Documentation: task 0040. Implementation:
+
+- **0043 — the enforcement arc** (docs/design/enforcement-arc.md):
+  world-state variables, ambient act events with compliance tags,
+  actual (evidenced) candidates, the prosecution template, dispositions;
+- **0044 — the delivery arc**: promulgation cadence + city reception
+  with lag observables (existing machinery, unwired).
