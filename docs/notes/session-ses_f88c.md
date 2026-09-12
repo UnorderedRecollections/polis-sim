@@ -1998,7 +1998,7 @@ Odd transient shell issue — let me retry with absolute paths:
 **Input:**
 ```json
 {
-  "command": "export PATH=\"/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:$PATH\"; GOGS_KEY=$(/usr/bin/tr -d '[:space:]' < gogs.api-key); for path in \"api/v1/users/search?q=x\" \"api/v1/repos/search\" \"api/v1/user\"; do code=$(/usr/bin/curl -s -o /dev/null -w \"%{http_code}\" -H \"Authorization: token $GOGS_KEY\" \"http://localhost:10880/$path\"); echo \"$path -> $code\"; done"
+  "command": "export PATH=\"/usr/bin:/bin:/usr/sbin:/sbin:<HOMEBREW-BIN>:$PATH\"; GOGS_KEY=$(/usr/bin/tr -d '[:space:]' < gogs.api-key); for path in \"api/v1/users/search?q=x\" \"api/v1/repos/search\" \"api/v1/user\"; do code=$(/usr/bin/curl -s -o /dev/null -w \"%{http_code}\" -H \"Authorization: token $GOGS_KEY\" \"http://localhost:10880/$path\"); echo \"$path -> $code\"; done"
 }
 ```
 
