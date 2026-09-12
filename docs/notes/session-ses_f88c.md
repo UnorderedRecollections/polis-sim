@@ -3531,7 +3531,7 @@ Good — a Typer-based operator's tool it is. Let me set up a todo list and star
 **Output:**
 ```
 Python 3.14.7
-/opt/homebrew/bin/python3
+<PYTHON-BIN>/python3
 
 ```
 
