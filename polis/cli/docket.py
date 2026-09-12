@@ -77,12 +77,12 @@ def list_(
         petitions = [m.model_dump(mode="json") for m in ms]
     table = status_table("docket", ["id", "title", "petitioner", "city", "status"])
     for p in petitions:
-        if "id" in p:  # matter (phase 1)
-            table.add_row(p["id"], p.get("title", ""), p.get("proposer", ""),
-                          p.get("city", ""), p.get("status", ""))
-        else:  # platform issue (phase 2)
+        if "number" in p:  # platform issue (phase 2)
             table.add_row(f"#{p.get('number')}", p.get("title", ""),
                           (p.get("user") or {}).get("username", ""), "", p.get("state", ""))
+        else:  # matter (phase 1)
+            table.add_row(p["id"], p.get("title", ""), p.get("proposer", ""),
+                          p.get("city", ""), p.get("status", ""))
     console.print(table)
 
 

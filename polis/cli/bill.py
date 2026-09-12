@@ -173,10 +173,15 @@ def list_(
         prs = [m.model_dump(mode="json") for m in ms]
     table = status_table("bills", ["id", "title", "branch", "petitioner", "status"])
     for pr in prs:
-        table.add_row(
-            str(pr.get("id") or f"#{pr.get('number')}"), pr.get("title", ""),
-            pr.get("branch") or (pr.get("head") or {}).get("ref", ""),
-            pr.get("proposer") or (pr.get("user") or {}).get("username", ""),
-            pr.get("status") or pr.get("state", ""),
-        )
+        if "number" in pr:  # platform PR (phase 2)
+            table.add_row(
+                f"#{pr.get('number')}", pr.get("title", ""),
+                (pr.get("head") or {}).get("ref", ""),
+                (pr.get("user") or {}).get("username", ""), pr.get("state", ""),
+            )
+        else:  # matter (phase 1)
+            table.add_row(
+                pr.get("id"), pr.get("title", ""), pr.get("branch", ""),
+                pr.get("proposer", ""), pr.get("status", ""),
+            )
     console.print(table)
