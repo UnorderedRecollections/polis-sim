@@ -3,7 +3,7 @@
 - **created:** 2026-09-11T15:00:00Z
 - **type:** [infrastructure]
 - **depends-on:** 0041
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -179,7 +179,18 @@ fetches (local only); `/etc/hosts` needs one-time sudo.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-13T16:25:49Z
+- **commit:** 8769c03 (series: 3e7a039 design note → c94f4af per-sim proxy
+  → 8769c03 dev rig + docs; completion metadata in this commit)
+
+Final state: one caddy proxy per deployment is the only host-published
+HTTP entrypoint; canonical base `http://host.containers.internal:<P>`
+(gitea `ROOT_URL`, `WOODPECKER_HOST`, clone/webhook URLs, slice remotes,
+CI global secrets); per-route prefix semantics (gitea/gogs stripped,
+woodpecker kept); the webhook repoint is gone; one OAuth redirect;
+`proxy_port` persists across `--force`; dev rig, smoke and `polis health
+hosts` included. Verified: `tests/provision-demo.sh` (with the port
+assertion), `tests/provision-demo-gitea.sh`, `tests/director-demo.sh`,
+`tests/transition-demo.sh`, `uv run behave features/` — all passing; the
+dev-rig proxy builds, starts and routes (full dev-rig smoke needs `.env`
+credentials on a configured machine).

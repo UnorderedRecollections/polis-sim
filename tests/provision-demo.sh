@@ -68,8 +68,10 @@ say "provision status $SIM"
 uv run polis provision status "$SIM" > /dev/null && echo "  all inventory items present"
 
 say "idempotency: a second up --force reconciles without duplication"
+PORT_BEFORE=$(python3 -c "import json; print(json.load(open('data/sims/$SIM/secrets.json'))['proxy_port'])")
 uv run polis provision up "$SIM" --force > /dev/null
-echo "  re-provision ok"
+PORT_AFTER=$(python3 -c "import json; print(json.load(open('data/sims/$SIM/secrets.json'))['proxy_port'])")
+[[ "$PORT_BEFORE" == "$PORT_AFTER" ]] && echo "  re-provision ok (proxy port persisted: $PORT_AFTER)"
 
 say "provision teardown $SIM"
 uv run polis provision teardown "$SIM" --yes

@@ -1,6 +1,6 @@
 # The front proxy — one entrypoint per deployment
 
-Status: design (task 0042, in progress). Approved 2026-09-13; proxy:
+Status: implemented (task 0042). Approved 2026-09-13; proxy:
 **caddy** (HTTP only — everything is local). Supersedes the in-network /
 host URL split of the provisioning era (0037/0041).
 
