@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T18:18:39Z
 - **type:** [tests]
 - **depends-on:** 0053
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -55,7 +55,5 @@ slow-suite invocation from the docs actually runs the scenario.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-13T18:18:39Z
+- **commit:** 4eec1ea
