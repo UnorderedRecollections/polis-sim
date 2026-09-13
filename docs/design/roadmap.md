@@ -190,7 +190,7 @@ boundary.
 The theoretical detour (docs/isomorphism/law-in-effect.md): CI is the
 normative layer, but delivery decomposes — ratify → promulgate →
 receive → apply — and law in force ≠ law in effect needs the L0–L5
-stack. Documentation: task 0040. Implementation:
+stack. Documentation: task 0051. Implementation:
 
 - **0043 — the enforcement arc** (docs/design/enforcement-arc.md):
   world-state variables, ambient act events with compliance tags,

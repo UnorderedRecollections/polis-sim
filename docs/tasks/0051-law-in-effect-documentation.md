@@ -1,4 +1,4 @@
-# 0040: Documentation — delivery pipeline and law-in-effect stack
+# 0051: Documentation — delivery pipeline and law-in-effect stack
 
 - **created:** 2026-09-10T22:00:00Z
 - **type:** [simulation]
@@ -27,7 +27,8 @@ Deliverables:
 ## Completion
 
 - **finished:** 2026-09-10T22:15:00Z
-- **commit:** (pending — user commits)
+- **commit:** e3caf4f (renumbered to 0051 on 2026-09-13 — the 0040 slot
+  collided with the headless dev-rig gitea bootstrap task)
 
 Delivered: `docs/isomorphism/law-in-effect.md` (the delivery pipeline —
 ratify → promulgate → receive → apply, with the software/legal/sim
