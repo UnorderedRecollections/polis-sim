@@ -1,0 +1,19 @@
+{
+	auto_https off
+}
+
+:$proxy_port {
+	# gitea and gogs route at "/" — the proxy strips the prefix; ROOT_URL
+	# still carries it so generated links are absolute and correct
+	handle_path /$platform/* {
+		reverse_proxy $sim-$platform:3000
+	}
+	# woodpecker's prefix is part of WOODPECKER_HOST — forwarded intact
+	handle /ci/* {
+		reverse_proxy $sim-woodpecker-server:8000
+	}
+	# the one canonical base: host.containers.internal:<proxy_port>
+	handle / {
+		redir * /$platform/ 302
+	}
+}

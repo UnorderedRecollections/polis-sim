@@ -41,7 +41,9 @@ GOGS_URL = (os.environ.get("POLIS_GOGS_URL") or _SECRETS.get("gogs_url_external"
             or "http://localhost:10880")
 GITEA_URL = (os.environ.get("POLIS_GITEA_URL") or _SECRETS.get("gitea_url_external")
              or "http://localhost:3001")
-WOODPECKER_URL = os.environ.get("POLIS_WOODPECKER_URL", "http://localhost:10890")
+WOODPECKER_URL = (os.environ.get("POLIS_WOODPECKER_URL")
+                  or _SECRETS.get("woodpecker_url_external")
+                  or "http://localhost:10890")
 
 PODMAN_NETWORK = (os.environ.get("POLIS_NETWORK")
                   or (f"{PROVISIONED_SIM}-net" if PROVISIONED_SIM else "")

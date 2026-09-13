@@ -38,15 +38,14 @@ per-sim `/etc/hosts` entries, host-network tricks on macOS.
 One caddy container per deployment: `<sim>-proxy` on `<sim>-net` (and one
 for the shared dev rig), publishing the deployment's **only** host port
 `P:P`. The Caddyfile is generated at provisioning and mounted read-only.
-Paths are passed through **unstripped**: each service is configured with
-the prefix and matches it itself.
+Prefix handling differs per service (spike-verified 2026-09-13):
 
-| path | upstream | notes |
-|---|---|---|
-| `/gitea/*` | `<sim>-gitea:3000` | gitea `AppSubURL` from `ROOT_URL` |
-| `/ci/*` | `<sim>-woodpecker-server:8000` | prefix part of `WOODPECKER_HOST` (v3) |
-| `/gogs/*` | `<sim>-gogs:3000` | sub-URL support to verify (§7) |
-| `/` | redirect | to the platform's path |
+| path | upstream | route | notes |
+|---|---|---|---|
+| `/gitea/*` | `<sim>-gitea:3000` | `handle_path` (**strip**) | gitea routes at `/`, generates `/gitea/…` links; ROOT_URL subpath |
+| `/ci/*` | `<sim>-woodpecker-server:8000` | `handle` (**keep**) | prefix is part of `WOODPECKER_HOST` (v3) |
+| `/gogs/*` | `<sim>-gogs:3000` | `handle_path` (**strip**) | gogs routes at `/`, generates `/gogs/…` links |
+| `/` | redirect | | to the platform's path |
 
 `P` is allocated once and persisted (`secrets.json` → `proxy_port`); a
 re-`up --force` reuses it — retires `_free_port` churn. The dev rig uses
@@ -93,19 +92,17 @@ the same scheme on `host.containers.internal:10800`.
 - `_woodpecker_oauth_login` uses the single canonical redirect; the
   CSRF/login dance is unchanged.
 
-## 7. Prefix support — status and fallback
+## 7. Prefix support — spike-verified 2026-09-13
 
-| service | sub-path support | status |
+| service | behavior | verdict |
 |---|---|---|
-| gitea | `ROOT_URL` path (AppSubURL) | standard, to be smoke-tested |
-| woodpecker v3 | prefix in `WOODPECKER_HOST` | documented |
-| caddy pass-through | `handle /x/*` without stripping | to be smoke-tested |
-| gogs | `ROOT_URL` path | **risk**; verify first |
+| gitea | routes at `/`; `ROOT_URL` subpath shapes generated links; proxy strips | 200 |
+| gogs | same: proxy strips; links under `/gogs/` | 200 |
+| woodpecker v3 | `WOODPECKER_HOST` includes `/ci`; proxy must NOT strip | `healthz` 204 |
+| caddy | `handle_path` (strip) vs `handle` (pass) per route | verified |
 
-If gogs cannot serve under a prefix, the fallback is a dedicated proxy
-port for gogs (still proxied, still one published component); the
-canonical URL stays `host.containers.internal:<P_gogs>/` and no other
-design point changes.
+No fallback needed: all three serve correctly behind the proxy with the
+per-route strip setting above.
 
 ## 8. Dev rig
 

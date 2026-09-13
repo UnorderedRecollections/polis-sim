@@ -129,6 +129,39 @@ dedicated proxy port for gogs, still proxied); the SSRF allowlist
 shrinks to `host.containers.internal` but stays; hairpin for in-network
 fetches (local only); `/etc/hosts` needs one-time sudo.
 
+## Progress log
+
+- **2026-09-13 — prefix spike (step 1).** caddy + gogs + gitea +
+  woodpecker stood up behind one caddy port; **problem:** gitea and gogs
+  do NOT serve requests under the forwarded prefix (gitea routed
+  `/gitea/` as `user.UsernameSubRoute` → 404; gogs 404'd), while
+  woodpecker is the opposite (its prefix must be forwarded intact —
+  `/ci/healthz` → 204). Fix: per-route caddy semantics — `handle_path`
+  (strip) for `/gitea` and `/gogs`, `handle` (pass) for `/ci`; ROOT_URL /
+  EXTERNAL_URL still carry the prefix so generated links are correct.
+  Design note §3/§7 corrected. Verified: gitea 200 + `/gitea/…` links,
+  gogs 200 + `/gogs/…` links, woodpecker 204.
+
+- **2026-09-13 — steps 2–5 implemented; all three demos pass.**
+  `docker/caddy/` (Dockerfile + templated Caddyfile), `_up_proxy` with a
+  persisted `proxy_port` (reused by `up --force`), platform/CI containers
+  stop publishing ports, canonical `host.containers.internal:<P>` URLs in
+  gitea `ROOT_URL`, woodpecker `WOODPECKER_HOST`, slice remotes, CI global
+  secrets; the webhook delete-and-repoint block is gone (the registered
+  hook is deliverable as-is); the OAuth app has ONE redirect URI and the
+  host-side login rewrites the callback to localhost so provisioning needs
+  no `/etc/hosts` entry. `config.py`/`chamber.py` keep host-swapping, so
+  `beats.py`/`cli/archive.py` resolve per-platform. Problems:
+  - Caddyfile generation with `str.format` broke on the config's literal
+    `{}` braces → switched to `string.Template` (`$placeholders`);
+  - gogs bootstrap race: token creation right after `create-user` hit a
+    caddy 502 while gogs settled → retry loops in `_up_platform` and
+    `preflight`;
+  - **verified:** `tests/provision-demo.sh` (gogs),
+    `tests/provision-demo-gitea.sh`, `tests/director-demo.sh`,
+    `tests/transition-demo.sh` all pass; gitea remote messages and CI
+    clones now show the one canonical URL.
+
 ## Completion
 
 <!-- filled in when the task is done:

@@ -70,8 +70,7 @@ say "verify: the edition is promulgated"
 uv run python - <<'EOF'
 import json, httpx
 s = json.load(open("data/sims/tran-demo-01/secrets.json"))
-port = s["gitea_port"]
-c = httpx.Client(base_url=f"http://localhost:{port}",
+c = httpx.Client(base_url=s["gitea_url_external"],
                  headers={"Authorization": f"token {s['admin_token']}"}, timeout=10)
 tags = c.get("/api/v1/repos/tran-demo-01-archive/common-law/tags").json()
 assert any(t["name"] == "codified-machinery" for t in tags), tags
@@ -95,8 +94,7 @@ echo "  petition: #$PETITION"
 uv run python - <<EOF
 import json, httpx
 s = json.load(open("data/sims/tran-demo-01/secrets.json"))
-port = s["gitea_port"]
-c = httpx.Client(base_url=f"http://localhost:{port}",
+c = httpx.Client(base_url=s["gitea_url_external"],
                  headers={"Authorization": f"token {s['admin_token']}"}, timeout=10)
 issues = c.get("/api/v1/repos/tran-demo-01-archive/common-law/issues",
                params={"state": "open", "type": "issues"}).json()
@@ -116,8 +114,7 @@ uv run polis bill introduce bill/northern-banks-codified-access-act --as m.grims
 uv run python - <<'EOF'
 import json, httpx
 s = json.load(open("data/sims/tran-demo-01/secrets.json"))
-port = s["gitea_port"]
-c = httpx.Client(base_url=f"http://localhost:{port}",
+c = httpx.Client(base_url=s["gitea_url_external"],
                  headers={"Authorization": f"token {s['admin_token']}"}, timeout=10)
 prs = c.get("/api/v1/repos/tran-demo-01-archive/common-law/pulls",
             params={"state": "open"}).json()
@@ -132,8 +129,7 @@ uv run polis bill ratify bill/northern-banks-codified-access-act --as e.vexley -
 uv run python - <<'EOF'
 import json, httpx
 s = json.load(open("data/sims/tran-demo-01/secrets.json"))
-port = s["gitea_port"]
-c = httpx.Client(base_url=f"http://localhost:{port}",
+c = httpx.Client(base_url=s["gitea_url_external"],
                  headers={"Authorization": f"token {s['admin_token']}"}, timeout=10)
 r = c.get("/api/v1/repos/tran-demo-01-archive/common-law/contents/"
           "municipal%2Fcogswich%2Fnorthern-banks-codified-access-act.md")
@@ -159,11 +155,11 @@ uv run polis bill introduce bill/defective-ledger-act --as m.grimsbane --city co
 uv run python - <<'EOF'
 import json, httpx, time
 s = json.load(open("data/sims/tran-demo-01/secrets.json"))
-gtok = s["admin_token"]; gport = s["gitea_port"]
-wtok = s["woodpecker_token"]; wport = s["woodpecker_port"]
-g = httpx.Client(base_url=f"http://localhost:{gport}",
+gtok = s["admin_token"]
+wtok = s["woodpecker_token"]
+g = httpx.Client(base_url=s["gitea_url_external"],
                  headers={"Authorization": f"token {gtok}"}, timeout=10)
-w = httpx.Client(base_url=f"http://localhost:{wport}/api",
+w = httpx.Client(base_url=f"{s['woodpecker_url_external']}/api",
                  headers={"Authorization": f"Bearer {wtok}"}, timeout=10)
 repo = w.get("/repos/lookup/tran-demo-01-archive/common-law").json()
 assert repo, "archive repo not enabled in woodpecker"
@@ -198,15 +194,16 @@ import json
 s = json.load(open("data/sims/tran-demo-01/secrets.json"))
 city = json.load(open("data/sims/tran-demo-01/cities/cogswich.json"))
 tok = next(c for c in city["citizens"] if c["username"] == "m.grimsbane")["credentials"]["api_tokens"]["gitea"]
-print(f"http://{tok}@localhost:{s['gitea_port']}/tran-demo-01-cogswich/common-law.git")
+base = s["gitea_url_external"]
+print(base.replace("://", f"://{tok}@") + "/tran-demo-01-cogswich/common-law.git")
 EOF
 )
 git -C data/sims/tran-demo-01/common-law push -q "$PUSHURL" bill/defective-ledger-act:bill/defective-ledger-act
 uv run python - <<'EOF'
 import json, httpx, time
 s = json.load(open("data/sims/tran-demo-01/secrets.json"))
-gtok = s["admin_token"]; gport = s["gitea_port"]
-g = httpx.Client(base_url=f"http://localhost:{gport}",
+gtok = s["admin_token"]
+g = httpx.Client(base_url=s["gitea_url_external"],
                  headers={"Authorization": f"token {gtok}"}, timeout=10)
 deadline = time.time() + 300
 while time.time() < deadline:

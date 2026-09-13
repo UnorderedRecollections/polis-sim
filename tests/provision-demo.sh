@@ -30,8 +30,8 @@ p = next(p for p in s["citizens"] if p["username"] == "m.grimsbane")
 print(p["credentials"]["api_tokens"]["gogs"])
 EOF
 )
-PORT=$(python3 -c "import json; print(json.load(open('data/sims/$SIM/secrets.json'))['gogs_port'])")
-git clone -q "http://$TOKEN@localhost:$PORT/$SIM-cogswich/common-law.git" "$WORK/cogswich"
+PORT=$(python3 -c "import json; print(json.load(open('data/sims/$SIM/secrets.json'))['proxy_port'])")
+git clone -q "http://$TOKEN@localhost:$PORT/gogs/$SIM-cogswich/common-law.git" "$WORK/cogswich"
 test -f "$WORK/cogswich/constitution/01-foundation.md" \
   && echo "  founding corpus present in the city archive"
 grep -q "one common law" "$WORK/cogswich/constitution/01-foundation.md" \
@@ -43,12 +43,25 @@ say "verify: the sim slice points at namespaced remotes and carries the token"
 uv run python - <<'EOF'
 import json
 s = json.load(open("data/sims/prov-demo-01/cities/cogswich.json"))
-assert s["git"]["remotes"]["origin"] == "http://prov-demo-01-gogs:3000/prov-demo-01-cogswich/common-law.git", s["git"]["remotes"]
-assert s["git"]["remotes"]["upstream"] == "http://prov-demo-01-gogs:3000/prov-demo-01-archive/common-law.git"
+sec = json.load(open("data/sims/prov-demo-01/secrets.json"))
+port = sec["proxy_port"]
+assert s["git"]["remotes"]["origin"] == f"http://host.containers.internal:{port}/gogs/prov-demo-01-cogswich/common-law.git", s["git"]["remotes"]
+assert s["git"]["remotes"]["upstream"] == f"http://host.containers.internal:{port}/gogs/prov-demo-01-archive/common-law.git"
 grim = next(c for c in s["citizens"] if c["username"] == "m.grimsbane")
 assert grim["credentials"]["api_tokens"]["gogs"], "slice citizen has no token"
 fed = next(c for c in s["citizens"] if c["username"] == "e.vexley")
 print("  slice remotes and tokens ok")
+EOF
+
+say "verify: the front proxy is the only published entrypoint"
+uv run python - <<'EOF'
+import json
+import httpx
+s = json.load(open("data/sims/prov-demo-01/secrets.json"))
+port = s["proxy_port"]
+assert httpx.get(f"http://localhost:{port}/gogs/", timeout=10).status_code in (200, 302)
+assert s["platform"] == "gogs"
+print("  gogs reachable through the sim proxy on its path")
 EOF
 
 say "provision status $SIM"

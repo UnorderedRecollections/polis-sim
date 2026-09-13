@@ -137,8 +137,9 @@ def b_archive_contains(ctx: BeatContext, text: str) -> None:
     import os
     from .journal import run_dir
     secrets = json.loads((run_dir(ctx.sim) / "secrets.json").read_text())
-    base = (secrets["gogs_url_internal"] if os.environ.get("POLIS_SIM_DIR")
-            else secrets["gogs_url_external"])
+    platform = secrets.get("platform") or "gogs"
+    base = (secrets[f"{platform}_url_internal"] if os.environ.get("POLIS_SIM_DIR")
+            else secrets[f"{platform}_url_external"])
     url = f"{base}/{ctx.sim}-archive/common-law.git"
     with tempfile.TemporaryDirectory() as tmp:
         subprocess.run(["git", "clone", "-q", "--bare", url, tmp], check=True)

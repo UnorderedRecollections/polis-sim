@@ -30,7 +30,9 @@ import sys
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
+from string import Template
 from typing import Any
+from urllib.parse import urlparse, urlunparse
 
 from . import config, store
 from .clients import podman
@@ -64,6 +66,7 @@ class Inventory:
     slices_dir: str = ""
     network: str = ""                # the sim's private podman network
     platform_port: int = 0           # host port → the sim's platform :3000
+    proxy_port: int = 0              # host port → the sim's caddy proxy
     notes: list[str] = field(default_factory=list)
 
     def save(self) -> Path:
@@ -82,6 +85,9 @@ class Inventory:
         # pre-0037 inventories: no platform/platform_port (gogs era)
         if not inv.platform_port:
             inv.platform_port = raw.get("gogs_port", 0)
+        # pre-0042 inventories: platform_port is the proxy-era host port
+        if not inv.proxy_port:
+            inv.proxy_port = raw.get("proxy_port", 0)
         return inv
 
 
@@ -111,6 +117,7 @@ def _validate_sim_id(sim: str) -> None:
 # Task 0037: the platform is the *product*. Either product hosts phase 1.
 
 POSTGRES_IMAGE = "polis/postgres"
+CADDY_IMAGE = "polis/caddy"      # the front proxy (task 0042)
 
 
 @dataclass(frozen=True)
@@ -166,12 +173,17 @@ def sim_platform(sim: str) -> str:
 
 
 def sim_platform_client(sim: str):
-    """A client against the sim's own platform, as the sim's admin."""
+    """A client against the sim's own platform, as the sim's admin.
+    Post-0042 sims go through the sim's caddy (host-side localhost URL);
+    pre-0042 sims still carry the platform's own published port."""
     platform = sim_platform(sim)
     secrets = load_secrets(sim)
     spec = PLATFORMS[platform]
-    return spec.client(token=secrets["admin_token"],
-                       base_url=f"http://localhost:{secrets[f'{platform}_port']}")
+    if secrets.get("proxy_port"):
+        base = platform_host_url(secrets["proxy_port"], platform)
+    else:
+        base = f"http://localhost:{secrets[f'{platform}_port']}"
+    return spec.client(token=secrets["admin_token"], base_url=base)
 
 
 def _free_port(base: int = 11880) -> int:
@@ -185,7 +197,8 @@ def _free_port(base: int = 11880) -> int:
 
 def _ensure_platform_images(spec: PlatformSpec) -> None:
     for image, dockerfile in ((spec.image, spec.dockerfile),
-                              (POSTGRES_IMAGE, "postgres")):
+                              (POSTGRES_IMAGE, "postgres"),
+                              (CADDY_IMAGE, "caddy")):
         df = config.PROJECT_ROOT / "docker" / dockerfile / "Dockerfile"
         if not df.exists():
             raise ProvisionError(f"platform Dockerfile missing: {df}")
@@ -194,6 +207,80 @@ def _ensure_platform_images(spec: PlatformSpec) -> None:
                                 str(config.PROJECT_ROOT)], check=False)
             if proc.returncode != 0:
                 raise ProvisionError(f"building {image} failed: {proc.stderr.strip()[:300]}")
+
+
+# --- the front proxy (task 0042): one URL for host and network ---------------
+#
+# The canonical base is http://host.containers.internal:<P>: podman resolves
+# it inside the network (the host-published port loops back through gvproxy)
+# and it is the URL every component is configured with (gitea ROOT_URL,
+# WOODPECKER_HOST, clone/webhook URLs, slice remotes). The host only
+# resolves it after a one-time /etc/hosts entry (scripts/infra/hosts.sh);
+# provisioning itself talks to the proxy through http://localhost:<P> (caddy
+# binds :P, not the name), so no host configuration is required to work.
+#
+# Prefix semantics differ per service (spike 2026-09-13): gitea and gogs
+# route at "/" and need the prefix STRIPPED, while woodpecker's prefix is
+# part of WOODPECKER_HOST and must be forwarded intact. See
+# docker/caddy/Caddyfile.template and docs/design/proxy.md.
+
+CANONICAL_HOST = "host.containers.internal"
+
+
+def canonical_base(port: int) -> str:
+    return f"http://{CANONICAL_HOST}:{port}"
+
+
+def host_base(port: int) -> str:
+    return f"http://localhost:{port}"
+
+
+def platform_host_url(port: int, platform: str) -> str:
+    return f"{host_base(port)}/{platform}"
+
+
+def platform_canonical_url(port: int, platform: str) -> str:
+    return f"{canonical_base(port)}/{platform}"
+
+
+def _write_caddyfile(sim: str, platform: str, port: int) -> Path:
+    tpl = config.PROJECT_ROOT / "docker" / "caddy" / "Caddyfile.template"
+    if not tpl.exists():
+        raise ProvisionError(f"caddy template missing: {tpl}")
+    d = platform_dir(sim) / "caddy"
+    d.mkdir(parents=True, exist_ok=True)
+    path = d / "Caddyfile"
+    path.write_text(Template(tpl.read_text(encoding="utf-8")).substitute(
+        sim=sim, platform=platform, proxy_port=port), encoding="utf-8")
+    return path
+
+
+def _up_proxy(sim: str, inv: Inventory, platform: str, port: int) -> str:
+    """The sim's caddy: the only container publishing a host port."""
+    name = f"{sim}-proxy"
+    caddyfile = _write_caddyfile(sim, platform, port)
+    podman._run(["rm", "-f", name], check=False)
+    proc = podman._run([
+        "run", "-d", "--name", name, "--network", f"{sim}-net",
+        "--restart", "unless-stopped",
+        "-p", f"{port}:{port}",
+        "-v", f"{caddyfile}:/etc/caddy/Caddyfile:ro",
+        CADDY_IMAGE,
+    ])
+    if proc.returncode != 0:
+        raise ProvisionError(f"caddy start failed: {proc.stderr.strip()[:300]}")
+    inv.containers.append(name)
+    inv.proxy_port = port
+    return name
+
+
+def _proxy_port(sim: str, inv: Inventory, existing: dict | None) -> int:
+    """The sim's one published port: reused across re-provisioning."""
+    if existing and existing.get("proxy_port"):
+        return int(existing["proxy_port"])
+    if existing and existing.get("gogs_port"):
+        return int(existing["gogs_port"])       # migrating a pre-0042 sim
+    return _free_port()
 
 
 def _pg_password() -> str:
@@ -275,9 +362,9 @@ INSTALL_LOCK = true
 SECRET_KEY   = {secrets_mod.token_hex(8)}
 
 [server]
-DOMAIN       = localhost
+DOMAIN       = {CANONICAL_HOST}
 HTTP_PORT    = 3000
-EXTERNAL_URL = http://localhost:{port}/
+EXTERNAL_URL = {platform_canonical_url(port, "gogs")}/
 DISABLE_SSH  = true
 
 [repository]
@@ -297,7 +384,6 @@ ENABLED = false
     proc = podman._run([
         "run", "-d", "--name", gg, "--network", f"{sim}-net",
         "--restart", "unless-stopped",
-        "-p", f"{port}:3000",
         "-v", f"{plat / 'gogs'}:/data", PLATFORMS["gogs"].image,
     ])
     if proc.returncode != 0:
@@ -306,7 +392,7 @@ ENABLED = false
     inv.platform_port = port
 
     # wait for the web layer (first start runs migrations — can take a while)
-    url = f"http://localhost:{port}"
+    url = platform_host_url(port, "gogs")
     print(f"[provision] waiting for gogs at {url} …", file=sys.stderr, flush=True)
     for _ in range(90):
         try:
@@ -336,8 +422,11 @@ ENABLED = false
         raise ProvisionError(f"admin user creation failed: {last_err}")
 
     return {"platform": "gogs", "admin_username": "operator",
-            "admin_password": admin_password, "gogs_port": port,
-            "gogs_url_external": url, "gogs_url_internal": f"http://{gg}:3000"}
+            "admin_password": admin_password,
+            "proxy_port": port, "proxy_url": canonical_base(port),
+            "gogs_port": port,
+            "gogs_url_external": url,
+            "gogs_url_internal": platform_canonical_url(port, "gogs")}
 
 
 def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
@@ -360,11 +449,11 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
         "GITEA__database__USER": "gogs",
         "GITEA__database__PASSWD": password,
         "GITEA__database__SSL_MODE": "disable",
-        "GITEA__server__DOMAIN": "localhost",
+        "GITEA__server__DOMAIN": CANONICAL_HOST,
         # ROOT_URL shapes the clone URLs gitea reports (webhooks, forge
-        # payloads) — CI step containers reach gitea on the sim network,
-        # never through the mac loopback
-        "GITEA__server__ROOT_URL": f"http://{gt}:3000/",
+        # payloads); the proxy strips /gitea before forwarding, so links
+        # and routes agree from host and from the network alike
+        "GITEA__server__ROOT_URL": platform_canonical_url(port, "gitea") + "/",
         "GITEA__server__HTTP_PORT": "3000",
         "GITEA__security__INSTALL_LOCK": "true",
         "GITEA__security__SECRET_KEY": secrets_mod.token_hex(16),
@@ -372,7 +461,7 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
         # the whole apparatus is local; the delivery check reads
         # security.ALLOWED_HOST_LIST
         "GITEA__security__ALLOWED_HOST_LIST":
-            f"host.containers.internal,localhost,{sim}-woodpecker-server",
+            f"{CANONICAL_HOST},localhost",
         "GITEA__webhook__ALLOW_LOCALNETWORK_HOSTS": "true",
         "GITEA__service__DISABLE_REGISTRATION": "true",
         "GITEA__repository__DEFAULT_BRANCH": "main",
@@ -380,7 +469,7 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
         "USER_GID": "1000",
     }
     run_args = ["run", "-d", "--name", gt, "--network", f"{sim}-net",
-                "--restart", "unless-stopped", "-p", f"{port}:3000"]
+                "--restart", "unless-stopped"]
     for k, v in env.items():
         run_args += ["-e", f"{k}={v}"]
     run_args += ["-v", f"{plat / 'gitea'}:/data", PLATFORMS["gitea"].image]
@@ -392,7 +481,7 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
     inv.containers.append(gt)
     inv.platform_port = port
 
-    url = f"http://localhost:{port}"
+    url = platform_host_url(port, "gitea")
     print(f"[provision] waiting for gitea at {url} …", file=sys.stderr, flush=True)
     for _ in range(90):
         try:
@@ -432,15 +521,19 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
         raise ProvisionError(f"gitea admin user creation failed: {last_err}")
 
     secrets = {"platform": "gitea", "admin_username": "operator",
-               "admin_password": admin_password, "gitea_port": port,
-               "gitea_url_external": url, "gitea_url_internal": f"http://{gt}:3000"}
+               "admin_password": admin_password,
+               "proxy_port": port, "proxy_url": canonical_base(port),
+               "gitea_port": port,
+               "gitea_url_external": url,
+               "gitea_url_internal": platform_canonical_url(port, "gitea")}
     if token:      # re-provision may find the user already present (no token
         secrets["admin_token"] = token   # on stdout) — fall back to the old one
     return secrets
 
 
 def _up_platform(sim: str, inv: Inventory, platform: str) -> dict:
-    """Network + postgres + <platform> + admin + admin token. Returns the secrets."""
+    """Network + postgres + the proxy + <platform> + admin + admin token.
+    Returns the secrets."""
     import secrets as secrets_mod
 
     spec = PLATFORMS[platform]
@@ -453,25 +546,48 @@ def _up_platform(sim: str, inv: Inventory, platform: str) -> dict:
         if secrets_path(sim).exists() else None
     admin_password = existing["admin_password"] if existing else secrets_mod.token_urlsafe(12)
 
-    port = _free_port()
+    port = _proxy_port(sim, inv, existing)
+    _up_proxy(sim, inv, platform, port)
     secrets = _up_gogs(sim, inv, pg, _pg_password(), port, admin_password) \
         if platform == "gogs" else \
         _up_gitea(sim, inv, pg, _pg_password(), port, admin_password)
 
     if "admin_token" not in secrets:
-        url = secrets[f"{platform}_url_external"]
-        secrets["admin_token"] = existing["admin_token"] if existing else \
-            PLATFORMS[platform].client(token="-", base_url=url).create_token(
-                "operator", admin_password, "provision")
+        if existing:
+            secrets["admin_token"] = existing["admin_token"]
+        else:
+            # the platform can be briefly unreachable right after bootstrap
+            # (gogs restarts/migrates while the proxy answers 502) — retry
+            import time
+            url = secrets[f"{platform}_url_external"]
+            client = PLATFORMS[platform].client(token="-", base_url=url)
+            last = ""
+            for _ in range(30):
+                try:
+                    secrets["admin_token"] = client.create_token(
+                        "operator", admin_password, "provision")
+                    break
+                except API_ERRORS as e:
+                    last = str(e)
+                    time.sleep(1)
+            else:
+                raise ProvisionError(f"admin token creation failed: {last}")
     secrets_path(sim).write_text(json.dumps(secrets, indent=2), encoding="utf-8")
     return secrets
 
 
 def preflight(client) -> None:
-    try:
-        who = client.whoami()
-    except API_ERRORS as e:
-        raise ProvisionError(f"platform unreachable or token invalid: {e}") from e
+    import time
+    last: Exception | None = None
+    for _ in range(30):
+        try:
+            who = client.whoami()
+            break
+        except API_ERRORS as e:
+            last = e
+            time.sleep(1)
+    else:
+        raise ProvisionError(f"platform unreachable or token invalid: {last}")
     if not who.get("login"):
         raise ProvisionError("platform token did not authenticate")
     if not store.world_exists():
@@ -761,7 +877,6 @@ def up_woodpecker(sim: str) -> None:
     if inv.platform != "gitea":
         raise ProvisionError("the CI is erected only on gitea-hosted sims")
     world = store.load_world()
-    gitea_port = secrets["gitea_port"]
     gitea_url = secrets["gitea_url_external"]
     magistrate_user = f"{sim}-mechanical-magistrate"
     mag_pw = next(p.credentials.password for p in world.persons
@@ -777,18 +892,21 @@ def up_woodpecker(sim: str) -> None:
             podman._run(["build", "-t", image, "-f", str(dockerfile),
                          str(config.PROJECT_ROOT)], check=True)
 
-    wp_port = _free_port()
+    wp_port = secrets["proxy_port"]                       # the sim's one port
+    wp_url = f"{host_base(wp_port)}/ci"                   # host-side
+    wp_canonical = f"{canonical_base(wp_port)}/ci"        # the one URL
+    gitea_canonical = platform_canonical_url(wp_port, "gitea")
     agent_secret = secrets_mod.token_urlsafe(16)
     grpc_secret = secrets_mod.token_urlsafe(16)
 
     # 1. the OAuth application on the sim's gitea (before the server starts).
-    #    Two redirect URIs: the operator's loopback AND the WOODPECKER_HOST
-    #    form the server itself uses at exchange time.
+    #    ONE redirect URI: the canonical URL woodpecker itself uses at
+    #    exchange time (drove the old two-URI loopback + host.containers
+    #    workaround out of existence).
     gt = GiteaClient(token=secrets["admin_token"], base_url=gitea_url)
     oauth = gt._request("POST", "/api/v1/user/applications/oauth2", json={
         "name": "woodpecker",
-        "redirect_uris": [f"http://localhost:{wp_port}/authorize",
-                          f"http://host.containers.internal:{wp_port}/authorize"],
+        "redirect_uris": [f"{wp_canonical}/authorize"],
         "confidential_client": True,
     }).json()
 
@@ -800,20 +918,20 @@ def up_woodpecker(sim: str) -> None:
     (plat / "woodpecker" / "server").mkdir(parents=True, exist_ok=True)
     server_env = {
         "WOODPECKER_OPEN": "true",
-        # browser-friendly links (status "details" URLs); the forge webhook
-        # is repointed to the in-network URL after the repo enable below
-        "WOODPECKER_HOST": f"http://localhost:{wp_port}",
+        # the canonical URL: browser-friendly links AND the forge webhook
+        # target at once — no repoint needed (task 0042)
+        "WOODPECKER_HOST": wp_canonical,
         "WOODPECKER_AGENT_SECRET": agent_secret,
         "WOODPECKER_GRPC_SECRET": grpc_secret,
         "WOODPECKER_ADMIN": magistrate_user,
         "WOODPECKER_GITEA": "true",
-        "WOODPECKER_GITEA_URL": f"http://{sim}-gitea:3000",
-        "WOODPECKER_DEV_GITEA_OAUTH_URL": f"http://localhost:{gitea_port}",
+        "WOODPECKER_GITEA_URL": gitea_canonical,
+        "WOODPECKER_DEV_GITEA_OAUTH_URL": gitea_canonical,
         "WOODPECKER_GITEA_CLIENT": oauth["client_id"],
         "WOODPECKER_GITEA_SECRET": oauth["client_secret"],
     }
     run_args = ["run", "-d", "--name", wp, "--network", f"{sim}-net",
-                "--restart", "unless-stopped", "-p", f"{wp_port}:8000"]
+                "--restart", "unless-stopped"]
     for k, v in server_env.items():
         run_args += ["-e", f"{k}={v}"]
     run_args += ["-v", f"{plat / 'woodpecker' / 'server'}:/var/lib/woodpecker",
@@ -841,8 +959,7 @@ def up_woodpecker(sim: str) -> None:
     if proc.returncode != 0:
         raise ProvisionError(f"woodpecker agent start failed: {proc.stderr.strip()[:300]}")
 
-    # 5. wait for the server
-    wp_url = f"http://localhost:{wp_port}"
+    # 5. wait for the server (host-side through the proxy)
     print(f"[provision] waiting for woodpecker at {wp_url} …", file=sys.stderr, flush=True)
     for _ in range(60):
         try:
@@ -857,7 +974,8 @@ def up_woodpecker(sim: str) -> None:
     # 6. the Magistrate's first login — the OAuth dance (gitea session →
     #    grant → woodpecker session → CSRF → mint the API token)
     wp_token = _woodpecker_oauth_login(gitea_url, magistrate_user, mag_pw,
-                                       wp_url, oauth["client_id"])
+                                       wp_url, f"{wp_canonical}/authorize",
+                                       oauth["client_id"])
 
     # 7. enable the archive repo (the Magistrate must hold admin rights on
     #    the forge repo it guards). Woodpecker registers its own forge
@@ -874,21 +992,9 @@ def up_woodpecker(sim: str) -> None:
     wc._request("PATCH", f"/api/repos/{enabled.get('id')}",
                 json={"require_approval": "none"})
 
-    # woodpecker registered its own webhook at enable time — with the
-    # WOODPECKER_HOST (localhost) URL, unreachable from inside the forge.
-    # Repoint it: reuse woodpecker's hook token, in-network URL.
-    for hook in gt._request("GET", f"/api/v1/repos/{archive_org}/common-law/hooks").json():
-        url = (hook.get("config") or {}).get("url", "")
-        if "/api/hook" in url and "access_token=" in url:
-            token = url.split("access_token=", 1)[1]
-            gt._request("DELETE",
-                        f"/api/v1/repos/{archive_org}/common-law/hooks/{hook['id']}")
-            gt._request("POST", f"/api/v1/repos/{archive_org}/common-law/hooks", json={
-                "type": "gitea", "active": True,
-                "config": {"url": f"http://{wp}:8000/api/hook?access_token={token}",
-                           "content_type": "json"},
-                "events": ["push", "pull_request"],
-            })
+    # no webhook repoint: woodpecker registered its hook with the canonical
+    # WOODPECKER_HOST URL, which the forge reaches like any other client
+    # (the old delete-and-repoint workaround is gone — task 0042)
 
     # the cities hold copies of the one archive — sync the forks so every
     # repo carries the codified machinery (a PR's pipeline config is read
@@ -897,8 +1003,8 @@ def up_woodpecker(sim: str) -> None:
     for org in [o for o in inv.orgs if o != archive_org]:
         proc = subprocess.run(
             ["git", "push", "-q",
-             f"http://{secrets['admin_token']}@localhost:{gitea_port}/"
-             f"{org}/common-law.git", "main:main"],
+             f"http://{secrets['admin_token']}@localhost:{wp_port}/"
+             f"gitea/{org}/common-law.git", "main:main"],
             cwd=str(SIMS_DIR / sim / "common-law"), capture_output=True, text=True)
         if proc.returncode == 0:
             synced += 1
@@ -907,13 +1013,14 @@ def up_woodpecker(sim: str) -> None:
 
     # the formal checks' gitea context, injected into every pipeline step
     # (global secrets — WOODPECKER_ENVIRONMENT's comma format mangles URLs)
-    wc.create_global_secret("POLIS_GITEA_URL", f"http://{sim}-gitea:3000",
+    wc.create_global_secret("POLIS_GITEA_URL", gitea_canonical,
                             ["pull_request"])
     wc.create_global_secret("POLIS_GITEA_TOKEN", mag_token, ["pull_request"])
 
     # 8. persist
     secrets.update({
         "woodpecker_port": wp_port, "woodpecker_url_external": wp_url,
+        "woodpecker_url": wp_canonical,
         "woodpecker_token": wp_token, "woodpecker_agent_secret": agent_secret,
         "woodpecker_gitea_client": oauth["client_id"],
         "woodpecker_gitea_secret": oauth["client_secret"],
@@ -923,13 +1030,25 @@ def up_woodpecker(sim: str) -> None:
     inv.save()
 
 
+def _host_side(url: str, base: str) -> str:
+    """Rewrite a URL's authority to the host-side base (localhost)."""
+    u, b = urlparse(url), urlparse(base)
+    return urlunparse(u._replace(scheme=b.scheme, netloc=b.netloc))
+
+
 def _woodpecker_oauth_login(gitea_url: str, username: str, password: str,
-                            wp_url: str, client_id: str) -> str:
+                            wp_url: str, redirect_uri: str,
+                            client_id: str) -> str:
     """The Magistrate logs into the CI: gitea session → OAuth grant →
     woodpecker session → CSRF token → the woodpecker API token (a JWT).
-    Gitea quirks: no CSRF field on the login form; the grant form needs
-    granted=true; already-authorized apps redirect straight to the
-    callback."""
+
+    gitea_url and wp_url are the host-side (localhost) forms; redirect_uri
+    is the CANONICAL one — woodpecker exchanges the code with it and gitea
+    validates the exchange against the authorize request. The callback is
+    rewritten to the host side before following, so provisioning needs no
+    /etc/hosts entry. Gitea quirks: no CSRF field on the login form; the
+    grant form needs granted=true; already-authorized apps redirect
+    straight to the callback."""
     import re
 
     import httpx
@@ -940,10 +1059,6 @@ def _woodpecker_oauth_login(gitea_url: str, username: str, password: str,
     r = s.post("/user/login", data={"user_name": username, "password": password})
     if r.status_code not in (302, 303):
         raise ProvisionError(f"gitea login as {username} failed: {r.status_code}")
-    # the authorize redirect must match the redirect woodpecker sends at
-    # exchange time (WOODPECKER_HOST + /authorize, both localhost since
-    # task 0041's link fix)
-    redirect_uri = f"{wp_url}/authorize"
     r = s.get("/login/oauth/authorize"
               f"?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code")
     if r.status_code in (302, 303):
@@ -956,8 +1071,10 @@ def _woodpecker_oauth_login(gitea_url: str, username: str, password: str,
         loc = s.post("/login/oauth/grant", data=fields).headers.get("Location", "")
     if not loc or "code=" not in loc:
         raise ProvisionError(f"gitea OAuth grant failed: {loc[:200]}")
+    b = urlparse(wp_url)
+    callback = loc if loc.startswith("http") else f"{b.scheme}://{b.netloc}{loc}"
     ws = httpx.Client(base_url=wp_url, follow_redirects=True, timeout=20)
-    ws.get(loc if loc.startswith("http") else wp_url + loc)
+    ws.get(_host_side(callback, wp_url))
     cfg = ws.get("/web-config.js")
     csrf = re.search(r'WOODPECKER_CSRF = "([^"]*)"', cfg.text)
     if not csrf or not csrf.group(1):
@@ -1037,6 +1154,7 @@ def sim_containers(sim: str) -> list[str]:
     names = proc.stdout.split()
     return sorted(n for n in names
                   if n in (f"{sim}-postgres", f"{sim}-gogs", f"{sim}-gitea",
+                           f"{sim}-proxy",
                            f"{sim}-woodpecker-server", f"{sim}-woodpecker-agent",
                            f"polis-operator-{sim}")
                   or (n.startswith("polis-city-") and n.endswith(f"-{sim}")))
@@ -1100,7 +1218,7 @@ def list_sims() -> list[dict]:
         sims |= {p.name for p in SIMS_DIR.iterdir() if p.is_dir()}
     proc = podman._run(["ps", "-a", "--format", "{{.Names}}"], check=False)
     for n in proc.stdout.split():
-        for suffix in ("-postgres", "-gogs", "-gitea"):
+        for suffix in ("-postgres", "-gogs", "-gitea", "-proxy"):
             if n.endswith(suffix) and not n.startswith("polis-"):
                 sims.add(n[: -len(suffix)])
         if n.startswith("polis-operator-"):

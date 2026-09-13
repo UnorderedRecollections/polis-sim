@@ -133,7 +133,9 @@ def _archive_url() -> str:
         secrets = json.loads(
             (config.DATA_DIR / "sims" / config.PROVISIONED_SIM / "secrets.json")
             .read_text(encoding="utf-8"))
-        return f"{secrets['gogs_url_external']}/{config.PROVISIONED_SIM}-archive/{fed.repo}.git"
+        platform = secrets.get("platform") or "gogs"
+        return (f"{secrets[f'{platform}_url_external']}/"
+                f"{config.PROVISIONED_SIM}-archive/{fed.repo}.git")
     return f"{config.GOGS_URL}/{fed.archive_org}/{fed.repo}.git"
 
 
