@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T18:41:23Z
 - **type:** [tests]
 - **depends-on:** 0053, 0057
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -51,7 +51,5 @@ reports failures rather than skipping silently.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-13T18:41:23Z
+- **commit:** b063c4a
