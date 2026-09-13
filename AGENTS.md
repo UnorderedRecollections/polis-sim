@@ -327,7 +327,10 @@ journal provenance, MCP later).
 
 ## Task workflow (mandatory)
 
-Every task gets a description file **before work starts**:
+Every task is tracked twice: the local description file is the **source of
+truth**, the GitHub issue is its **public mirror** (`gh issue …`).
+
+**Local file (before work starts):**
 `docs/tasks/NNNN-snake-case-task-title.md` (NNNN = next sequential number,
 zero-padded; template: `docs/tasks/0000-task-template.md`). Metadata:
 
@@ -337,14 +340,28 @@ zero-padded; template: `docs/tasks/0000-task-template.md`). Metadata:
 - **depends-on:** task numbers of prerequisites, if any
 - **status:** open → in-progress → done
 
-When the task is complete:
+**GitHub issue (the same moment the file lands):** `gh issue create`:
 
-1. Commit the changes (this workflow is the standing authorization for
-  task-scoped commits; one task = one commit, message referencing the task
-  number, e.g. `task 0007: scaffold treaty template`).
-2. Fill the task file's **Completion** section: `**finished:**` timestamp and
-  `**commit:**` the commit's treeish; set status to `done`; commit that
-  update too (may be amended into the task commit).
+- **title:** the file's `# NNNN: title` line, verbatim (e.g.
+  `0039: llm integration`);
+- **body:** the task's Description verbatim, ending with
+  `Tracked in the repo: [docs/tasks/NNNN-....md](docs/tasks/NNNN-....md)`;
+- **label:** `bug` for `[bugfix]`, `documentation` for doc-only tasks,
+  `enhancement` otherwise.
+
+**Keep both in sync** — a `done` file never outlives its closed issue (and
+vice versa). No back-fill for tasks already closed:
+
+1. Move the file's `status:` and the issue's state together (comment on
+  the issue when work starts).
+2. When the task is complete: commit the changes (this workflow is the
+  standing authorization for task-scoped commits; one task = one commit,
+  message referencing the task number, e.g. `task 0007: scaffold treaty
+  template`); fill the task file's **Completion** section
+  (`**finished:**` timestamp, `**commit:**` treeish) and set status to
+  `done`; commit that update too (may be amended into the task commit).
+3. Close the GitHub issue referencing the completion commit:
+  `gh issue close <n> --comment "done in <treeish>"`.
 
 ## Dev
 
