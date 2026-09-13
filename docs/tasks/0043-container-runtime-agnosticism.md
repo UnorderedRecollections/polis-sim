@@ -3,7 +3,7 @@
 - **created:** 2026-09-11T16:00:00Z
 - **type:** [refactoring]
 - **depends-on:** none
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -61,7 +61,6 @@ assumes podman (`polis/clients/podman.py`, `scripts/infra/*`,
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-13T20:30:49Z
+- **commit:** 8c4c69f (Python boundary) + 90ca376 (scripts, compose, checks,
+  docs)
