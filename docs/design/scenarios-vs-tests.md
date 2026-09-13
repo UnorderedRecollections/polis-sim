@@ -1,12 +1,14 @@
 # Scenarios vs tests — driving the simulation is not testing it
 
 Status: design (2026-09-13, from the 0053/0057 discussion; refines
-roadmap §1 "one binding, two drivers"). The insight: **driving the
-simulation with BDD and testing the software with BDD are different use
-cases** that happen to share a syntax. Mixing them in one vocabulary,
-one feature tree and one runner is a design gap — the long-term UI
-surface (TUI/Web) is meant for the first use case, while `features/` and
-`tests/all.sh` serve the second.
+roadmap §1 "one binding, two drivers"). §4–§5 are implemented by tasks
+0059 (scopes + catalog) and 0060 (tree + contract + driver tests);
+§§6–7 (live semantics, service, UIs) are tasks 0060–0063. The insight:
+**driving the simulation with BDD and testing the software with BDD are
+different use cases** that happen to share a syntax. Mixing them in one
+vocabulary, one feature tree and one runner is a design gap — the
+long-term UI surface (TUI/Web) is meant for the first use case, while
+`features/` and `tests/all.sh` serve the second.
 
 ## 1. The two use cases
 

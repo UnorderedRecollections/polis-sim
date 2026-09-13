@@ -68,7 +68,9 @@ legal actions and in-world goals — while setup and operator-machinery
 steps (`a provisioned sim …`, `the Mechanical Magistrate's CI is
 erected`) belong to the test harness and are rejected at submission.
 `uv run polis sim steps --scope user` lists the vocabulary (`--json` for
-the UIs).
+the UIs). The full authoring guide — beat kinds, naming, phase
+constraints, goals and resume — is
+[`docs/simulation-scenarios.md`](../simulation-scenarios.md).
 
 ```bash
 uv run polis sim submit my-story.feature   # validated against the user vocabulary

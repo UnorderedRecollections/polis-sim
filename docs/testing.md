@@ -85,6 +85,7 @@ Each provisions its own namespaced sim and destroys it afterwards.
 | `tests/provision-demo.sh` | gogs provisioning: proxy path, city clone, slices, status, teardown | podman |
 | `tests/provision-demo-gitea.sh` | gitea provisioning, phase stays 1 | podman |
 | `tests/director-demo.sh` | director drives two stories through the operator container | podman; sources `.env` (may be empty) |
+| `tests/scenarios-demo.sh` | a user scenario from `scenarios/` submitted and serviced to completion | podman |
 | `tests/transition-demo.sh` | transition + CI verdicts (defective fails, corrected passes) | podman |
 | `tests/sim-runtime-demo.sh` | the `enact()` facade end to end | dev rig up + `.env` (`GOGS_API_KEY`) |
 | `tests/e2e-gogs.sh` | the full live legislative flow | dev rig up + `.env` (`GOGS_API_KEY`) |
@@ -132,6 +133,8 @@ call.
 
 ## See also
 
+- `docs/simulation-scenarios.md` — the author-facing guide to driving a
+  running sim (the other side of the BDD split).
 - `docs/design/proxy.md` — why every sim's one HTTP entrypoint is
   `localhost:<proxy_port>` and how the canonical URLs work.
 - `docs/tasks/0053-*.md`, `0054`–`0056` — the BDD work this document

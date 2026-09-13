@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T19:00:00Z
 - **type:** [simulation]
 - **depends-on:** 0059
-- **status:** open
+- **status:** in-progress
 
 ## Description
 
@@ -35,6 +35,31 @@ Acceptance: an example scenario from `scenarios/` drives a provisioned
 sim via `submit` → `drive` → done; a test-scoped beat is rejected with
 an explanatory message; the queue's own tests run in the full
 verification; the authoring guide is written.
+
+## Progress log
+
+- **2026-09-13 — implemented and verified.** `scenarios/` (tracked) added
+  with a README and two examples — `northern-banks-quota.feature`
+  (phase I) and `codified-procedure.feature` (phase II, review +
+  Magistrate check). `docs/simulation-scenarios.md` is the authoring
+  contract: lifecycle, keyword timing (Given = at submission, one action
+  per drive step, goals evaluated as reached), naming (casting, corpus
+  dirs, norm ids, rule forms), phase-constraint table, failure/resume
+  semantics, the rejected test vocabulary, and the UI horizon; linked
+  from `docs/flows/simulation.md`, `docs/testing.md` and AGENTS.md.
+  Driver tests added: `tests/queue_driver_test.py` (15 checks, stub
+  `execute_beat`, no containers) covers submit/Given timing, one action
+  per service, goals passed as reached, pause with the reason, "the sim
+  goes on" while one scenario is paused, resume retrying, done, and the
+  journal scoreboard; wired into `tests/all.sh`. Acceptance demo
+  `tests/scenarios-demo.sh` provisions a sim, submits
+  `scenarios/northern-banks-quota.feature`, drives three steps and
+  asserts every beat executed/passed and the scenario `done` — also in
+  `tests/all.sh`. Noted for 0061: the `codify` beat performs the legal
+  transition but the **CI erection is the driver's** — the service must
+  perform machinery effects for user-submitted transitions.
+- **Verified:** `tests/queue_driver_test.py`, `tests/scenarios-demo.sh`,
+  fast behave, `tests/bdd-phase2.sh`, full `tests/all.sh`.
 
 ## Completion
 

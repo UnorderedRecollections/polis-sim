@@ -61,6 +61,8 @@ Cities") whose legislative life runs on real local infrastructure.
   infra → genesis → legal seed → provision → drive → teardown),
   `testing.md` (**how to run the suites**: fast behave, slow gitea,
   demos, troubleshooting),
+  `simulation-scenarios.md` (**the author guide**: driving a running sim
+  with user scenarios — the other side of the BDD split),
   `flows/` (**the legal flows**, master + petitions/legislation/archive/
   simulation, with mermaid graphs — read after the guide),
   `isomorphism/` (concepts), `design/` (simulator design + legal
@@ -68,6 +70,12 @@ Cities") whose legislative life runs on real local infrastructure.
   `notes/` (background docs), `tasks/` (task files, see Task workflow),
   `todo/` (design debts).
 - `tests/e2e-gogs.sh` — full live legislative flow against gogs (see below).
+- `features/` — the developer BDD tests (behave, `@slow`; docs/testing.md).
+  `scenarios/` — user-authored scenarios for a *running* sim
+  (`polis sim submit`; the driving side of the split in
+  `docs/design/scenarios-vs-tests.md`; author guide
+  `docs/simulation-scenarios.md`). The vocabulary is scoped: `polis sim
+  steps [--scope user|test]`; submitted scenarios use user beats only.
 - `.env` — secrets (NEVER commit; template in `.env.example`).
 
 ## Infrastructure (podman, network `gogs-local`)

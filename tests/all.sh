@@ -38,11 +38,13 @@ run() { # name command...
 }
 
 run "beat vocabulary scopes (user/test)" bash tests/beat-scopes.sh
+run "queue driver semantics (stub execute_beat)" uv run python tests/queue_driver_test.py
 run "fast behave (phase I)" uv run behave features/
 run "slow gitea suites (phase I -> transition -> phase II)" bash tests/bdd-phase2.sh
 run "provisioning demo (gogs)" bash tests/provision-demo.sh
 run "provisioning demo (gitea)" bash tests/provision-demo-gitea.sh
 run "director demo" bash tests/director-demo.sh
+run "scenario authoring demo (submit -> drive -> done)" bash tests/scenarios-demo.sh
 run "transition demo" bash tests/transition-demo.sh
 
 # --- the dev rig: required with --dev-rig, detected otherwise ---------------
