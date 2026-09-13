@@ -3,7 +3,7 @@
 - **created:** 2026-09-11T15:00:00Z
 - **type:** [infrastructure]
 - **depends-on:** 0041
-- **status:** open
+- **status:** in-progress
 
 ## Description
 
@@ -63,6 +63,71 @@ The workarounds this has already forced (see AGENTS.md platform facts):
   links, the webhook repoint, `host.containers.internal` loops);
 - update the demos/tests that parse ports out of secrets.json;
 - docs: services/*, running-a-simulation.md, AGENTS.md.
+
+## Implementation proposal (approved 2026-09-13)
+
+**Validated by spike (2026-09-13):**
+
+- a sibling container reaching `http://host.containers.internal:<published
+  port>` lands on the host-published port (gvproxy hairpin) — works;
+- `.localhost` network aliases are forwarded upstream (in-container they
+  resolve to 127.0.0.1) — rejected;
+- macOS resolves `*.localhost` but NOT `host.containers.internal` on the
+  host → one-time `/etc/hosts` line needed for host browser/CLI links;
+- woodpecker v3: the path prefix belongs to `WOODPECKER_HOST`
+  (`http://host:P/ci`); `WOODPECKER_ROOT_PATH` is not a v3 setting;
+  `WOODPECKER_EXPERT_WEBHOOK_HOST` remains as an escape hatch.
+
+**Authority model: one URL everywhere.** Canonical base
+`http://host.containers.internal:<P>` for gitea `ROOT_URL`,
+`WOODPECKER_HOST`, clone URLs, webhook URLs, OAuth redirects, slice
+remotes, CI global secrets, operator CLI and browser. The host reaches it
+through the `/etc/hosts` entry → 127.0.0.1 → the published proxy port;
+containers through podman's DNS. Caddy binds `:P` so `localhost:<P>` also
+serves host-side API calls before the hosts entry exists.
+
+**Routing.** One caddy container per sim (`<sim>-proxy`, caddy:2-alpine)
+on `<sim>-net`, publishing the ONLY host port `P:P`; `P` allocated once,
+persisted in `secrets.json`, reused by `up --force`. Paths are passed
+through unstripped so the services' own prefix handling matches:
+
+- `/gitea/*` → `<sim>-gitea:3000`
+- `/ci/*` → `<sim>-woodpecker-server:8000`
+- `/gogs/*` → `<sim>-gogs:3000`
+- `/` → redirect to the platform path
+
+The Caddyfile is generated per sim and mounted read-only.
+
+**Work items**
+
+1. `docker/caddy/` — caddy image + Caddyfile template.
+2. `provision.py` — `_up_proxy`; platforms/CI stop publishing ports;
+   canonical ROOT_URL/webhooks/global secrets/slice remotes; delete the
+   webhook delete-and-repoint block; proxy in
+   inventory/status/stop/start/destroy/`sim_containers`; secrets
+   `proxy_port`/`proxy_url`.
+3. `config.py` — platform URLs = `proxy_url + /gitea|/gogs|/ci`; dev-rig
+   default `host.containers.internal:10800`.
+4. `chamber.py` — `_host_swap` becomes identity (URLs already canonical);
+   keep the `POLIS_*` test hooks.
+5. `beats.py`, `cli/archive.py` — drop internal/external branching;
+   `_woodpecker_oauth_login` — one redirect URI (`…/ci/authorize`).
+6. Dev rig — compose `proxy` service + `scripts/infra/proxy.sh`;
+   gitea.sh/woodpecker.sh point at it; smoke.sh checks each path.
+7. `scripts/infra/hosts.sh add|remove` (sudo) + preflight in
+   `provision up`/`health`.
+8. Docs — `docs/design/proxy.md`; services/*, running-a-simulation.md,
+   AGENTS.md; demos parse `proxy_port`/`proxy_url`.
+
+**Verification.** Provision demos (gogs + gitea), director, transition
+and behave stay green; new assertions: clone/CI through the proxy,
+webhook delivered with no repoint, gitea links resolve on the host,
+`up --force` keeps the port.
+
+**Risks / fallbacks.** gogs sub-path support (verify first; fallback: a
+dedicated proxy port for gogs, still proxied); the SSRF allowlist
+shrinks to `host.containers.internal` but stays; hairpin for in-network
+fetches (local only); `/etc/hosts` needs one-time sudo.
 
 ## Completion
 
