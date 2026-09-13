@@ -407,5 +407,6 @@ vice versa). No back-fill for tasks already closed:
   `polis/sim/scenario.py` is the Gherkin→beats model, one binding for
   tests and the live-sim queue), `tests/bdd-phase2.sh` (the slow gitea
   suites: phase I on gitea + phase I → transition → phase II, task 0053).
-  **All passing.** Runbook: `docs/testing.md` (tags, prerequisites,
+  **All passing.** One shot: `tests/all.sh` (`--dev-rig` includes the
+  shared-rig checks). Runbook: `docs/testing.md` (tags, prerequisites,
   direct invocations, troubleshooting).

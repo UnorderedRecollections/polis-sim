@@ -18,7 +18,11 @@ and push:
   no containers);
 - BDD: the behave suite, on a per-sim throwaway basis if a container
   runtime is available (docker on ubuntu runners), or the
-  non-provisioned scenarios only.
+  non-provisioned scenarios only;
+- the runner: `tests/all.sh` is the one-shot full verification (fast +
+  slow + demos, `--dev-rig` for the shared rig); the workflow should
+  call it on a container-capable runner, or split fast-on-PR /
+  full-on-main (see `docs/testing.md`, task 0058).
 
 Caching via `uv` (setup-uv action); no secrets required; the workflow
 must stay green on the current tree before it lands.

@@ -27,7 +27,8 @@ the whole matrix the demos currently sample:
 
 Runner notes: container-backed cases stay in `tests/*.sh` style; the
 pure layers get pytest coverage; the mock forge (task 0047) makes the
-matrix fast and failure-injectable.
+matrix fast and failure-injectable. The current one-shot entrypoint is
+`tests/all.sh` (task 0058) — this suite should absorb and extend it.
 
 ## Completion
 

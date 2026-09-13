@@ -100,7 +100,21 @@ scripts/infra/smoke.sh        # containers up + API keys valid (needs .env)
 uv run polis health           # subsystem checks (dev rig, or the sim named by POLIS_PROVISIONED_SIM)
 ```
 
-## 5. Troubleshooting
+## 5. One command — the full verification
+
+```bash
+tests/all.sh              # everything below, cheapest first
+tests/all.sh --dev-rig    # also the dev-rig checks (required, not skipped)
+```
+
+`tests/all.sh` runs the fast suite, the slow gitea suites and the
+self-contained demos in order; the dev-rig checks (smoke, sim-runtime,
+e2e) run when the shared rig answers, or are **required** with
+`--dev-rig`. It continues past failures and exits non-zero with a summary
+naming what failed. This is the command the CI tasks (0045/0049) should
+call.
+
+## 6. Troubleshooting
 
 - **Everything skipped, `# None` step locations** → a `@slow` suite;
   pass `--tags @slow` or use `tests/bdd-phase2.sh`.
