@@ -48,8 +48,9 @@ The workarounds this has already forced (see AGENTS.md platform facts):
 - The proxy config is templated at provisioning (per-sim services);
   path-prefix routing must respect each service's expectations (gitea
   and woodpecker work under prefixes with `ROOT_URL`/`WOODPECKER_ROOT_PATH`).
-- Candidate: caddy (auto-config, local, tiny) or nginx; TLS unnecessary
-  (all local).
+- Proxy: **caddy** (decided 2026-09-13) — HTTP only (all local), one
+  container per deployment, one published port; the Caddyfile is
+  templated per sim at provisioning.
 
 ## Deliverables (at implementation time)
 
