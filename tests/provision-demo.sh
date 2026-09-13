@@ -5,7 +5,6 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SIM="prov-demo-01"
-GOGS="http://localhost:10880"
 WORK="$(mktemp -d "${TMPDIR:-/tmp}/polis-prov.XXXXXX")"
 
 say() { printf '\n\033[1m== %s ==\033[0m\n' "$*"; }

@@ -11,7 +11,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 POLIS="$ROOT/.venv/bin/polis"
-GOGS="http://localhost:10880"
+GOGS="http://localhost:10800/gogs"
 set -a; source "$ROOT/.env"; set +a
 ADMIN_TOKEN="${GOGS_API_KEY:?set GOGS_API_KEY in .env}"
 
@@ -71,7 +71,7 @@ for u in e2e-vexley e2e-grimsbane e2e-starling; do
 done
 
 say "seed the founding corpus"
-git clone -q "http://$TOK_ARCHIVE@localhost:10880/$OWNER/$REPO.git" "$WORK/seed"
+git clone -q "http://$TOK_ARCHIVE@localhost:10800/gogs/$OWNER/$REPO.git" "$WORK/seed"
 mkdir -p "$WORK/seed"/{constitution,taxation,municipal/cogswich}
 cat > "$WORK/seed/constitution/01-foundation.md" <<'MD'
 # Article 1 — Foundation

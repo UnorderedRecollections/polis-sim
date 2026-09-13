@@ -59,6 +59,8 @@ Cities") whose legislative life runs on real local infrastructure.
   `smoke.sh` (per-container smoke tests incl. API-key validity).
 - `docs/` — `running-a-simulation.md` (**the user guide**: requirements →
   infra → genesis → legal seed → provision → drive → teardown),
+  `testing.md` (**how to run the suites**: fast behave, slow gitea,
+  demos, troubleshooting),
   `flows/` (**the legal flows**, master + petitions/legislation/archive/
   simulation, with mermaid graphs — read after the guide),
   `isomorphism/` (concepts), `design/` (simulator design + legal
@@ -405,4 +407,5 @@ vice versa). No back-fill for tasks already closed:
   `polis/sim/scenario.py` is the Gherkin→beats model, one binding for
   tests and the live-sim queue), `tests/bdd-phase2.sh` (the slow gitea
   suites: phase I on gitea + phase I → transition → phase II, task 0053).
-  **All passing.**
+  **All passing.** Runbook: `docs/testing.md` (tags, prerequisites,
+  direct invocations, troubleshooting).

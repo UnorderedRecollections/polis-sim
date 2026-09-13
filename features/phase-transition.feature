@@ -1,3 +1,7 @@
+# Slow suite (task 0053). Run via tests/bdd-phase2.sh, or directly:
+#   uv run behave features/phase-transition.feature --tags @slow
+# behave.ini excludes @slow by default, so a bare `behave features/` skips
+# this feature (all steps report as skipped).
 @phase1 @phase2 @gitea @slow
 Feature: The codification of the machinery
   The federation lives by custom until the three acts codify the

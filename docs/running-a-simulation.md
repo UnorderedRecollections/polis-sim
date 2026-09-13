@@ -48,6 +48,10 @@ scripts/infra/smoke.sh          # rig healthy, API keys valid
 uv run polis health             # subsystem checks from the CLI's side
 ```
 
+The test suites themselves — the fast behave stories, the slow gitea
+suites (phase I → transition → phase II) and the demo scripts — are
+documented in `docs/testing.md`.
+
 ## 3. Generate the world (once, ever — it is shared)
 
 ```bash

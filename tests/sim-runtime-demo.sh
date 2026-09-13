@@ -5,7 +5,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-GOGS="http://localhost:10880"
+GOGS="http://localhost:10800/gogs"
 set -a; source "$ROOT/.env"; set +a
 ADMIN_TOKEN="${GOGS_API_KEY:?}"
 
@@ -49,7 +49,7 @@ for u in e2e-vexley e2e-grimsbane; do
   admin_api -H "Content-Type: application/json" -X PUT \
     "$GOGS/api/v1/repos/$OWNER/$REPO/collaborators/$u" -d '{"permission":"write"}' > /dev/null
 done
-git clone -q "http://$TOK_ARCHIVE@localhost:10880/$OWNER/$REPO.git" "$WORK/seed" 2>/dev/null
+git clone -q "http://$TOK_ARCHIVE@${GOGS#http://}/$OWNER/$REPO.git" "$WORK/seed" 2>/dev/null
 mkdir -p "$WORK/seed"/{constitution,fisheries,municipal/cogswich}
 echo -e "# Article 1 — Foundation\nThe Concord of the Nine Cities recognizes one common law." \
   > "$WORK/seed/constitution/01-foundation.md"
