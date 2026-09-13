@@ -34,6 +34,25 @@ Deliverable: a repeatable harness + a report in `docs/design/` (or a
 task annex) with the numbers and the conclusions; fixes folded into
 this task or split out.
 
+## Progress log
+
+- **2026-09-13 — harness landed, baseline measured, one bug found and
+  fixed.** `build_world(seed, cities, legislators_per_city,
+  delegates_per_city)` + `polis world genesis --cities N` (the canonical
+  world is byte-identical by default; the name pool grew to 24 names —
+  appended, never reordered), and `tests/performance_test.py` (worlds,
+  per-size provisioning/drive timing, record/git-pack sizes, restore).
+  Baseline (seed 42, 1 story): 9/64 → provision 9.8 s; 15/106 → 12.8 s;
+  20/141 → 15.7 s; 20/281 → 25.7 s; drive flat at ~1.2 s/story.
+  Conclusions and proposed budgets in `docs/design/performance.md`;
+  documented in `docs/testing.md`.
+- **Bug found by the actor-heavy point (folded in):** provisioning
+  hardcoded the Keeper as `e.vexley`; at non-canonical rosters the actual
+  `federal-archivist` occupant lost archive write and the Keeper's push
+  failed (HTTP 403). Provisioning now resolves the occupant from the
+  civil registry. Verified: 20 cities/281 persons enacts 1/1 after the
+  fix.
+
 ## Completion
 
 <!-- filled in when the task is done:

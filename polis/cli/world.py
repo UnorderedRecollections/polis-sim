@@ -44,14 +44,29 @@ app.add_typer(events_app, name="events")
 def genesis(
     seed: int = typer.Option(42, help="Deterministic seed for names/passwords."),
     force: bool = typer.Option(False, "--force", help="Overwrite an existing world."),
+    cities: Optional[int] = typer.Option(
+        None, "--cities", help="How many cities (default: the canonical nine; "
+        "the name pool is longer for scale runs — task 0056)."),
+    legislators_per_city: int = typer.Option(
+        3, "--legislators-per-city", help="Citizen-legislators per city."),
+    delegates_per_city: int = typer.Option(
+        2, "--delegates-per-city", help="Local delegates per city."),
 ) -> None:
-    """Generate the founding population: 9 cities, 63 persons, all offices."""
+    """Generate the founding population: the canonical 9 cities, 64 persons,
+    all offices — or a scaled world for the performance harness."""
     if store.world_exists() and not force:
         die(f"a world already exists at {config.WORLD_FILE} — use --force to overwrite")
-    world = build_world(seed=seed)
+    try:
+        world = build_world(seed=seed, cities=cities,
+                            legislators_per_city=legislators_per_city,
+                            delegates_per_city=delegates_per_city)
+    except ValueError as e:
+        die(str(e))
     path = store.save_world(world)
     exported = store.export_all_cities(world)
-    console.print(f"[green]world created[/green] (seed={seed}) -> {path}")
+    scale = "" if (cities is None and legislators_per_city == 3
+                   and delegates_per_city == 2) else "  [yellow](scaled world)[/yellow]"
+    console.print(f"[green]world created[/green] (seed={seed}){scale} -> {path}")
     console.print(f"  cities:  {len(world.cities)}")
     console.print(f"  persons: {len(world.persons)}")
     console.print(f"  offices: {len(world.offices)}")

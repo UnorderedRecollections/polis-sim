@@ -726,13 +726,20 @@ def up(sim: str, platform: str = "gogs", with_city_containers: bool = False,
     # NOTE: per-sim tokens go ONLY into the sim slices (below) — the civil
     # registry (world.json) never carries per-sim machinery credentials.
 
-    keeper_token = tokens["e.vexley"] if "e.vexley" in tokens else next(iter(tokens.values()))
-
-    # --- archive org + repo + founding corpus --------------------------------
-    # the Keeper of the Federal Rolls needs write everywhere he seeds/merges
-    keeper_username = "e.vexley"
+    # --- the Keeper of the Federal Rolls --------------------------------------
+    # resolved from the civil registry, never hardcoded: scale worlds (task
+    # 0056) shift the deterministic roster, and the office holder must keep
+    # write everywhere he seeds/merges regardless of the name
+    keeper = next((o for o in world.offices
+                   if o.id == "federal-archivist" and o.occupant), None)
+    if keeper is None:
+        raise ProvisionError("the world has no federal-archivist office — "
+                             "run `polis world genesis --force`")
+    keeper_username = keeper.occupant
+    keeper_token = tokens[keeper_username]
     keeper_sim_user = f"{sim}-{keeper_username}"
 
+    # --- archive org + repo + founding corpus --------------------------------
     archive_org = f"{sim}-archive"
     _ensure_org(client, archive_org, "The Federal Archive")
     inv.orgs.append(archive_org)

@@ -30,6 +30,10 @@ from .names import CITY_NAMES, make_display_name, make_password, make_username
 LEGISLATORS_PER_CITY = 3
 DELEGATES_PER_CITY = 2
 
+# The Concord of the Nine Cities: the canonical world is the first nine
+# names; the pool is longer for scale runs (task 0056).
+CANONICAL_CITIES = 9
+
 ARCHIVE_POWERS_FEDERAL = ["merge:main", "revert:main", "tag:create", "branch:manage"]
 MAGISTRATE_POWERS = ["execute:formal-checks", "report:commit-status"]
 
@@ -102,16 +106,27 @@ class _RosterBuilder:
         return office
 
 
-def build_world(seed: int = 42) -> World:
+def build_world(seed: int = 42, cities: int | None = None,
+                legislators_per_city: int = LEGISLATORS_PER_CITY,
+                delegates_per_city: int = DELEGATES_PER_CITY) -> World:
+    """The founding population. The defaults are the canonical federation
+    (the first nine city names, 3 legislators + 2 delegates per city);
+    `cities`, `legislators_per_city` and `delegates_per_city` scale it for
+    the performance harness (task 0056). The first nine names and their
+    order are fixed — existing seeds depend on them."""
+    n = CANONICAL_CITIES if cities is None else cities
+    if not 1 <= n <= len(CITY_NAMES):
+        raise ValueError(f"cities must be 1..{len(CITY_NAMES)} (the name pool)")
     b = _RosterBuilder(seed)
-    cities = [City(id=name.lower().replace(" ", ""), display_name=name) for name in CITY_NAMES]
+    cities_ = [City(id=name.lower().replace(" ", ""), display_name=name)
+               for name in CITY_NAMES[:n]]
 
     # --- municipal layer ---------------------------------------------------
     local_archivists: dict[str, Person] = {}
-    for city in cities:
-        for _ in range(LEGISLATORS_PER_CITY):
+    for city in cities_:
+        for _ in range(legislators_per_city):
             b.new_person("political", city.id, roles=["citizen-legislator"])
-        for _ in range(DELEGATES_PER_CITY):
+        for _ in range(delegates_per_city):
             b.new_person("political", city.id, roles=["local-delegate"])
         archivist = b.new_person("juridical", city.id)
         local_archivists[city.id] = archivist
@@ -128,8 +143,10 @@ def build_world(seed: int = 42) -> World:
     # --- federal superstructure --------------------------------------------
     fed = Federation()
 
-    # Domain experts — one per legal domain; citizens of the first six cities.
-    for domain, city in zip(fed.domains, cities):
+    # Domain experts — one per legal domain; citizens of the first six cities
+    # at the canonical size, cycling for tiny federations.
+    for i, domain in enumerate(fed.domains):
+        city = cities_[i % len(cities_)]
         expert = b.new_person("juridical", city.id)
         b.new_office(
             office_id=f"expert-{domain}",
@@ -141,9 +158,11 @@ def build_world(seed: int = 42) -> World:
             occupant=expert,
         )
 
-    # Constitutional jurists — citizens of the remaining three cities, so that
-    # every city is home to exactly one federal officer.
-    for i, city in enumerate(cities[len(fed.domains):], start=1):
+    # Constitutional jurists — citizens of the remaining cities, so that
+    # every city is home to exactly one federal officer at the canonical
+    # size; a tiny federation still seats one.
+    jurist_cities = cities_[len(fed.domains):] or [cities_[-1]]
+    for i, city in enumerate(jurist_cities, start=1):
         jurist = b.new_person("juridical", city.id)
         b.new_office(
             office_id=f"council-jurist-{i}",
@@ -163,7 +182,7 @@ def build_world(seed: int = 42) -> World:
         kind="juridical",
         scope="federal",
         powers=list(ARCHIVE_POWERS_FEDERAL),
-        occupant=local_archivists[cities[0].id],
+        occupant=local_archivists[cities_[0].id],
     )
 
     # The Mechanical Magistrate — software, not a person; belongs to the
@@ -183,4 +202,4 @@ def build_world(seed: int = 42) -> World:
         occupant=magistrate,
     )
 
-    return World(federation=fed, cities=cities, offices=b.offices, persons=b.persons)
+    return World(federation=fed, cities=cities_, offices=b.offices, persons=b.persons)

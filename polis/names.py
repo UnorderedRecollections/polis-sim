@@ -6,6 +6,8 @@ import re
 import string
 
 CITY_NAMES = [
+    # the canonical nine (their order is fixed: the default world is the
+    # first nine, and existing seeds depend on it)
     "Cogswich",
     "Brasshaven",
     "Aetherquay",
@@ -15,6 +17,22 @@ CITY_NAMES = [
     "Hushpoole",
     "Chimefall",
     "Vapourmouth",
+    # the scale pool (task 0056): appended, never reordered
+    "Saltmarch",
+    "Ravenmoor",
+    "Gildenford",
+    "Mistvale",
+    "Ashenbridge",
+    "Coldharbour",
+    "Foxglove",
+    "Dunhollow",
+    "Emberwick",
+    "Greyfen",
+    "Highwater",
+    "Ironhall",
+    "Larkspur",
+    "Marrowgate",
+    "Ninewells",
 ]
 
 FIRST_NAMES = [

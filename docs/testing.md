@@ -85,6 +85,19 @@ both pass 15/15. Cross-jurisdiction cases (e.g. river-water ↔ fisheries)
 are not reachable by a single-jurisdiction run — see
 `docs/todo/runtime-and-cross-jurisdiction-resources.md`.
 
+### Performance / scale harness (task 0056)
+
+```bash
+uv run python tests/performance_test.py --cities 9,15,20
+uv run python tests/performance_test.py --cities 20 \
+    --legislators-per-city 8 --delegates-per-city 4
+```
+
+Builds scaled worlds, provisions one sim per size, drives stories, and
+prints a metrics table (provisioning/drive times, record and git-pack
+sizes). The canonical world is restored afterwards; take minutes and
+opt-in. Baseline and conclusions: `docs/design/performance.md`.
+
 The transition scenario flips `federation.phase` in `world.json` (the
 civil registry); `features/environment.py` snapshots and restores it
 around every scenario, so a normal run leaves the world in phase 1. If a
