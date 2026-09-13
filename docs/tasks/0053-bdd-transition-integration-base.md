@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T17:12:46Z
 - **type:** [tests]
 - **depends-on:** 0034, 0038, 0041, 0042
-- **status:** open
+- **status:** done
 
 ## Description
 
@@ -86,7 +86,5 @@ performance (0056).
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-13T18:11:49Z
+- **commit:** 55041a6
