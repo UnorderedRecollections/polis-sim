@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T17:12:46Z
 - **type:** [tests]
 - **depends-on:** 0053, 0049
-- **status:** open
+- **status:** done
 
 ## Description
 
@@ -55,7 +55,5 @@ this task or split out.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-13T20:56:25Z
+- **commit:** 985dede
