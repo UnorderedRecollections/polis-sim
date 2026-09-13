@@ -62,19 +62,23 @@ uv run polis sim present --epoch <name>
 ### Intervening while the sim runs — scenario files (0034b)
 
 You don't have to watch: write a Gherkin scenario and submit it to the
-running sim. Beats are the shared vocabulary (`polis/sim/beats.py` — the
-same bindings the behave tests use):
+running sim. Beats are the shared vocabulary (`polis/sim/beats.py`), now
+**scoped** (task 0059): submitted scenarios may use the `user` steps —
+legal actions and in-world goals — while setup and operator-machinery
+steps (`a provisioned sim …`, `the Mechanical Magistrate's CI is
+erected`) belong to the test harness and are rejected at submission.
+`uv run polis sim steps --scope user` lists the vocabulary (`--json` for
+the UIs).
 
 ```bash
-uv run polis sim submit my-story.feature   # validated; setup beats run now
+uv run polis sim submit my-story.feature   # validated against the user vocabulary
 uv run polis sim scenarios                 # the scoreboard
 uv run polis sim resume <slug>             # re-activate a paused scenario
 ```
 
 ```gherkin
 Scenario: overfishing leads to a quota
-  Given a provisioned sim seeded from "fisheries"   # checked, skipped (the sim exists)
-  And a petition of the fishers of brasshaven about the northern banks
+  Given a petition of the fishers of brasshaven about the northern banks
   When the legislator drafts "Northern Banks Quota Act" into fisheries
   And the Keeper ratifies it with remedy "quota" superseding "N-0001"
   Then the archive main contains "Northern Banks Quota Act"

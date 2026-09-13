@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T19:00:00Z
 - **type:** [refactoring]
 - **depends-on:** 0058
-- **status:** open
+- **status:** in-progress
 
 ## Description
 
@@ -36,6 +36,25 @@ mechanical.
 Acceptance: a submitted scenario containing a test-scoped beat is
 rejected with an explanatory message; `polis sim steps --json` lists the
 user vocabulary; `tests/all.sh` green.
+
+## Progress log
+
+- **2026-09-13 — implemented and verified.** `Binding.scope` (`user` |
+  `test`; `is_user`); the classification rule was corrected from the
+  original description: **test** = harness setup + operator-machinery
+  introspection, **user** = legal actions *and* in-world outcomes
+  (goals) — the conservative "all oracles are test" reading would have
+  left submitted scenarios with no way to state goals, contradicting the
+  driving use case; the design note §4 now records the rule. Split
+  `b_codify` (legal act only; the harness step erects the CI after it).
+  `queue.validate(feature)` now accepts user beats only, with an
+  explanatory rejection; `polis sim steps [--scope user|test] [--json]`
+  (15 user / 2 test at present) is the catalog. `docs/flows/simulation.md`
+  example updated (submitted scenarios no longer carry the provision
+  beat); `tests/beat-scopes.sh` covers catalog + validation and runs
+  first in `tests/all.sh`.
+- **Verified:** `tests/beat-scopes.sh`, fast behave, `tests/bdd-phase2.sh`
+  (transition + CI through the new driver split), `tests/all.sh`.
 
 ## Completion
 

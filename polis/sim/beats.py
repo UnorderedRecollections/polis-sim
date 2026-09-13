@@ -179,13 +179,10 @@ def b_petition_answered(ctx: BeatContext) -> None:
 # --- the transition arc (task 0053) --------------------------------------------
 
 def b_codify(ctx: BeatContext) -> None:
-    """Enact the phase transition (task 0038) and, host-side, erect the
-    Mechanical Magistrate's CI (task 0041). The transition is explicit in
-    the feature by design — alternate transition scenarios and failures
-    can be written against the same vocabulary."""
-    import os
-
-    from .. import provision
+    """Enact the phase transition (task 0038). The CI erection is an
+    operator/machinery effect of the transition, not a scenario beat —
+    the driver (the test harness, the host command, the future service)
+    performs it; the driving layer never touches infrastructure."""
     from . import transition as transition_mod
     try:
         story = transition_mod.transition(ctx.sim)
@@ -193,12 +190,6 @@ def b_codify(ctx: BeatContext) -> None:
         raise BeatFailed(str(e)) from e
     if story.status != "enacted":
         raise BeatFailed(f"the transition did not happen: {story.error}")
-    if not os.environ.get("POLIS_SIM_DIR"):
-        # inside the operator container the host wrapper erects the CI
-        try:
-            provision.up_woodpecker(ctx.sim)
-        except provision.ProvisionError as e:
-            raise BeatFailed(f"the CI was not erected: {e}") from e
     ctx.data["edition"] = story.bindings.get("edition")
     ctx.data["transition_acts"] = story.bindings.get("acts")
 
@@ -335,6 +326,11 @@ class Binding:
     pattern: re.Pattern
     fn: Callable
     template: str                       # the human form, for error messages
+    scope: str = "user"                 # user | test (task 0059)
+
+    @property
+    def is_user(self) -> bool:
+        return self.scope == "user"
 
 
 def _rx(template: str) -> re.Pattern:
@@ -349,8 +345,14 @@ def _rx(template: str) -> re.Pattern:
 
 
 BINDINGS: list[Binding] = [
+    # --- test scope: harness setup + operator machinery -----------------------
+    # (the sim already exists for a submitted scenario; the CI is erected by
+    # the driver as a machinery effect, never by the scenario itself)
     Binding(_rx('a provisioned sim seeded from {j}'), b_provisioned_sim,
-            'a provisioned sim seeded from "<jurisdiction>"'),
+            'a provisioned sim seeded from "<jurisdiction>"', scope="test"),
+    Binding(_rx("the Mechanical Magistrate's CI is erected"), b_ci_erected,
+            "the Mechanical Magistrate's CI is erected", scope="test"),
+    # --- user scope: legal actions and in-world outcomes ----------------------
     Binding(_rx('a petition of the {a}s of {c} about the {r}'), b_petition,
             'a petition of the <actor-kind>s of <city> about the <resource>'),
     Binding(_rx('the legislator drafts {t} into {d}'), b_drafts,
@@ -371,8 +373,6 @@ BINDINGS: list[Binding] = [
             'the federation operates in phase <1|2>'),
     Binding(_rx('the corpus contains {p}'), b_corpus_contains,
             'the corpus contains "<path>"'),
-    Binding(_rx("the Mechanical Magistrate's CI is erected"), b_ci_erected,
-            "the Mechanical Magistrate's CI is erected"),
     Binding(_rx('the petition is a real issue on the platform'), b_petition_is_issue,
             'the petition is a real issue on the platform'),
     Binding(_rx('the bill is a real pull request on the platform'), b_bill_is_pr,

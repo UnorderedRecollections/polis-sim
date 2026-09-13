@@ -37,6 +37,7 @@ run() { # name command...
   fi
 }
 
+run "beat vocabulary scopes (user/test)" bash tests/beat-scopes.sh
 run "fast behave (phase I)" uv run behave features/
 run "slow gitea suites (phase I -> transition -> phase II)" bash tests/bdd-phase2.sh
 run "provisioning demo (gogs)" bash tests/provision-demo.sh

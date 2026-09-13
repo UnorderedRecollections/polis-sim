@@ -83,6 +83,34 @@ def list_() -> None:
 
 
 @app.command()
+def steps(
+    scope: Optional[str] = typer.Option(None, "--scope",
+                                        help="Only this scope: user | test."),
+    as_json: bool = typer.Option(False, "--json",
+                                 help="Machine-readable output (authoring UIs)."),
+) -> None:
+    """The step catalog: the beat forms a scenario may use (task 0059).
+
+    `user` steps are legal actions and in-world goals — the vocabulary a
+    submitted scenario may use; `test` steps are the harness's (setup and
+    operator-machinery introspection) and are rejected at submission.
+    """
+    import json
+    from ..sim.beats import BINDINGS
+    if scope is not None and scope not in ("user", "test"):
+        die("--scope must be 'user' or 'test'")
+    items = [{"scope": b.scope, "form": b.template} for b in BINDINGS
+             if scope is None or b.scope == scope]
+    if as_json:
+        print(json.dumps(items, indent=2, ensure_ascii=False))
+        return
+    table = status_table(f"scenario steps ({scope or 'all'})", ["scope", "form"])
+    for it in items:
+        table.add_row(it["scope"], it["form"])
+    console.print(table)
+
+
+@app.command()
 def present(
     run_id: Optional[str] = typer.Argument(None, help="Run to present (default: POLIS_PROVISIONED_SIM)."),
     last: Optional[int] = typer.Option(None, "--last", help="Only the last N entries."),

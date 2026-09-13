@@ -69,10 +69,18 @@ Rules:
 
 - `Binding` gains `scope: user | test` (and later `requires_phase`,
   `requires_office` for authoring help).
+- The rule: **`test`** beats are harness setup and operator-machinery
+  introspection — the provisioned-sim precondition and the CI's
+  existence; **`user`** beats are the legal actions *and* the in-world
+  outcomes a scenario author states as goals (petition answered, norm
+  superseded, archive/corpus contents, platform issue/PR/merge, the
+  Magistrate's verdicts, the federation's phase). The catalog a UI
+  renders therefore shows actions and goals, never provisioning.
 - `polis sim submit`/`validate` accepts only `user` beats; behave may
   execute all (`test` beats are the harness's).
-- The CI erection moves out of `b_codify` into the operator/host wrapper
-  (machinery effect, not a scenario beat); `b_codify` stays a legal act.
+- The CI erection moves out of `b_codify` into the **driver** (the test
+  harness now; the host command/service later) — a machinery effect, not
+  a scenario beat; `b_codify` stays a legal act.
 - A machine-readable catalog (`polis sim steps [--scope user] [--json]`)
   is generated from the table: the UI authoring surface and the docs both
   consume it.

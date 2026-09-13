@@ -87,22 +87,27 @@ def list_scenarios(run_id: str) -> list[ScenarioState]:
 
 # --- submission -----------------------------------------------------------------
 
-def validate(run_id: str, feature: scenario_mod.Feature) -> list[str]:
-    """Static checks at submission. Returns errors (empty = valid)."""
+def validate(feature: scenario_mod.Feature) -> list[str]:
+    """Static checks at submission: every beat must be a USER beat.
+
+    The sim already exists (the provisioning/setup beat is the test
+    harness's), and the operator machinery is not the scenario author's
+    business — a submitted scenario is legal actions and in-world goals
+    only. Returns errors (empty = valid)."""
     errors: list[str] = []
-    from .director import RunConfig
-    cfg = RunConfig.load(run_id)
     for sc in feature.scenarios:
         for beat in sc.beats:
-            binding, groups = match_beat(beat.text)
+            binding, _ = match_beat(beat.text)
             if binding is None:
-                templates = "\n  ".join(b.template for b in _templates())
+                templates = "\n  ".join(f"{b.template}  [{b.scope}]"
+                                        for b in _templates())
                 errors.append(f"{sc.name}:{beat.line} no binding for {beat.text!r}"
                               f"\n  known forms:\n  {templates}")
-            elif binding is SIM_CREATION and groups[0] != cfg.jurisdiction:
-                errors.append(f"{sc.name}:{beat.line} the scenario seeds "
-                              f"'{groups[0]}' but this run legislates in "
-                              f"'{cfg.jurisdiction}'")
+            elif not binding.is_user:
+                errors.append(
+                    f"{sc.name}:{beat.line} '{beat.text}' is a "
+                    f"{binding.scope}-scoped beat — a submitted scenario uses "
+                    "the user vocabulary only (`polis sim steps --scope user`)")
     return errors
 
 
@@ -119,7 +124,7 @@ def submit(run_id: str, feature_path: str, name: Optional[str] = None) -> Scenar
     if len(feature.scenarios) != 1:
         raise QueueError("v1: exactly one scenario per feature file")
     sc = feature.scenarios[0]
-    errors = validate(run_id, feature)
+    errors = validate(feature)
     if errors:
         raise QueueError("scenario rejected:\n" + "\n".join(errors))
 
@@ -145,7 +150,7 @@ def submit(run_id: str, feature_path: str, name: Optional[str] = None) -> Scenar
         if binding is SIM_CREATION:
             beat.status = "skipped"
             _record(journal, st, beat, "skipped",
-                    "the sim already exists — jurisdiction checked at submission")
+                    "the sim already exists — the setup beat is the harness's")
             continue
         try:
             execute_beat(ctx, beat.text)

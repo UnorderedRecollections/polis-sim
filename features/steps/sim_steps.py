@@ -74,7 +74,18 @@ def petition_answered(context):
 
 @when("the federation codifies its machinery")
 def codify(context):
-    beats.b_codify(_ctx(context))
+    ctx = _ctx(context)
+    beats.b_codify(ctx)
+    _back(context, ctx)
+    # the transition's machinery effect belongs to the driver, not the
+    # scenario: the host erects the Mechanical Magistrate's CI (task 0059)
+    import os
+    if not os.environ.get("POLIS_SIM_DIR"):
+        from polis import provision
+        try:
+            provision.up_woodpecker(context.sim)
+        except provision.ProvisionError as e:
+            raise beats.BeatFailed(f"the CI was not erected: {e}") from e
 
 
 @then("the federation operates in phase {phase}")
