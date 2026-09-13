@@ -107,11 +107,16 @@ class Runtime:
     # --- typed moves (each = one legal act) -----------------------------------
 
     def file_petition(self, chamber: Chamber, title: str, body: str) -> EnactResult:
-        return self.enact(
+        res = self.enact(
             chamber.actor_username, "docket.file",
             docket_mod.file_petition(chamber, title, body),
             params={"title": title}, chamber=chamber,
         )
+        out = res.outputs[-1] if res.outputs else None
+        if isinstance(out, dict):                         # platform issue (phase 2)
+            res.entry.result["id"] = out.get("number")
+            res.entry.anchors.setdefault("matter", f"#{out.get('number')}")
+        return res
 
     def draft_bill(self, chamber: Chamber, title: str, **draft_kw) -> EnactResult:
         return self.enact(

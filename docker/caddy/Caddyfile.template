@@ -6,11 +6,19 @@
 	# gitea and gogs route at "/" — the proxy strips the prefix; ROOT_URL
 	# still carries it so generated links are absolute and correct
 	handle_path /$platform/* {
-		reverse_proxy $sim-$platform:3000
+		# force the canonical host upstream: services derive clone/webhook
+		# URLs from the request host, and host-side clients reach the proxy
+		# as localhost — without this the forge hands the CI a localhost
+		# clone URL (unreachable from a step container)
+		reverse_proxy $sim-$platform:3000 {
+			header_up Host host.containers.internal:$proxy_port
+		}
 	}
 	# woodpecker's prefix is part of WOODPECKER_HOST — forwarded intact
 	handle /ci/* {
-		reverse_proxy $sim-woodpecker-server:8000
+		reverse_proxy $sim-woodpecker-server:8000 {
+			header_up Host host.containers.internal:$proxy_port
+		}
 	}
 	# the one canonical base: host.containers.internal:<proxy_port>
 	handle / {

@@ -53,6 +53,37 @@ passes; default `behave features/` stays fast.
 Out of scope: per-jurisdiction suites (0054), failure injection (0055),
 performance (0056).
 
+## Progress log
+
+- **2026-09-13 — implemented and verified.** Platform-parameterized
+  provisioning (`BeatContext.platform`; `-D platform=gitea` or an
+  `@gitea` tag), the explicit transition beat `b_codify` (transition +
+  host-side CI erection), phase-2 expectations (petition is an issue,
+  bill is a PR, PR merged, CI verdict with polling), `b_jurist_approves`,
+  phase/corpus/CI-erected expectations; `Runtime.file_petition` anchors
+  platform issue numbers; `features/environment.py` snapshots/restores
+  `world.json`; new `features/phase-transition.feature`; `behave.ini`
+  excludes `@slow` by default; `tests/bdd-phase2.sh` runs phase I on
+  gitea plus the full arc. Problems met and fixed on the way:
+  - **Host-derived URLs.** gitea derives clone/webhook URLs from the
+    request Host; host-side clients reach the proxy as `localhost`, so
+    the webhook payload pointed the CI clone at `localhost:<P>` —
+    unreachable from a step container. Fixed by forcing the canonical
+    Host upstream in both Caddyfiles (`header_up Host`). Verified:
+    gitea reports canonical clone URLs and the CI clones successfully.
+  - **Vacuous checks.** The CI clone is shallow and has no mainline ref,
+    so `_changed_docs` diffed `main` against itself — every check saw
+    "no documents changed" and every act passed. The transition demo's
+    defective-act assertion had been passing only because the clone
+    itself failed. Fixed: the pipeline's first command fetches
+    `$CI_COMMIT_TARGET_BRANCH` (`--unshallow`) before the checks.
+    Verified: the defective act fails on `missing proposer`; the
+    corrected act passes; the BDD approval assertion is now meaningful.
+- **Verified:** `tests/bdd-phase2.sh` (phase I on gitea + phase I →
+  transition → phase II) green; default `uv run behave features/` green
+  and fast (the slow scenario skipped); `tests/transition-demo.sh`
+  green; `world.json` restored to phase 1 after the scenario.
+
 ## Completion
 
 <!-- filled in when the task is done:

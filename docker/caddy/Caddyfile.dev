@@ -6,14 +6,22 @@
 	# gitea and gogs route at "/" — the proxy strips the prefix; their
 	# ROOT_URL/EXTERNAL_URL carry it so generated links are correct
 	handle_path /gogs/* {
-		reverse_proxy gogs:3000
+		# force the canonical host upstream: services derive clone/webhook
+		# URLs from the request host (see docs/design/proxy.md)
+		reverse_proxy gogs:3000 {
+			header_up Host host.containers.internal:10800
+		}
 	}
 	handle_path /gitea/* {
-		reverse_proxy gitea:3000
+		reverse_proxy gitea:3000 {
+			header_up Host host.containers.internal:10800
+		}
 	}
 	# woodpecker's prefix is part of WOODPECKER_HOST — forwarded intact
 	handle /ci/* {
-		reverse_proxy woodpecker-server:8000
+		reverse_proxy woodpecker-server:8000 {
+			header_up Host host.containers.internal:10800
+		}
 	}
 	handle / {
 		redir * /gitea/ 302

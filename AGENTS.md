@@ -206,7 +206,10 @@ Cities") whose legislative life runs on real local infrastructure.
   The pipeline = `data/world/legal/transition/.woodpecker.yml` (woodpecker
   v3 `steps:` list format; the step image is `polis-city:latest`, which
   carries the legal-design data — `POLIS_DATA_DIR` — for the CLI's
-  import-time ontology loaders). The checks: `polis formal-check
+  import-time ontology loaders). Its first command fetches the target
+  branch (`--unshallow`): the CI clone is shallow and without a mainline
+  ref the checks diffed nothing — every act passed vacuously (found live
+  in task 0053). The checks: `polis formal-check
   identify|entry-force|references|constitution` (exit non-zero =
   failure; the constitution check requires a jurist's
   `SCRUTINY — APPROVED` comment on the PR — read via the global secrets +
@@ -254,7 +257,11 @@ Cities") whose legislative life runs on real local infrastructure.
   containers resolve it natively, the host browser needs a one-time
   `127.0.0.1 host.containers.internal` (`scripts/infra/hosts.sh add`,
   sudo) — provisioning and the CLI use `localhost:<P>`, which caddy binds
-  too. Pieces: `docker/caddy/{Dockerfile,Caddyfile.template,Caddyfile.dev}`,
+  too. The proxy **forces the canonical Host upstream** (`header_up
+  Host`), because gitea derives clone/webhook URLs from the request host;
+  without it host-side pushes produce `localhost:<P>` clone URLs the CI
+  step containers cannot reach (found live in task 0053). Pieces:
+  `docker/caddy/{Dockerfile,Caddyfile.template,Caddyfile.dev}`,
   `_up_proxy` in `provision.py`, `scripts/infra/proxy.sh` for the dev rig.
 - `polis nuke gogs orgs <prefix> --yes` (DB cascade) is for the **shared dev
   rig** only — per-sim gogs instances need no surgery.
@@ -394,7 +401,8 @@ vice versa). No back-fill for tasks already closed:
   `uv run python …` (or activate `.venv`). Deps: typer, httpx, pydantic, rich.
 - Verify: `scripts/infra/smoke.sh` (containers + API keys), `polis health`
   (subsystem checks), `tests/e2e-gogs.sh` (full live flow), `uv run behave
-  features/` (BDD stories — the user-facing surface: throwaway sim per
-  scenario; `polis/sim/scenario.py` is the Gherkin→beats model, one
-  binding for tests now and the live-sim queue (0034b) next).
+  features/` (BDD stories — the fast suite; `behave.ini` excludes `@slow`;
+  `polis/sim/scenario.py` is the Gherkin→beats model, one binding for
+  tests and the live-sim queue), `tests/bdd-phase2.sh` (the slow gitea
+  suites: phase I on gitea + phase I → transition → phase II, task 0053).
   **All passing.**

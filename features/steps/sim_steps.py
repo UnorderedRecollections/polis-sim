@@ -14,7 +14,7 @@ from polis.sim.beats import BeatContext
 
 
 def _ctx(context) -> BeatContext:
-    ctx = BeatContext(sim=context.sim)
+    ctx = BeatContext(sim=context.sim, platform=getattr(context, "platform", "gogs"))
     for k in ("petition_id", "bill_branch", "matter_id", "title",
               "petitioner", "city", "jurisdiction"):
         setattr(ctx, k, getattr(context, k, None))
@@ -68,3 +68,55 @@ def norm_superseded(context, norm_id):
 @then("the docket shows the petition is answered")
 def petition_answered(context):
     beats.b_petition_answered(_ctx(context))
+
+
+# --- the transition arc (task 0053) -----------------------------------------
+
+@when("the federation codifies its machinery")
+def codify(context):
+    beats.b_codify(_ctx(context))
+
+
+@then("the federation operates in phase {phase}")
+def phase(context, phase):
+    beats.b_phase_is(_ctx(context), phase)
+
+
+@then('the corpus contains "{path}"')
+def corpus(context, path):
+    beats.b_corpus_contains(_ctx(context), path)
+
+
+@then("the Mechanical Magistrate's CI is erected")
+def ci_erected(context):
+    beats.b_ci_erected(_ctx(context))
+
+
+@then("the petition is a real issue on the platform")
+def petition_issue(context):
+    beats.b_petition_is_issue(_ctx(context))
+
+
+@then("the bill is a real pull request on the platform")
+def bill_pr(context):
+    beats.b_bill_is_pr(_ctx(context))
+
+
+@then("the bill's pull request is merged")
+def bill_pr_merged(context):
+    beats.b_bill_pr_merged(_ctx(context))
+
+
+@when("the jurist approves the bill")
+def jurist_approves(context):
+    beats.b_jurist_approves(_ctx(context))
+
+
+@then("the Mechanical Magistrate approves the bill")
+def ci_approves(context):
+    beats.b_ci_approves(_ctx(context))
+
+
+@then("the Mechanical Magistrate rejects the bill")
+def ci_rejects(context):
+    beats.b_ci_rejects(_ctx(context))

@@ -10,6 +10,9 @@ steps:
     when:
       event: pull_request
     commands:
+      # the clone is shallow and has no mainline ref — a check needs the
+      # target branch to diff the proposed line of development against
+      - git fetch --no-tags --unshallow origin "${CI_COMMIT_TARGET_BRANCH:-main}"
       - polis formal-check identify       # every act has id, jurisdiction, proposer
       - polis formal-check entry-force    # an Entry into Force provision
       - polis formal-check references     # cited law exists in the corpus

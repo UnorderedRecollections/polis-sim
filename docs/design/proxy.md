@@ -51,6 +51,13 @@ Prefix handling differs per service (spike-verified 2026-09-13):
 re-`up --force` reuses it — retires `_free_port` churn. The dev rig uses
 the same scheme on `host.containers.internal:10800`.
 
+The proxy **forces the canonical Host upstream**
+(`header_up Host host.containers.internal:P`): the services derive their
+clone and webhook URLs from the request host, and host-side clients reach
+the proxy as `localhost`. Without it the forge hands the CI a
+`localhost:<P>` clone URL, unreachable from a pipeline step container
+(found live while building the BDD transition suite, task 0053).
+
 ## 4. Service configuration
 
 - **gitea**: `GITEA__server__ROOT_URL=http://host.containers.internal:P/gitea/`;
