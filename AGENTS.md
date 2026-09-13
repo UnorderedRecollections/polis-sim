@@ -425,7 +425,8 @@ vice versa). No back-fill for tasks already closed:
   features/` (BDD stories — the fast suite; `behave.ini` excludes `@slow`;
   `polis/sim/scenario.py` is the Gherkin→beats model, one binding for
   tests and the live-sim queue), `tests/bdd-phase2.sh` (the slow gitea
-  suites: phase I on gitea + phase I → transition → phase II, task 0053).
+  suites: phase I on gitea + phase I → transition → phase II, task 0053),
+  `tests/jurisdictions.sh` (one whole story per jurisdiction, task 0054).
   **All passing.** One shot: `tests/all.sh` (`--dev-rig` includes the
   shared-rig checks). Runbook: `docs/testing.md` (tags, prerequisites,
   direct invocations, troubleshooting).

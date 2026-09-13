@@ -69,6 +69,22 @@ uv run behave features/phase-transition.feature --tags @slow
 > is the `behave.ini` default excluding the slow suite, not a broken
 > scenario.
 
+### Cross-jurisdiction suite (task 0054)
+
+```bash
+tests/jurisdictions.sh              # seed 41
+tests/jurisdictions.sh --seed 7
+```
+
+One provisioned sim, one whole director story per jurisdiction (15):
+each situation is generated from the jurisdiction's own data
+(`polis/sim/situations.py`), validated, seeded into a fresh run, and
+driven to enactment; the summary lists per-jurisdiction pass/fail with
+the story's error. Takes minutes (drives 15 stories); seeds 41 and 7
+both pass 15/15. Cross-jurisdiction cases (e.g. river-water ↔ fisheries)
+are not reachable by a single-jurisdiction run — see
+`docs/todo/runtime-and-cross-jurisdiction-resources.md`.
+
 The transition scenario flips `federation.phase` in `world.json` (the
 civil registry); `features/environment.py` snapshots and restores it
 around every scenario, so a normal run leaves the world in phase 1. If a
