@@ -3,12 +3,15 @@
 Status: current (2026-09-13, task 0057). Two layers: **behave** Gherkin
 suites (throwaway sims, the fast feedback loop) and **demo scripts**
 (bash, real containers, the integration surface). Everything runs on the
-local podman machine; nothing talks to a remote host.
+local container runtime — podman (default) or docker — and nothing talks
+to a remote host.
 
 ## Prerequisites
 
 - `uv sync` — behave is a dev dependency.
-- A running podman machine (`podman machine start`).
+- A running container runtime: podman (machine started,
+  `podman machine start`) or docker. Auto-detected (`podman` first, then
+  `docker`); override with `POLIS_RUNTIME=podman|docker`.
 - First run pulls/builds the images (`polis/postgres`, `polis/gogs`,
   `polis/gitea`, `polis/caddy`, `polis/woodpecker-*`, `polis-city`) — a
   few minutes on a cold machine.
@@ -82,11 +85,11 @@ Each provisions its own namespaced sim and destroys it afterwards.
 
 | script | what it proves | needs |
 |---|---|---|
-| `tests/provision-demo.sh` | gogs provisioning: proxy path, city clone, slices, status, teardown | podman |
-| `tests/provision-demo-gitea.sh` | gitea provisioning, phase stays 1 | podman |
-| `tests/director-demo.sh` | director drives two stories through the operator container | podman; sources `.env` (may be empty) |
-| `tests/scenarios-demo.sh` | a user scenario from `scenarios/` submitted and serviced to completion | podman |
-| `tests/transition-demo.sh` | transition + CI verdicts (defective fails, corrected passes) | podman |
+| `tests/provision-demo.sh` | gogs provisioning: proxy path, city clone, slices, status, teardown | a runtime |
+| `tests/provision-demo-gitea.sh` | gitea provisioning, phase stays 1 | a runtime |
+| `tests/director-demo.sh` | director drives two stories through the operator container | a runtime; sources `.env` (may be empty) |
+| `tests/scenarios-demo.sh` | a user scenario from `scenarios/` submitted and serviced to completion | a runtime |
+| `tests/transition-demo.sh` | transition + CI verdicts (defective fails, corrected passes) | a runtime |
 | `tests/sim-runtime-demo.sh` | the `enact()` facade end to end | dev rig up + `.env` (`GOGS_API_KEY`) |
 | `tests/e2e-gogs.sh` | the full live legislative flow | dev rig up + `.env` (`GOGS_API_KEY`) |
 

@@ -46,12 +46,12 @@ elif ! grep -q "host.containers.internal:${PROXY_PORT}" "$INI"; then
 fi
 
 say "build gogs image"
-podman build -t polis/gogs "$DOCKER_DIR/gogs"
+rt build -t polis/gogs "$DOCKER_DIR/gogs"
 
 say "run gogs"
-podman rm -f gogs 2>/dev/null || true
+rt rm -f gogs 2>/dev/null || true
 require_network
-podman run -d \
+rt run -d \
   --restart unless-stopped \
   --name gogs \
   --network "$NETWORK" \

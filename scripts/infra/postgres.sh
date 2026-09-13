@@ -4,12 +4,12 @@ set -euo pipefail
 source "$(dirname "$0")/env.sh"
 
 say "build postgres image"
-podman build -t polis/postgres "$DOCKER_DIR/postgres"
+rt build -t polis/postgres "$DOCKER_DIR/postgres"
 
 say "run postgres-gogs"
-podman rm -f postgres-gogs 2>/dev/null || true
+rt rm -f postgres-gogs 2>/dev/null || true
 require_network
-podman run -d \
+rt run -d \
   --restart unless-stopped \
   --name postgres-gogs \
   --network "$NETWORK" \

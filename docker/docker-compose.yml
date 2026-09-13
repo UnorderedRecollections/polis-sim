@@ -40,6 +40,8 @@ services:
     build: ./gitea
     container_name: gitea
     networks: [gogs-local]
+    extra_hosts:
+      - host.containers.internal:host-gateway
     ports:
       - "2222:22"      # ssh (git transport only; HTTP goes through the proxy)
     volumes:
@@ -77,6 +79,8 @@ services:
     build: ./woodpecker
     container_name: woodpecker-server
     networks: [gogs-local]
+    extra_hosts:
+      - host.containers.internal:host-gateway
     volumes:
       - ../.state/woodpecker/server:/var/lib/woodpecker
     environment:
@@ -97,15 +101,19 @@ services:
     build: ./woodpecker-agent
     container_name: woodpecker-agent
     networks: [gogs-local]
-    # podman-machine on macOS: container root maps to the VM's core user
-    # (owner of the podman socket); label=disable or CoreOS SELinux denies
-    # access to the mounted socket. See docs/services/woodpecker.md.
-    user: "0:0"
+    # the runtime quirks (podman-machine's root mapping + SELinux label; the
+    # engine socket path) come from the environment — scripts/infra/env.sh
+    # exports POLIS_CONTAINER_SOCKET for the detected runtime (task 0043).
+    # podman-machine users run compose via compose-up.sh (which sources it);
+    # docker users get the defaults.
+    user: "${POLIS_AGENT_USER:-0:0}"
     security_opt:
-      - label=disable
+      - ${POLIS_AGENT_SECURITY_OPT:-label=disable}
+    extra_hosts:
+      - host.containers.internal:host-gateway
     volumes:
       - ../.state/woodpecker/agent/01:/etc/woodpecker
-      - /run/user/501/podman/podman.sock:/var/run/docker.sock
+      - ${POLIS_CONTAINER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
     environment:
       DOCKER_HOST: unix:///var/run/docker.sock
       WOODPECKER_SERVER: woodpecker-server:9000

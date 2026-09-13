@@ -6,7 +6,7 @@ on its own. Every command below is real and tested.
 The one-sentence version:
 
 ```
-podman up → uv sync → world genesis → legal validate
+container runtime up → uv sync → world genesis → legal validate
 → provision up → sim new --situation … → sim drive --steps N → sim present
 → provision teardown → rm -rf data/sims/<sim>
 ```
@@ -17,7 +17,7 @@ podman up → uv sync → world genesis → legal validate
 
 | requirement | what for |
 |---|---|
-| **podman** | everything (each sim gets its own postgres + gogs + operator) |
+| **a container runtime** — podman (machine started) or docker | everything (each sim gets its own postgres + gogs + operator); auto-detected, `POLIS_RUNTIME` overrides |
 | **uv** | the Python package manager — *never* pip or ad-hoc venvs |
 | **git** | the legal archive is git history |
 
@@ -226,12 +226,12 @@ code from the `polis-city` image. Rebuild the image and refresh the
 container or sims keep running the old code:
 
 ```bash
-podman build -t polis-city:latest -f docker/polis-city/Dockerfile .
+podman build -t polis-city:latest -f docker/polis-city/Dockerfile .   # or docker build
 uv run polis provision up --force    # recreates the operator container
 ```
 
 Each step drives **one whole story** end to end, inside the operator
-container (the host CLI proxies via `podman exec`):
+container (the host CLI proxies via the runtime's `exec`):
 
 - the situation yields charged candidates (frictions);
 - the seeded selector picks one;

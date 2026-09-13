@@ -20,7 +20,8 @@ Cities") whose legislative life runs on real local infrastructure.
   - `matters.py` — the matter store (pending petitions/bills + procedural record).
   - `cli/` — typer commands. Domain: `world city person office assign`;
     legislative: `docket bill archive`; component: `gogs gitea woodpecker citynode health`.
-  - `clients/` — httpx wrappers for gogs/gitea/woodpecker APIs + podman CLI wrapper.
+  - `clients/` — httpx wrappers for gogs/gitea/woodpecker APIs + the
+    container-runtime boundary (podman/docker).
   - `legislation/` — the legislative engine: plan, chamber, gitcmd, docket, bill,
     archive, documents (+ `templates/*.md` — act/amendment/repeal scaffolds).
 - `data/` — all mutable state:
@@ -78,7 +79,7 @@ Cities") whose legislative life runs on real local infrastructure.
   steps [--scope user|test]`; submitted scenarios use user beats only.
 - `.env` — secrets (NEVER commit; template in `.env.example`).
 
-## Infrastructure (podman, network `gogs-local`)
+## Infrastructure (container runtime: podman or docker; network `gogs-local`)
 
 - postgres-gogs — shared DB (databases `gogs` + `gitea`), internal only.
 - proxy :10800 — the dev rig's only HTTP entrypoint (task 0042, caddy):
@@ -132,6 +133,16 @@ Cities") whose legislative life runs on real local infrastructure.
   modes: container (`POLIS_CITY_CONFIG` or `/etc/polis/city.json`) vs operator
   (`--city`, host-swapped URLs). Testing hooks: `POLIS_PLATFORM_TOKEN`,
   `POLIS_ORIGIN_URL`, `POLIS_UPSTREAM_URL`, `POLIS_REPO_DIR`, `POLIS_MATTERS_FILE`.
+- Container runtime (task 0043): everything goes through
+  `polis/clients/containers.py` (`ContainerRuntime`; auto-detect podman
+  first, then docker; `POLIS_RUNTIME` overrides). The quirks live there —
+  image/network probes, machine vs daemon state, socket path, the
+  woodpecker agent's flags, and the canonical-host alias docker needs
+  (auto-inserted on every `run`) — never in provisioning. `scripts/infra/*`
+  use `env.sh`'s `rt`/`rt_*` helpers; `tests/runtime-agnosticism.sh` checks
+  both paths (docker via a stub CLI). Known gap for 0050: woodpecker's
+  docker backend has no per-step `extra_hosts`, so pipeline step
+  containers on docker need the canonical-host problem solved there.
 
 ## The three stores (ontology — settled)
 

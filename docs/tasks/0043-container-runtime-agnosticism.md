@@ -44,6 +44,21 @@ assumes podman (`polis/clients/podman.py`, `scripts/infra/*`,
   docker path, docs, full `tests/all.sh`. The docker path is untested
   live (no docker on this machine).
 
+- **2026-09-13 — resumed and completed.** Scripts converted to the `rt`
+  helpers (`proxy/postgres/gogs/gitea/woodpecker/smoke`; the woodpecker
+  agent's flags from `rt_agent_flags`, the canonical-host alias from
+  `rt_host_alias_flags`); `compose-up/down` prefer the detected runtime's
+  provider; `docker-compose.yml` parameterized (`POLIS_CONTAINER_SOCKET`,
+  `POLIS_AGENT_USER/SECURITY_OPT`) with `extra_hosts` on gitea/woodpecker;
+  `tests/runtime-agnosticism.sh` (docker via a stub CLI, podman live)
+  added first in `tests/all.sh`; docs swept (AGENTS.md, README, the user
+  guide, testing.md, services, design). Verified: full `tests/all.sh`
+  green on podman (10 run, 1 skip) and the stub-verified docker command
+  construction. **Caveats:** no docker live test on this machine;
+  woodpecker's docker backend has no per-step `extra_hosts`, so phase-2
+  pipeline step containers on docker still need the canonical-host
+  problem solved (recorded as a known gap for 0050).
+
 ## Completion
 
 <!-- filled in when the task is done:

@@ -134,7 +134,7 @@ settled (post-director), which is why it's scheduled after it.
 
 | dependency | used for |
 |---|---|
-| podman + network `gogs-local` | containers |
+| a container runtime (podman or docker) + network `gogs-local` | containers |
 | gogs running + admin `GOGS_API_KEY` | all platform objects |
 | `world.json` (genesis done) | persons, passwords, cities, federation fields |
 | git on host | founding corpus commit, forks' seed |
@@ -153,7 +153,7 @@ settled (post-director), which is why it's scheduled after it.
 
 `polis/provision.py` (or `polis/sim/provision.py`) as the orchestrator;
 `polis/cli/provision.py` thin CLI. Reuses `clients/gogs.py` (porcelain),
-`store.py` (slices), `clients/podman.py`. Everything recorded in
+`store.py` (slices), `clients/containers.py`. Everything recorded in
 `provision.json`; teardown consumes it. Demo: `tests/provision-demo.sh` —
 up → status → clone as a namespaced citizen → teardown → prefix check that
 nothing remains.

@@ -55,14 +55,17 @@ Verify: `scripts/infra/smoke.sh woodpecker`.
   gitea admin user a woodpecker admin on first login; an existing account
   can be flipped in
   `.state/woodpecker/server/woodpecker.sqlite` (`users.admin`).
-- The agent on podman-machine (macOS) needs three non-obvious settings
-  (already in `scripts/infra/woodpecker.sh` and the compose file):
+- The agent's runtime quirks are owned by the runtime boundary
+  (`polis/clients/containers.py`, `rt_agent_flags` in
+  `scripts/infra/env.sh`; task 0043). On podman-machine (macOS) that means
+  three non-obvious settings:
   - mount the **VM-internal** rootless socket
-    `/run/user/501/podman/podman.sock` — the host-forwarded socket can't be
+    `/run/user/<uid>/podman/podman.sock` — the host-forwarded socket can't be
     mounted (virtiofs can't mount sockets);
   - `--user 0:0` — container root maps to the VM's `core` user, the socket
     owner;
   - `--security-opt label=disable` — the CoreOS VM's SELinux otherwise denies
     socket access even with matching uids.
+  On docker the agent simply mounts `/var/run/docker.sock`.
 - `WOODPECKER_GRPC_SECRET` is not pinned; the server regenerates one per
   restart (harmless here, pin it if agents ever run elsewhere).

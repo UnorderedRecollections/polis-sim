@@ -21,24 +21,24 @@ check() { # name, command...
 
 smoke_proxy() {
   say "proxy (port 10800 — the only HTTP entrypoint)"
-  check "container running" podman container exists proxy
+  check "container running" rt_container_exists proxy
   check "gitea path reachable" curl -sf -o /dev/null http://localhost:10800/gitea/
   check "gogs path reachable" curl -sf -o /dev/null http://localhost:10800/gogs/
 }
 
 smoke_postgres() {
   say "postgres"
-  check "container running" podman container exists postgres-gogs
-  check "pg_isready" podman exec postgres-gogs pg_isready -U gogs
+  check "container running" rt_container_exists postgres-gogs
+  check "pg_isready" rt exec postgres-gogs pg_isready -U gogs
   check "database 'gogs' queryable" \
-    podman exec postgres-gogs psql -U gogs -d gogs -tAc "SELECT 1"
+    rt exec postgres-gogs psql -U gogs -d gogs -tAc "SELECT 1"
   check "database 'gitea' queryable" \
-    podman exec postgres-gogs psql -U gogs -d gitea -tAc "SELECT 1"
+    rt exec postgres-gogs psql -U gogs -d gitea -tAc "SELECT 1"
 }
 
 smoke_gogs() {
   say "gogs ($GOGS_URL)"
-  check "container running" podman container exists gogs
+  check "container running" rt_container_exists gogs
   check "HTTP reachable" curl -sf -o /dev/null "$GOGS_URL/"
   [[ -n "${GOGS_API_KEY:-}" ]] || { fail "GOGS_API_KEY set in .env"; return; }
   check "GOGS_API_KEY authenticates" \
@@ -47,7 +47,7 @@ smoke_gogs() {
 
 smoke_gitea() {
   say "gitea ($GITEA_URL)"
-  check "container running" podman container exists gitea
+  check "container running" rt_container_exists gitea
   check "HTTP reachable" curl -sf -o /dev/null "$GITEA_URL/"
   [[ -n "${GITEA_API_KEY:-}" ]] || { fail "GITEA_API_KEY set in .env"; return; }
   check "GITEA_API_KEY authenticates" \
@@ -63,8 +63,8 @@ _wp_agent_registered() {
 
 smoke_woodpecker() {
   say "woodpecker ($WOODPECKER_URL)"
-  check "server container running" podman container exists woodpecker-server
-  check "agent container running" podman container exists woodpecker-agent
+  check "server container running" rt_container_exists woodpecker-server
+  check "agent container running" rt_container_exists woodpecker-agent
   check "healthz" _wp_healthz
   [[ -n "${WOODPECKER_API_KEY:-}" ]] || { fail "WOODPECKER_API_KEY set in .env"; return; }
   check "WOODPECKER_API_KEY authenticates" \

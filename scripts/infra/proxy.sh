@@ -6,12 +6,12 @@ set -euo pipefail
 source "$(dirname "$0")/env.sh"
 
 say "build proxy image"
-podman build -t polis/caddy "$DOCKER_DIR/caddy"
+rt build -t polis/caddy "$DOCKER_DIR/caddy"
 
 say "run proxy"
-podman rm -f proxy 2>/dev/null || true
+rt rm -f proxy 2>/dev/null || true
 require_network
-podman run -d \
+rt run -d \
   --restart unless-stopped \
   --name proxy \
   --network "$NETWORK" \

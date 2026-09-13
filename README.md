@@ -41,7 +41,7 @@ platform. See [docs/flows/README.md](docs/flows/README.md).
 ## Quick start
 
 ```bash
-# prerequisites: podman machine running; uv
+# prerequisites: a container runtime (podman or docker, auto-detected); uv
 uv run polis world genesis                 # once: the 9 cities, 63 persons, offices
 uv run polis world legal validate          # the legal seed
 
@@ -68,8 +68,9 @@ Phase-2 recipes and a CI demo (defective acts fail, corrected acts pass):
   (`gogs gitea woodpecker health provision`). Every legislative command builds
   a **Plan** (machinery step + legal meaning) and accepts `--isomorphism` to
   render it instead of executing.
-- Infrastructure: podman, gogs :10880, gitea :3001, woodpecker :10890 —
-  see [docs/services/](docs/services/).
+- Infrastructure: podman or docker (auto-detected, `POLIS_RUNTIME`
+  overrides), fronted by one proxy — `localhost:10800` → `/gogs`,
+  `/gitea`, `/ci` — see [docs/services/](docs/services/).
 - The **director** drives stories; the **phase transition** is one story;
   the **Mechanical Magistrate's CI** runs `polis formal-check …`.
 

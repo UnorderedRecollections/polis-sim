@@ -37,6 +37,7 @@ run() { # name command...
   fi
 }
 
+run "runtime agnosticism (docker stubbed, podman live)" bash tests/runtime-agnosticism.sh
 run "beat vocabulary scopes (user/test)" bash tests/beat-scopes.sh
 run "queue driver semantics (stub execute_beat)" uv run python tests/queue_driver_test.py
 run "fast behave (phase I)" uv run behave features/

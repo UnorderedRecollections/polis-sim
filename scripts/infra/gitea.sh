@@ -15,17 +15,17 @@ GITEA_ADMIN_PASSWORD="${GITEA_ADMIN_PASSWORD:?set GITEA_ADMIN_PASSWORD in .env}"
 GITEA_ADMIN_EMAIL="${GITEA_ADMIN_EMAIL:?set GITEA_ADMIN_EMAIL in .env}"
 
 say "build gitea image"
-podman build -t polis/gitea "$DOCKER_DIR/gitea"
+rt build -t polis/gitea "$DOCKER_DIR/gitea"
 
 say "ensure the gitea database exists"
 # pg_isready turns true during postgres' temp bootstrap phase — retry the
 # CREATE DATABASE (same race as the sim bring-up, task 0037).
 for _ in $(seq 1 30); do
-  if podman exec postgres-gogs psql -U gogs -tAc \
+  if rt exec postgres-gogs psql -U gogs -tAc \
       "SELECT 1 FROM pg_database WHERE datname='gitea'" 2>/dev/null | grep -q 1; then
     break
   fi
-  if podman exec postgres-gogs psql -U gogs -c "CREATE DATABASE gitea" > /dev/null 2>&1; then
+  if rt exec postgres-gogs psql -U gogs -c "CREATE DATABASE gitea" > /dev/null 2>&1; then
     break
   fi
   sleep 1
@@ -33,12 +33,14 @@ done
 
 say "run gitea"
 mkdir -p "$DATA_DIR/gitea"
-podman rm -f gitea 2>/dev/null || true
+rt rm -f gitea 2>/dev/null || true
 require_network
-podman run -d \
+# shellcheck disable=SC2046  (flags are word-split on purpose)
+rt run -d \
   --restart unless-stopped \
   --name gitea \
   --network "$NETWORK" \
+  $(rt_host_alias_flags) \
   -p 2222:22 \
   -e USER_UID=1000 \
   -e USER_GID=1000 \
@@ -73,7 +75,7 @@ say "bootstrap the admin account (headless)"
 # the CLI refuses root; runs as the container's git user. The web layer
 # answers before migrations finish — retry.
 for attempt in $(seq 1 60); do
-  out=$(podman exec -u git -e HOME=/data/git -e GITEA_WORK_DIR=/data/gitea gitea \
+  out=$(rt exec -u git -e HOME=/data/git -e GITEA_WORK_DIR=/data/gitea gitea \
     gitea admin user create \
     --username "$GITEA_ADMIN_USERNAME" \
     --password "$GITEA_ADMIN_PASSWORD" \
