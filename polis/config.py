@@ -38,12 +38,12 @@ def sim_secrets() -> dict:
 _SECRETS = sim_secrets()
 
 GOGS_URL = (os.environ.get("POLIS_GOGS_URL") or _SECRETS.get("gogs_url_external")
-            or "http://localhost:10880")
+            or "http://localhost:10800/gogs")
 GITEA_URL = (os.environ.get("POLIS_GITEA_URL") or _SECRETS.get("gitea_url_external")
-             or "http://localhost:3001")
+             or "http://localhost:10800/gitea")
 WOODPECKER_URL = (os.environ.get("POLIS_WOODPECKER_URL")
                   or _SECRETS.get("woodpecker_url_external")
-                  or "http://localhost:10890")
+                  or "http://localhost:10800/ci")
 
 PODMAN_NETWORK = (os.environ.get("POLIS_NETWORK")
                   or (f"{PROVISIONED_SIM}-net" if PROVISIONED_SIM else "")

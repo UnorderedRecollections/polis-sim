@@ -54,7 +54,8 @@ Cities") whose legislative life runs on real local infrastructure.
 - `docker/` — per-component Dockerfiles + `docker-compose.yml` (project `polis`,
   network `gogs-local`).
 - `scripts/infra/` — `env.sh` (shared), per-service build/run scripts
-  (`postgres.sh gogs.sh gitea.sh woodpecker.sh`), `compose-up/down.sh`,
+  (`postgres.sh gogs.sh gitea.sh woodpecker.sh`), `proxy.sh` (dev-rig
+  front proxy), `hosts.sh` (canonical-host entry), `compose-up/down.sh`,
   `smoke.sh` (per-container smoke tests incl. API-key validity).
 - `docs/` — `running-a-simulation.md` (**the user guide**: requirements →
   infra → genesis → legal seed → provision → drive → teardown),
@@ -70,9 +71,15 @@ Cities") whose legislative life runs on real local infrastructure.
 ## Infrastructure (podman, network `gogs-local`)
 
 - postgres-gogs — shared DB (databases `gogs` + `gitea`), internal only.
-- gogs :10880 — phase-1 platform ("customary machinery"; merely a mechanical
-  archive in the fiction — no petitions/reviews/approvals).
-- gitea :3001 — phase-2 platform ("codified machinery"; postgres-backed).
+- proxy :10800 — the dev rig's only HTTP entrypoint (task 0042, caddy):
+  routes `/gogs`, `/gitea`, `/ci`; the services publish no HTTP port of
+  their own. Canonical base `http://host.containers.internal:10800` —
+  containers resolve it natively, the host needs a one-time
+  `scripts/infra/hosts.sh add` (sudo) for browser links; `localhost:10800`
+  always works. Same scheme per sim (`<sim>-proxy`).
+- gogs (internal :3000) — phase-1 platform ("customary machinery"; merely a
+  mechanical archive in the fiction — no petitions/reviews/approvals).
+- gitea (internal :3000) — phase-2 platform ("codified machinery"; postgres-backed).
   Since 0037 it also hosts phase-1 sims: `provision up --platform gitea`
   (phase is a procedure, not a product — the federation stays in phase 1
   with matter-store proceedings on either product). The dev rig's gitea
@@ -81,7 +88,8 @@ Cities") whose legislative life runs on real local infrastructure.
   neutral identity — never a personal account), creates the admin via the
   gitea CLI and mints `GITEA_API_KEY` into `.env`; `WOODPECKER_ADMIN`
   follows `GITEA_ADMIN_USERNAME`.
-- woodpecker server :10890 + agent — CI (the Mechanical Magistrate), OAuth against gitea.
+- woodpecker server (internal :8000) + agent — CI (the Mechanical
+  Magistrate), OAuth against gitea, reached at `/ci`.
 - City containers `polis-city-*` not built yet.
 - Secrets: `.env` (`GOGS_API_KEY GITEA_API_KEY WOODPECKER_API_KEY
   WOODPECKER_GITEA_CLIENT/SECRET POSTGRES_PASSWORD`). Resolution order in
@@ -181,8 +189,7 @@ Cities") whose legislative life runs on real local infrastructure.
   after the story — per-sim `<sim>-woodpecker-server` + agent (the macOS
   VM quirks: `--user 0:0`, `--security-opt label=disable`, the VM socket),
   an OAuth2 app on the sim's gitea (`POST /user/applications/oauth2`,
-  redirects registered for BOTH the loopback and
-  `host.containers.internal`), the Magistrate's FIRST LOGIN scripted
+  ONE canonical redirect — `<proxy>/ci/authorize`), the Magistrate's FIRST LOGIN scripted
   end-to-end (gitea login form → OAuth grant (`granted=true`; already
   authorized apps redirect straight to the callback) → woodpecker
   `/authorize` → the CSRF token from `/web-config.js` → `POST
@@ -192,10 +199,10 @@ Cities") whose legislative life runs on real local infrastructure.
   machinery (a PR's pipeline config is read from its HEAD — the fork),
   global secrets `POLIS_GITEA_URL`/`POLIS_GITEA_TOKEN` (the checks'
   context — `WOODPECKER_ENVIRONMENT`'s comma format mangles URLs), and
-  the forge webhook (woodpecker registers its own — `WOODPECKER_HOST`
-  must be `host.containers.internal:<port>` so the forge can deliver,
-  and gitea needs `security.ALLOWED_HOST_LIST` incl.
-  `host.containers.internal` + `webhook.ALLOW_LOCALNETWORK_HOSTS=true`).
+  the forge webhook (woodpecker registers its own — the canonical
+  `WOODPECKER_HOST` is deliverable from the forge as-is; no repoint; gitea
+  keeps `security.ALLOWED_HOST_LIST` incl. `host.containers.internal` +
+  `webhook.ALLOW_LOCALNETWORK_HOSTS=true` for the private target).
   The pipeline = `data/world/legal/transition/.woodpecker.yml` (woodpecker
   v3 `steps:` list format; the step image is `polis-city:latest`, which
   carries the legal-design data — `POLIS_DATA_DIR` — for the CLI's
@@ -217,8 +224,10 @@ Cities") whose legislative life runs on real local infrastructure.
   `<sim>-net`, containers `<sim>-postgres` + `<sim>-gogs` or `<sim>-gitea`
   (headless bootstrap — `operator` admin user + token; gogs via app.ini
   (`DEFAULT_BRANCH=main`) + its CLI, gitea via `GITEA__*` env config +
-  `gitea admin user create --access-token`; host port from
-  `_free_port(11880+)`), users `<sim>-<username>` with per-sim tokens, orgs
+  `gitea admin user create --access-token`; the host port comes from the
+  **front proxy** — `<sim>-proxy` (caddy) is the only published port,
+  `proxy_port` persisted and reused by `--force`; task 0042), users
+  `<sim>-<username>` with per-sim tokens, orgs
   `<sim>-archive`/`<sim>-<city>` + `common-law` repos + **one shared founding
   commit** (`_founding_repo` — all repos must share history or the Keeper's
   enactment pushes are non-fast-forward), per-sim slices (carrying
@@ -228,12 +237,25 @@ Cities") whose legislative life runs on real local infrastructure.
   (no forks API). Secrets in `data/sims/<sim>/secrets.json`
   (**never world.json** — provisioning must not mutate the civil registry;
   `polis world cleanup` removes legacy `gogs@<sim>` residue). Slices/remotes
-  use the in-network URL `http://<sim>-<platform>:3000`; the host port is for
-  the operator CLI only. `status`/`teardown`/`destroy` use
+  use the canonical proxy URL
+  `http://host.containers.internal:<proxy_port>/<platform>`; config.py
+  host-swaps to `localhost:<proxy_port>` for host-side work. `status`/`teardown`/`destroy` use
   `sim_platform_client(sim)`; teardown removes containers+network, the
   platform volumes die with the sim dir (`rm -rf data/sims/<sim>`).
   Re-`up --force` reuses existing secrets/volume. Demos:
   `tests/provision-demo.sh` + `tests/provision-demo-gitea.sh` (**passing**).
+- **The front proxy** (task 0042, `docs/design/proxy.md`): per deployment
+  (dev rig + per sim) one caddy container is the ONLY host-published
+  entrypoint, routing path prefixes `/gogs`, `/gitea`, `/ci` (`/`
+  redirects). Prefix semantics differ (spike): gitea/gogs need the prefix
+  **stripped** (`handle_path` — their ROOT_URL still carries it so rendered
+  links are absolute), woodpecker needs it **kept** (it is part of
+  `WOODPECKER_HOST`). Canonical base `host.containers.internal:<P>`;
+  containers resolve it natively, the host browser needs a one-time
+  `127.0.0.1 host.containers.internal` (`scripts/infra/hosts.sh add`,
+  sudo) — provisioning and the CLI use `localhost:<P>`, which caddy binds
+  too. Pieces: `docker/caddy/{Dockerfile,Caddyfile.template,Caddyfile.dev}`,
+  `_up_proxy` in `provision.py`, `scripts/infra/proxy.sh` for the dev rig.
 - `polis nuke gogs orgs <prefix> --yes` (DB cascade) is for the **shared dev
   rig** only — per-sim gogs instances need no surgery.
 - City containers: `docker/polis-city/Dockerfile` (build context = project

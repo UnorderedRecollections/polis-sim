@@ -13,11 +13,15 @@ federation. The constitution is enforced by people; the platform only records.
 ## Start locally
 
 ```sh
+scripts/infra/postgres.sh      # dependency first
+scripts/infra/proxy.sh         # the front proxy (task 0042) — or gogs.sh ensures it
 scripts/infra/gogs.sh          # build + run alone (podman)
 scripts/infra/compose-up.sh    # or the whole stack via compose
 ```
 
-- HTTP: <http://localhost:10880> · SSH: `localhost:10022`
+- HTTP: <http://localhost:10800/gogs> (through the dev-rig proxy; the
+  canonical `http://host.containers.internal:10800/gogs/` is what the
+  service renders — see `scripts/infra/hosts.sh`) · SSH: `localhost:10022`
 - Data: `.state/gogs` · Image build: `docker/gogs/`
 
 ## API key
@@ -26,7 +30,7 @@ scripts/infra/compose-up.sh    # or the whole stack via compose
 
 - UI: user avatar → **Settings → Applications → Generate New Token**, or
 - API: `curl -u <user>:<pass> -H "Content-Type: application/json" \
-  -X POST http://localhost:10880/api/v1/users/<user>/tokens -d '{"name":"polis"}'`
+  -X POST http://localhost:10800/gogs/api/v1/users/<user>/tokens -d '{"name":"polis"}'`
 
 Verify: `scripts/infra/smoke.sh gogs`.
 

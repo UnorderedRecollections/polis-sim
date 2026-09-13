@@ -39,7 +39,6 @@ podman run -d \
   --restart unless-stopped \
   --name gitea \
   --network "$NETWORK" \
-  -p 3001:3000 \
   -p 2222:22 \
   -e USER_UID=1000 \
   -e USER_GID=1000 \
@@ -51,17 +50,19 @@ podman run -d \
   -e GITEA__security__INSTALL_LOCK=true \
   -e GITEA__security__ALLOWED_HOST_LIST=host.containers.internal,localhost \
   -e GITEA__webhook__ALLOW_LOCALNETWORK_HOSTS=true \
-  -e GITEA__server__DOMAIN=localhost \
-  -e GITEA__server__ROOT_URL=http://localhost:3001/ \
+  -e GITEA__server__DOMAIN=host.containers.internal \
+  -e GITEA__server__ROOT_URL="http://host.containers.internal:${PROXY_PORT}/gitea/" \
   -e GITEA__server__HTTP_PORT=3000 \
   -e GITEA__service__DISABLE_REGISTRATION=true \
   -e GITEA__repository__DEFAULT_BRANCH=main \
   -v "$DATA_DIR/gitea:/data" \
   polis/gitea
 
-say "wait for the web layer"
+ensure_proxy
+
+say "wait for the web layer (through the proxy)"
 for _ in $(seq 1 90); do
-  code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001 2>/dev/null || true)
+  code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:${PROXY_PORT}/gitea/" 2>/dev/null || true)
   if [[ "$code" != "000" ]] && (( code < 500 )); then
     break
   fi
@@ -108,5 +109,5 @@ fi
 say "verify"
 GITEA_API_KEY=$(grep '^GITEA_API_KEY=' "$ROOT/.env" | cut -d= -f2-)
 curl -sf -H "Authorization: token $GITEA_API_KEY" \
-  http://localhost:3001/api/v1/user > /dev/null \
-  && echo "  gitea up — authenticated as $GITEA_ADMIN_USERNAME"
+  "http://localhost:${PROXY_PORT}/gitea/api/v1/user" > /dev/null \
+  && echo "  gitea up (through the proxy) — authenticated as $GITEA_ADMIN_USERNAME"

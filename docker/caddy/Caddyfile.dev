@@ -1,0 +1,21 @@
+{
+	auto_https off
+}
+
+:10800 {
+	# gitea and gogs route at "/" — the proxy strips the prefix; their
+	# ROOT_URL/EXTERNAL_URL carry it so generated links are correct
+	handle_path /gogs/* {
+		reverse_proxy gogs:3000
+	}
+	handle_path /gitea/* {
+		reverse_proxy gitea:3000
+	}
+	# woodpecker's prefix is part of WOODPECKER_HOST — forwarded intact
+	handle /ci/* {
+		reverse_proxy woodpecker-server:8000
+	}
+	handle / {
+		redir * /gitea/ 302
+	}
+}

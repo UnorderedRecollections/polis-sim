@@ -120,8 +120,10 @@ uv run polis provision up my-sim-01
 A sim is **fully self-contained** — nothing touches your other containers:
 
 - **its own platform**: network `my-sim-01-net`, containers
-  `my-sim-01-postgres` and `my-sim-01-gogs` (headless bootstrap: schema,
-  admin, API token; host port allocated and recorded);
+  `my-sim-01-postgres`, `my-sim-01-gogs` and `my-sim-01-proxy` — a caddy
+  **front proxy** is the sim's only published port (persisted as
+  `proxy_port`), routing `/gogs`, `/gitea`, `/ci` to the services
+  (task 0042). Headless bootstrap: schema, admin, API token;
 - **users** `my-sim-01-<username>` (64) with per-sim API tokens;
 - **orgs + repos** `my-sim-01-archive` and `my-sim-01-<city>` (10 ×
   `common-law`), each seeded with the same founding commit;
@@ -140,6 +142,13 @@ Check it:
 ```bash
 uv run polis provision status my-sim-01
 ```
+
+The platform's canonical URL is
+`http://host.containers.internal:<proxy_port>/…` (gitea/gogs render their
+links with it). In-network containers resolve that name natively; for
+your **host browser** run `scripts/infra/hosts.sh add` once (sudo) — or
+use the `localhost:<proxy_port>/gogs|gitea|ci` form, which the proxy also
+serves.
 
 ### Addressing the sim with the generic commands
 
@@ -272,7 +281,8 @@ restarts). For a blank legal slate, `teardown` + `rm -rf` the sim dir.
 The legal truth is in git itself:
 
 ```bash
-git clone http://localhost:10880/my-sim-01-archive/common-law.git
+# <proxy_port> is in data/sims/my-sim-01/secrets.json (proxy_port)
+git clone http://localhost:<proxy_port>/gogs/my-sim-01-archive/common-law.git
 git -C common-law log --oneline     # the enactment merges
 ```
 

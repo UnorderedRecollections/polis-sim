@@ -31,7 +31,9 @@ scripts/infra/woodpecker.sh                            # server + agent
 scripts/infra/compose-up.sh                            # or the whole stack
 ```
 
-- UI: <http://localhost:10890> (log in via gitea OAuth)
+- UI: <http://localhost:10800/ci> (log in via gitea OAuth); the canonical
+  `http://host.containers.internal:10800/ci` is what the server renders
+  (and what the forge reaches) — see `scripts/infra/hosts.sh`
 - Data: `.state/woodpecker/{server,agent}` · Builds:
   `docker/woodpecker/`, `docker/woodpecker-agent/`
 

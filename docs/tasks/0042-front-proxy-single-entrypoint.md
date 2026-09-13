@@ -162,6 +162,21 @@ fetches (local only); `/etc/hosts` needs one-time sudo.
     `tests/transition-demo.sh` all pass; gitea remote messages and CI
     clones now show the one canonical URL.
 
+- **2026-09-13 — steps 6–7: dev rig + hosts helper.** The shared dev rig
+  moves behind the same scheme: `docker/caddy/Caddyfile.dev` +
+  `scripts/infra/proxy.sh` (port 10800, the only HTTP entrypoint), compose
+  gains the `proxy` service, gogs/gitea/woodpecker stop publishing HTTP
+  (SSH kept as a git transport), their root URLs point at the canonical
+  name, `env.sh` gains `ensure_proxy`, `smoke.sh` checks the proxy and the
+  per-path URLs, `config.py` dev-rig defaults move to
+  `localhost:10800/{gogs,gitea,ci}`. `scripts/infra/hosts.sh add|remove`
+  manages the one-time `/etc/hosts` entry; `provision up` prints a note
+  when it is missing and `polis health hosts` reports it (warn, not
+  fail). gogs.sh writes a canonical `app.ini` on first run. Verified: the
+  proxy builds, starts and routes (502 without upstreams, as expected);
+  full dev-rig smoke still needs `.env` credentials on a configured
+  machine.
+
 ## Completion
 
 <!-- filled in when the task is done:

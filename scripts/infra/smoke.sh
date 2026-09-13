@@ -7,9 +7,9 @@
 set -uo pipefail
 source "$(dirname "$0")/env.sh"
 
-GOGS_URL="${POLIS_GOGS_URL:-http://localhost:10880}"
-GITEA_URL="${POLIS_GITEA_URL:-http://localhost:3001}"
-WOODPECKER_URL="${POLIS_WOODPECKER_URL:-http://localhost:10890}"
+GOGS_URL="${POLIS_GOGS_URL:-http://localhost:10800/gogs}"
+GITEA_URL="${POLIS_GITEA_URL:-http://localhost:10800/gitea}"
+WOODPECKER_URL="${POLIS_WOODPECKER_URL:-http://localhost:10800/ci}"
 
 FAILED=0
 pass() { printf '  \033[32mok\033[0m   %s\n' "$*"; }
@@ -17,6 +17,13 @@ fail() { printf '  \033[31mFAIL\033[0m %s\n' "$*"; FAILED=1; }
 check() { # name, command...
   local name="$1"; shift
   if "$@" > /dev/null 2>&1; then pass "$name"; else fail "$name"; fi
+}
+
+smoke_proxy() {
+  say "proxy (port 10800 — the only HTTP entrypoint)"
+  check "container running" podman container exists proxy
+  check "gitea path reachable" curl -sf -o /dev/null http://localhost:10800/gitea/
+  check "gogs path reachable" curl -sf -o /dev/null http://localhost:10800/gogs/
 }
 
 smoke_postgres() {
@@ -65,7 +72,7 @@ smoke_woodpecker() {
   check "an agent is registered" _wp_agent_registered
 }
 
-SERVICES=(postgres gogs gitea woodpecker)
+SERVICES=(proxy postgres gogs gitea woodpecker)
 if [[ $# -gt 0 ]]; then
   for s in "$@"; do
     [[ " ${SERVICES[*]} " == *" $s "* ]] || die "unknown service '$s' (${SERVICES[*]})"

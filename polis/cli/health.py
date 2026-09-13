@@ -97,6 +97,22 @@ def check_woodpecker() -> list[Check]:
     return checks
 
 
+def check_hosts() -> list[Check]:
+    """The canonical host (task 0042): needed only for the HOST browser to
+    open links the platforms render; warn, never fail."""
+    from ..provision import CANONICAL_HOST
+    import socket
+    try:
+        socket.getaddrinfo(CANONICAL_HOST, None)
+        return [Check("hosts: canonical host resolves", True,
+                      f"{CANONICAL_HOST} reaches the front proxy")]
+    except OSError:
+        return [Check("hosts: canonical host resolves", False,
+                      "run scripts/infra/hosts.sh add (sudo) so host browser "
+                      "links open; CLI and in-network traffic work without it",
+                      warn=True)]
+
+
 def check_postgres() -> list[Check]:
     name = config.POSTGRES_CONTAINER
     checks = [Check("postgres: container running", podman.container_running(name),
@@ -149,6 +165,7 @@ def check_citynodes() -> list[Check]:
 
 
 SUITES: dict[str, Callable[[], list[Check]]] = {
+    "hosts": check_hosts,
     "gogs": check_gogs,
     "gitea": check_gitea,
     "woodpecker": check_woodpecker,
@@ -193,6 +210,12 @@ def all_(ctx: typer.Context) -> None:
         any_failed |= _render(name, SUITES[name]())
     if any_failed:
         raise typer.Exit(code=1)
+
+
+@app.command()
+def hosts() -> None:
+    """Checks the canonical front-proxy host entry (host browser links)."""
+    _run_suite("hosts")
 
 
 @app.command()

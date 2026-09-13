@@ -22,19 +22,21 @@ podman run -d \
   --restart unless-stopped \
   --name woodpecker-server \
   --network "$NETWORK" \
-  -p 10890:8000 \
   -v "$DATA_DIR/woodpecker/server:/var/lib/woodpecker" \
   -e WOODPECKER_OPEN=true \
-  -e WOODPECKER_HOST="http://localhost:10890" \
+  -e WOODPECKER_HOST="http://host.containers.internal:${PROXY_PORT}/ci" \
   -e WOODPECKER_AGENT_SECRET="w00000d" \
   -e WOODPECKER_ADMIN="${GITEA_ADMIN_USERNAME:?set GITEA_ADMIN_USERNAME in .env}" \
   -e WOODPECKER_GITEA=true \
-  -e WOODPECKER_GITEA_URL=http://gitea:3000 \
-  -e WOODPECKER_DEV_GITEA_OAUTH_URL=http://localhost:3001 \
-  -e WOODPECKER_EXPERT_FORGE_OAUTH_HOST=http://localhost:3001 \
+  -e WOODPECKER_GITEA_URL="http://host.containers.internal:${PROXY_PORT}/gitea" \
+  -e WOODPECKER_DEV_GITEA_OAUTH_URL="http://host.containers.internal:${PROXY_PORT}/gitea" \
+  -e WOODPECKER_EXPERT_FORGE_OAUTH_HOST="http://host.containers.internal:${PROXY_PORT}/gitea" \
   -e WOODPECKER_GITEA_CLIENT="${WOODPECKER_GITEA_CLIENT:?set WOODPECKER_GITEA_CLIENT in .env}" \
   -e WOODPECKER_GITEA_SECRET="${WOODPECKER_GITEA_SECRET:?set WOODPECKER_GITEA_SECRET in .env}" \
   polis/woodpecker-server
+
+ensure_proxy
+say "woodpecker is behind the proxy: http://localhost:${PROXY_PORT}/ci"
 
 say "run woodpecker-agent"
 podman rm -f woodpecker-agent 2>/dev/null || true

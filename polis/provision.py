@@ -231,6 +231,18 @@ def canonical_base(port: int) -> str:
     return f"http://{CANONICAL_HOST}:{port}"
 
 
+def _canonical_host_resolves() -> bool:
+    """Whether the host itself resolves the canonical name (the one-time
+    /etc/hosts entry). In-network and CLI traffic do not need it; browser
+    links rendered by the platform do."""
+    import socket
+    try:
+        socket.getaddrinfo(CANONICAL_HOST, None)
+        return True
+    except OSError:
+        return False
+
+
 def host_base(port: int) -> str:
     return f"http://localhost:{port}"
 
@@ -776,6 +788,12 @@ def up(sim: str, platform: str = "gogs", with_city_containers: bool = False,
         inv.containers += _up_containers(sim, world, slices_dir)
 
     inv.notes.append(PLATFORMS[platform].notes.format(plat_dir=platform_dir(sim)))
+    if not _canonical_host_resolves():
+        note = (f"'{CANONICAL_HOST}' does not resolve on this host — browser links "
+                "into the sim need `scripts/infra/hosts.sh add` (needs sudo); "
+                "in-network and CLI traffic works without it")
+        inv.notes.append(note)
+        print(f"[provision] note: {note}", file=sys.stderr, flush=True)
     inv.save()
     return inv
 

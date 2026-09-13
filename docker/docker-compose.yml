@@ -31,8 +31,7 @@ services:
     container_name: gogs
     networks: [gogs-local]
     ports:
-      - "10022:2222"   # ssh
-      - "10880:3000"   # http
+      - "10022:2222"   # ssh (git transport only; HTTP goes through the proxy)
     volumes:
       - ../.state/gogs:/data
     restart: unless-stopped
@@ -42,8 +41,7 @@ services:
     container_name: gitea
     networks: [gogs-local]
     ports:
-      - "3001:3000"    # http
-      - "2222:22"      # ssh
+      - "2222:22"      # ssh (git transport only; HTTP goes through the proxy)
     volumes:
       - ../.state/gitea:/data
     environment:
@@ -57,28 +55,39 @@ services:
       GITEA__security__INSTALL_LOCK: "true"
       GITEA__security__ALLOWED_HOST_LIST: host.containers.internal,localhost
       GITEA__webhook__ALLOW_LOCALNETWORK_HOSTS: "true"
+      GITEA__server__DOMAIN: host.containers.internal
+      GITEA__server__ROOT_URL: http://host.containers.internal:10800/gitea/
     # The admin account is bootstrapped headlessly by scripts/infra/gitea.sh
     # (the compose stack alone leaves an admin-less gitea).
     depends_on: [postgres]
+    restart: unless-stopped
+
+  proxy:
+    build: ./caddy
+    container_name: proxy
+    networks: [gogs-local]
+    ports:
+      - "10800:10800"  # the only HTTP entrypoint (task 0042)
+    volumes:
+      - ./caddy/Caddyfile.dev:/etc/caddy/Caddyfile:ro
+    depends_on: [gogs, gitea]
     restart: unless-stopped
 
   woodpecker-server:
     build: ./woodpecker
     container_name: woodpecker-server
     networks: [gogs-local]
-    ports:
-      - "10890:8000"   # http
     volumes:
       - ../.state/woodpecker/server:/var/lib/woodpecker
     environment:
       WOODPECKER_OPEN: "true"
-      WOODPECKER_HOST: http://localhost:10890
+      WOODPECKER_HOST: http://host.containers.internal:10800/ci
       WOODPECKER_AGENT_SECRET: w00000d
       WOODPECKER_ADMIN: ${GITEA_ADMIN_USERNAME:-operator}
       WOODPECKER_GITEA: "true"
-      WOODPECKER_GITEA_URL: http://gitea:3000
-      WOODPECKER_DEV_GITEA_OAUTH_URL: http://localhost:3001
-      WOODPECKER_EXPERT_FORGE_OAUTH_HOST: http://localhost:3001
+      WOODPECKER_GITEA_URL: http://host.containers.internal:10800/gitea
+      WOODPECKER_DEV_GITEA_OAUTH_URL: http://host.containers.internal:10800/gitea
+      WOODPECKER_EXPERT_FORGE_OAUTH_HOST: http://host.containers.internal:10800/gitea
       WOODPECKER_GITEA_CLIENT: ${WOODPECKER_GITEA_CLIENT}
       WOODPECKER_GITEA_SECRET: ${WOODPECKER_GITEA_SECRET}
     depends_on: [gitea]
