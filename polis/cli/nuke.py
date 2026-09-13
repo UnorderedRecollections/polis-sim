@@ -6,11 +6,10 @@ requires --yes. Not part of the fiction; rig maintenance only.
 """
 from __future__ import annotations
 
-import subprocess
-
 import typer
 
 from .. import config
+from ..clients import containers
 from .common import console, die, status_table
 
 app = typer.Typer(no_args_is_help=True, help="Implementation-breaching commands (DB surgery). Dangerous.")
@@ -19,10 +18,10 @@ app.add_typer(gogs_app, name="gogs")
 
 
 def _psql(sql: str) -> str:
-    proc = subprocess.run(
-        ["podman", "exec", config.POSTGRES_CONTAINER,
+    proc = containers._run(
+        ["exec", config.POSTGRES_CONTAINER,
          "psql", "-U", "gogs", "-d", "gogs", "-v", "ON_ERROR_STOP=1", "-tAc", sql],
-        capture_output=True, text=True, timeout=30,
+        check=False, timeout=30,
     )
     if proc.returncode != 0:
         die(f"psql failed: {proc.stderr.strip()[:300]}")

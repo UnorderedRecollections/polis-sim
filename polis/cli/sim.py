@@ -144,18 +144,17 @@ def drive(
     """
     run_id = _run_id(run_id)
     if not local:
-        from ..clients import podman
+        from ..clients import containers
         name = f"polis-operator-{run_id}"
         try:
-            proxied = podman.container_running(name)
+            proxied = containers.container_running(name)
         except Exception:
-            proxied = False          # podman hiccup — degrade, never crash
+            proxied = False          # runtime hiccup — degrade, never crash
         if proxied:
-            import subprocess
-            proc = subprocess.run(
-                ["podman", "exec", name, "polis", "sim", "drive", run_id,
+            code = containers.passthrough(
+                ["exec", name, "polis", "sim", "drive", run_id,
                  "--steps", str(steps), "--local"])
-            raise typer.Exit(proc.returncode)
+            raise typer.Exit(code)
         console.print("[yellow]no operator container running — executing locally "
                       "(host-swapped URLs)[/yellow]")
     from ..sim import director
@@ -196,20 +195,19 @@ def transition(
     """
     run_id = _run_id(run_id)
     if not local:
-        from ..clients import podman
+        from ..clients import containers
         name = f"polis-operator-{run_id}"
         try:
-            proxied = podman.container_running(name)
+            proxied = containers.container_running(name)
         except Exception:
-            proxied = False          # podman hiccup — degrade, never crash
+            proxied = False          # runtime hiccup — degrade, never crash
         if proxied:
-            import subprocess
-            proc = subprocess.run(
-                ["podman", "exec", name, "polis", "sim", "transition", run_id,
+            code = containers.passthrough(
+                ["exec", name, "polis", "sim", "transition", run_id,
                  "--local"])
-            if proc.returncode == 0:
+            if code == 0:
                 _erect_ci(run_id)
-            raise typer.Exit(proc.returncode)
+            raise typer.Exit(code)
         console.print("[yellow]no operator container running — executing locally "
                       "(host-swapped URLs)[/yellow]")
     from ..sim import transition as transition_mod
@@ -232,7 +230,7 @@ def transition(
 
 def _erect_ci(run_id: str) -> None:
     """The third act erects the Mechanical Magistrate — bring its CI up.
-    The operator container has no podman; the host wrapper (the proxied
+    The operator container has no runtime CLI; the host wrapper (the proxied
     call site) performs the bring-up."""
     import os
     if os.environ.get("POLIS_SIM_DIR"):

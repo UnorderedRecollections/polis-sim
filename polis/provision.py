@@ -35,7 +35,7 @@ from typing import Any
 from urllib.parse import urlparse, urlunparse
 
 from . import config, store
-from .clients import podman
+from .clients import containers
 from .clients.gitea import GiteaClient, GiteaError
 from .clients.gogs import GogsClient, GogsError
 from .clients.woodpecker import WoodpeckerClient
@@ -64,7 +64,7 @@ class Inventory:
     repos: list[str] = field(default_factory=list)        # "owner/name"
     containers: list[str] = field(default_factory=list)
     slices_dir: str = ""
-    network: str = ""                # the sim's private podman network
+    network: str = ""                # the sim's private container network
     platform_port: int = 0           # host port → the sim's platform :3000
     proxy_port: int = 0              # host port → the sim's caddy proxy
     notes: list[str] = field(default_factory=list)
@@ -123,7 +123,7 @@ CADDY_IMAGE = "polis/caddy"      # the front proxy (task 0042)
 @dataclass(frozen=True)
 class PlatformSpec:
     name: str                       # "gogs" | "gitea" (also the secrets-key prefix)
-    image: str                      # podman image
+    image: str                      # container image
     dockerfile: str                 # dir under docker/ with the Dockerfile
     client: Any                     # client class (GogsClient | GiteaClient)
     notes: str                      # quirks isolated here, for the inventory
@@ -202,22 +202,23 @@ def _ensure_platform_images(spec: PlatformSpec) -> None:
         df = config.PROJECT_ROOT / "docker" / dockerfile / "Dockerfile"
         if not df.exists():
             raise ProvisionError(f"platform Dockerfile missing: {df}")
-        if podman._run(["image", "exists", image], check=False).returncode != 0:
-            proc = podman._run(["build", "-t", image, "-f", str(df),
-                                str(config.PROJECT_ROOT)], check=False)
-            if proc.returncode != 0:
-                raise ProvisionError(f"building {image} failed: {proc.stderr.strip()[:300]}")
+        if not containers.image_exists(image):
+            try:
+                containers.build(image, df, config.PROJECT_ROOT)
+            except containers.ContainerError as e:
+                raise ProvisionError(f"building {image} failed: {e}") from e
 
 
 # --- the front proxy (task 0042): one URL for host and network ---------------
 #
-# The canonical base is http://host.containers.internal:<P>: podman resolves
-# it inside the network (the host-published port loops back through gvproxy)
-# and it is the URL every component is configured with (gitea ROOT_URL,
-# WOODPECKER_HOST, clone/webhook URLs, slice remotes). The host only
-# resolves it after a one-time /etc/hosts entry (scripts/infra/hosts.sh);
-# provisioning itself talks to the proxy through http://localhost:<P> (caddy
-# binds :P, not the name), so no host configuration is required to work.
+# The canonical base is http://host.containers.internal:<P>: the runtime
+# resolves it inside the network (podman natively, docker via the alias the
+# runtime module adds) and it is the URL every component is configured with
+# (gitea ROOT_URL, WOODPECKER_HOST, clone/webhook URLs, slice remotes). The
+# host only resolves it after a one-time /etc/hosts entry
+# (scripts/infra/hosts.sh); provisioning itself talks to the proxy through
+# http://localhost:<P> (caddy binds :P, not the name), so no host
+# configuration is required to work.
 #
 # Prefix semantics differ per service (spike 2026-09-13): gitea and gogs
 # route at "/" and need the prefix STRIPPED, while woodpecker's prefix is
@@ -271,8 +272,8 @@ def _up_proxy(sim: str, inv: Inventory, platform: str, port: int) -> str:
     """The sim's caddy: the only container publishing a host port."""
     name = f"{sim}-proxy"
     caddyfile = _write_caddyfile(sim, platform, port)
-    podman._run(["rm", "-f", name], check=False)
-    proc = podman._run([
+    containers._run(["rm", "-f", name], check=False)
+    proc = containers._run([
         "run", "-d", "--name", name, "--network", f"{sim}-net",
         "--restart", "unless-stopped",
         "-p", f"{port}:{port}",
@@ -308,10 +309,10 @@ def _up_postgres(sim: str, inv: Inventory, password: str) -> str:
     pg = f"{sim}-postgres"
     plat = platform_dir(sim)
     (plat / "postgres").mkdir(parents=True, exist_ok=True)
-    podman._run(["network", "create", net], check=False)
-    if not podman.container_running(pg):
-        podman._run(["rm", "-f", pg], check=False)
-        proc = podman._run([
+    containers._run(["network", "create", net], check=False)
+    if not containers.container_running(pg):
+        containers._run(["rm", "-f", pg], check=False)
+        proc = containers._run([
             "run", "-d", "--name", pg, "--network", net,
             "-v", f"{plat / 'postgres'}:/var/lib/postgresql/data",
             "-e", "POSTGRES_USER=gogs", "-e", f"POSTGRES_PASSWORD={password}",
@@ -321,7 +322,7 @@ def _up_postgres(sim: str, inv: Inventory, password: str) -> str:
             raise ProvisionError(f"postgres start failed: {proc.stderr.strip()[:300]}")
     import time
     for _ in range(60):                       # postgres must be ready before the platform
-        if podman._run(["exec", pg, "pg_isready", "-U", "gogs"],
+        if containers._run(["exec", pg, "pg_isready", "-U", "gogs"],
                        check=False).returncode == 0:
             break
         time.sleep(1)
@@ -338,12 +339,12 @@ def _ensure_postgres_db(pg: str, name: str) -> None:
     the entrypoint's temporary bootstrap phase, when CREATE DATABASE still
     gets torn down with the restart."""
     import time
-    ok, out = podman.exec_ok(pg, ["psql", "-U", "gogs", "-tAc",
+    ok, out = containers.exec_ok(pg, ["psql", "-U", "gogs", "-tAc",
                                   f"SELECT 1 FROM pg_database WHERE datname = '{name}'"])
     if ok and "1" in out:
         return
     for _ in range(30):
-        if podman._run(["exec", pg, "psql", "-U", "gogs", "-c",
+        if containers._run(["exec", pg, "psql", "-U", "gogs", "-c",
                         f"CREATE DATABASE {name}"], check=False).returncode == 0:
             return
         time.sleep(1)
@@ -392,8 +393,8 @@ REQUIRE_EMAIL_CONFIRMATION = false
 ENABLED = false
 """, encoding="utf-8")
 
-    podman._run(["rm", "-f", gg], check=False)
-    proc = podman._run([
+    containers._run(["rm", "-f", gg], check=False)
+    proc = containers._run([
         "run", "-d", "--name", gg, "--network", f"{sim}-net",
         "--restart", "unless-stopped",
         "-v", f"{plat / 'gogs'}:/data", PLATFORMS["gogs"].image,
@@ -419,7 +420,7 @@ ENABLED = false
     # the web layer answers before the DB schema is fully migrated — retry
     last_err = ""
     for _ in range(60):
-        proc = podman._run([
+        proc = containers._run([
             "exec", gg, "/app/gogs/gogs", "admin", "create-user",
             "--name", "operator", "--password", admin_password,
             "--email", f"operator@{sim}.invalid", "--admin",
@@ -486,8 +487,8 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
         run_args += ["-e", f"{k}={v}"]
     run_args += ["-v", f"{plat / 'gitea'}:/data", PLATFORMS["gitea"].image]
 
-    podman._run(["rm", "-f", gt], check=False)
-    proc = podman._run(run_args)
+    containers._run(["rm", "-f", gt], check=False)
+    proc = containers._run(run_args)
     if proc.returncode != 0:
         raise ProvisionError(f"gitea start failed: {proc.stderr.strip()[:300]}")
     inv.containers.append(gt)
@@ -510,7 +511,7 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
     last_err = ""
     token = ""
     for attempt in range(60):
-        proc = podman._run([
+        proc = containers._run([
             "exec", "-u", "git", "-e", "HOME=/data/git", "-e", "GITEA_WORK_DIR=/data/gitea",
             gt, "gitea", "admin", "user", "create",
             "--username", "operator", "--password", admin_password,
@@ -807,8 +808,10 @@ def _ensure_image() -> str:
     dockerfile = config.PROJECT_ROOT / "docker" / "polis-city" / "Dockerfile"
     if not dockerfile.exists():
         raise ProvisionError(f"city image Dockerfile missing: {dockerfile}")
-    subprocess.run(["podman", "build", "-t", CITY_IMAGE, "-f", str(dockerfile),
-                    str(config.PROJECT_ROOT)], check=True, capture_output=True)
+    try:
+        containers.build(CITY_IMAGE, dockerfile, config.PROJECT_ROOT)
+    except containers.ContainerError as e:
+        raise ProvisionError(f"building {CITY_IMAGE} failed: {e}") from e
     return CITY_IMAGE
 
 
@@ -822,10 +825,10 @@ def _run_operator_container(sim: str) -> str:
     """
     image = _ensure_image()
     name = f"polis-operator-{sim}"
-    podman._run(["rm", "-f", name], check=False)
+    containers._run(["rm", "-f", name], check=False)
     sim_dir = SIMS_DIR / sim
     sim_dir.mkdir(parents=True, exist_ok=True)
-    podman._run([
+    containers._run([
         "run", "-d", "--name", name,
         "--network", f"{sim}-net",
         "-v", f"{sim_dir}:/sim:rw",
@@ -854,8 +857,8 @@ def _up_containers(sim: str, world, slices_dir: Path) -> list[str]:
         docket = dockets / f"{city.id}.json"
         if not docket.exists():
             docket.write_text('{"matters": []}', encoding="utf-8")
-        podman._run(["rm", "-f", name], check=False)
-        podman._run([
+        containers._run(["rm", "-f", name], check=False)
+        containers._run([
             "run", "-d", "--name", name,
             "--network", f"{sim}-net",
             "-v", f"{slices_dir}/{city.id}.json:/etc/polis/city.json:ro",
@@ -890,7 +893,7 @@ def up_woodpecker(sim: str) -> None:
     secrets = load_secrets(sim)
     wp = f"{sim}-woodpecker-server"
     agent = f"{sim}-woodpecker-agent"
-    if secrets.get("woodpecker_token") and podman.container_running(wp):
+    if secrets.get("woodpecker_token") and containers.container_running(wp):
         return                            # already erected
     if inv.platform != "gitea":
         raise ProvisionError("the CI is erected only on gitea-hosted sims")
@@ -906,9 +909,11 @@ def up_woodpecker(sim: str) -> None:
         dockerfile = config.PROJECT_ROOT / "docker" / df / "Dockerfile"
         if not dockerfile.exists():
             raise ProvisionError(f"woodpecker Dockerfile missing: {dockerfile}")
-        if podman._run(["image", "exists", image], check=False).returncode != 0:
-            podman._run(["build", "-t", image, "-f", str(dockerfile),
-                         str(config.PROJECT_ROOT)], check=True)
+        if not containers.image_exists(image):
+            try:
+                containers.build(image, dockerfile, config.PROJECT_ROOT)
+            except containers.ContainerError as e:
+                raise ProvisionError(f"building {image} failed: {e}") from e
 
     wp_port = secrets["proxy_port"]                       # the sim's one port
     wp_url = f"{host_base(wp_port)}/ci"                   # host-side
@@ -954,21 +959,21 @@ def up_woodpecker(sim: str) -> None:
         run_args += ["-e", f"{k}={v}"]
     run_args += ["-v", f"{plat / 'woodpecker' / 'server'}:/var/lib/woodpecker",
                  WOODPECKER_SERVER_IMAGE]
-    podman._run(["rm", "-f", wp], check=False)
-    proc = podman._run(run_args)
+    containers._run(["rm", "-f", wp], check=False)
+    proc = containers._run(run_args)
     if proc.returncode != 0:
         raise ProvisionError(f"woodpecker server start failed: {proc.stderr.strip()[:300]}")
 
     # 4. the agent (the macOS VM quirks: root, SELinux, the VM socket)
     (plat / "woodpecker" / "agent").mkdir(parents=True, exist_ok=True)
-    podman._run(["rm", "-f", agent], check=False)
-    proc = podman._run([
+    containers._run(["rm", "-f", agent], check=False)
+    # the agent's runtime quirks (macOS VM socket, root mapping, SELinux
+    # label) come from the runtime boundary — see clients/containers.py
+    proc = containers._run([
         "run", "-d", "--name", agent,
-        "--user", "0:0", "--security-opt", "label=disable",
         "--network", f"{sim}-net",
         "-v", f"{plat / 'woodpecker' / 'agent'}:/etc/woodpecker",
-        "-v", "/run/user/501/podman/podman.sock:/var/run/docker.sock",
-        "-e", "DOCKER_HOST=unix:///var/run/docker.sock",
+        *containers.agent_run_args(),
         "-e", f"WOODPECKER_SERVER={wp}:9000",
         "-e", f"WOODPECKER_AGENT_SECRET={agent_secret}",
         "-e", f"WOODPECKER_BACKEND_DOCKER_NETWORK={sim}-net",
@@ -1126,8 +1131,8 @@ def status(sim: str) -> dict:
         else:
             item("org", o, True, "existence not checked (no org-delete/list-by-name route)")
     for c in inv.containers:
-        item("container", c, podman.container_running(c),
-             podman.container(c).get("State") if podman.container(c) else "absent")
+        item("container", c, containers.container_running(c),
+             containers.container(c).get("State") if containers.container(c) else "absent")
     item("slices", inv.slices_dir, Path(inv.slices_dir).is_dir())
     return report
 
@@ -1137,8 +1142,8 @@ def stop(sim: str) -> dict:
     inv = Inventory.load(sim)
     stopped = []
     for c in inv.containers:
-        if podman.container_running(c):
-            podman._run(["stop", c], check=False)
+        if containers.container_running(c):
+            containers._run(["stop", c], check=False)
             stopped.append(c)
     return {"stopped": stopped}
 
@@ -1153,12 +1158,12 @@ def start(sim: str) -> dict:
             [c for c in inv.containers if c != pg]
     started = []
     for c in order:
-        if not podman.container_running(c):
-            podman._run(["start", c], check=False)
+        if not containers.container_running(c):
+            containers._run(["start", c], check=False)
             started.append(c)
         if c == pg:
             for _ in range(60):
-                if podman._run(["exec", pg, "pg_isready", "-U", "gogs"],
+                if containers._run(["exec", pg, "pg_isready", "-U", "gogs"],
                                check=False).returncode == 0:
                     break
                 time.sleep(1)
@@ -1168,7 +1173,7 @@ def start(sim: str) -> dict:
 def sim_containers(sim: str) -> list[str]:
     """All containers belonging to a sim, matched by NAME PATTERN (the
     inventory goes stale; names don't)."""
-    proc = podman._run(["ps", "-a", "--format", "{{.Names}}"], check=False)
+    proc = containers._run(["ps", "-a", "--format", "{{.Names}}"], check=False)
     names = proc.stdout.split()
     return sorted(n for n in names
                   if n in (f"{sim}-postgres", f"{sim}-gogs", f"{sim}-gitea",
@@ -1213,14 +1218,14 @@ def destroy(sim: str) -> dict:
         pass                                    # platform gone or inventory stale — fine
 
     for c in sim_containers(sim):
-        podman._run(["rm", "-f", c], check=False)
+        containers._run(["rm", "-f", c], check=False)
         done["containers"].append(c)
-    podman._run(["network", "rm", f"{sim}-net"], check=False)
+    containers._run(["network", "rm", f"{sim}-net"], check=False)
     done["network"] = f"{sim}-net"
     # container restarts leave anonymous volumes behind (the platform
     # images declare VOLUMEs); prune the orphans — a full VM disk is the
     # alternative
-    podman._run(["volume", "prune", "-f"], check=False)
+    containers._run(["volume", "prune", "-f"], check=False)
 
     sim_dir = SIMS_DIR / sim
     if sim_dir.exists():
@@ -1234,7 +1239,7 @@ def list_sims() -> list[dict]:
     sims: set[str] = set()
     if SIMS_DIR.is_dir():
         sims |= {p.name for p in SIMS_DIR.iterdir() if p.is_dir()}
-    proc = podman._run(["ps", "-a", "--format", "{{.Names}}"], check=False)
+    proc = containers._run(["ps", "-a", "--format", "{{.Names}}"], check=False)
     for n in proc.stdout.split():
         for suffix in ("-postgres", "-gogs", "-gitea", "-proxy"):
             if n.endswith(suffix) and not n.startswith("polis-"):
@@ -1247,7 +1252,7 @@ def list_sims() -> list[dict]:
     for sim in sorted(sims):
         sim_dir = SIMS_DIR / sim
         containers = sim_containers(sim)
-        running = [c for c in containers if podman.container_running(c)]
+        running = [c for c in containers if containers.container_running(c)]
         record = {}
         journal = sim_dir / "journal.jsonl"
         if journal.exists():
@@ -1282,9 +1287,9 @@ def teardown(sim: str) -> dict:
         except API_ERRORS:
             pass
     for c in inv.containers:
-        podman._run(["rm", "-f", c], check=False)
+        containers._run(["rm", "-f", c], check=False)
         done["containers"] += 1
     if inv.network:
-        podman._run(["network", "rm", inv.network], check=False)
+        containers._run(["network", "rm", inv.network], check=False)
         done["network"] = inv.network
     return done

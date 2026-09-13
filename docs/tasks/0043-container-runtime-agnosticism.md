@@ -3,7 +3,7 @@
 - **created:** 2026-09-11T16:00:00Z
 - **type:** [refactoring]
 - **depends-on:** none
-- **status:** open
+- **status:** in-progress
 
 ## Description
 
@@ -23,6 +23,26 @@ assumes podman (`polis/clients/podman.py`, `scripts/infra/*`,
   `_up_woodpecker`, operator/city containers) go through the interface;
   `scripts/infra/*` and `docker-compose.yml` keep working on either.
 - Enables the deployment work (task 0050): cloud hosts use docker.
+
+## Progress log
+
+- **2026-09-13 — Python side landed; parked for 0059.** Added
+  `polis/clients/containers.py`: `ContainerRuntime` with
+  `PodmanRuntime`/`DockerRuntime`, auto-detection (`podman` first, then
+  `docker`) and `POLIS_RUNTIME`; runtime quirks isolated (image/network
+  existence spellings, machine vs `docker info` state, socket path,
+  the woodpecker agent's flags, and the canonical-host alias docker
+  needs — auto-inserted on every `run`). All Python call sites moved;
+  `clients/podman.py` deleted; `polis health runtime` (the old `podman`
+  suite name kept as a hidden alias). `scripts/infra/env.sh` gained
+  runtime detection and helpers (`rt`, `rt_container_exists/running`,
+  `rt_network_exists`, `rt_host_alias_flags`, `rt_socket_path`,
+  `rt_agent_flags`). Verified on podman: `polis health runtime`,
+  `polis health podman`, fast behave green. **Remaining:** convert the
+  scripts to the helpers, compose `extra_hosts` + parameterized agent
+  socket/flags, the `tests/runtime-agnosticism.sh` stub check for the
+  docker path, docs, full `tests/all.sh`. The docker path is untested
+  live (no docker on this machine).
 
 ## Completion
 

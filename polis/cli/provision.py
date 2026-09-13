@@ -31,7 +31,7 @@ def up(
     force: bool = typer.Option(False, "--force", help="Re-provision even if an inventory exists."),
 ) -> None:
     """Provision a sim instance (idempotent)."""
-    from ..clients import podman
+    from ..clients import containers
     from ..sim.journal import SIMS_DIR
     sim = _sim(sim)
     if platform not in ("gogs", "gitea"):
@@ -47,7 +47,7 @@ def up(
         except Exception:
             pass
     already = inv_path.exists() and \
-        podman.container_running(f"{sim}-{existing_platform}")
+        containers.container_running(f"{sim}-{existing_platform}")
     if already and not force:
         die(f"'{sim}' is already provisioned and running — use --force to re-provision")
     try:

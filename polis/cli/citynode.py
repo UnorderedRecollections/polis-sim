@@ -10,7 +10,7 @@ from typing import Optional
 import typer
 
 from .. import config
-from ..clients import podman
+from ..clients import containers
 from ..store import world_exists
 from .common import console, die, get_world, status_table
 
@@ -28,8 +28,8 @@ def list_() -> None:
         die("no world yet — run `polis world genesis` first")
     world = get_world()
     try:
-        running = {c["Names"][0]: c for c in podman.containers() if c.get("Names")}
-    except podman.PodmanError as e:
+        running = containers.get_runtime().by_name()
+    except containers.ContainerError as e:
         die(str(e))
     table = status_table("city nodes", ["city", "container", "state"])
     for city in world.cities:
@@ -47,8 +47,8 @@ def status(
     """Show the container state of one city."""
     name = container_name(city_id)
     try:
-        c = podman.container(name)
-    except podman.PodmanError as e:
+        c = containers.container(name)
+    except containers.ContainerError as e:
         die(str(e))
     if c is None:
         console.print(f"[yellow]{name}: not created[/yellow] (city container images are not built yet)")

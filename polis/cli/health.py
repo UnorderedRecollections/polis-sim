@@ -12,7 +12,7 @@ from typing import Callable
 import typer
 
 from .. import config
-from ..clients import podman
+from ..clients import containers
 from ..clients.gitea import GiteaClient
 from ..clients.gogs import GogsClient
 from ..clients.woodpecker import WoodpeckerClient
@@ -21,7 +21,7 @@ from .common import console, get_world, status_table
 
 app = typer.Typer(
     invoke_without_command=True,
-    help="Health checks for gogs, gitea, woodpecker, postgres, podman and city nodes.",
+    help="Health checks for gogs, gitea, woodpecker, postgres, the container runtime and city nodes.",
 )
 
 
@@ -41,7 +41,7 @@ def check_gogs() -> list[Check]:
                       "platform: gitea (gogs checks apply to gogs-platformed sims)",
                       warn=True)]
     container = (f"{config.PROVISIONED_SIM}-gogs" if config.PROVISIONED_SIM else "gogs")
-    checks = [Check("gogs: container running", podman.container_running(container),
+    checks = [Check("gogs: container running", containers.container_running(container),
                     f"container '{container}' should be up")]
     try:
         client = GogsClient()
@@ -60,7 +60,7 @@ def check_gitea() -> list[Check]:
                       "platform: gogs (gitea checks apply to gitea-platformed sims)",
                       warn=True)]
     container = (f"{config.PROVISIONED_SIM}-gitea" if config.PROVISIONED_SIM else "gitea")
-    checks = [Check("gitea: container running", podman.container_running(container),
+    checks = [Check("gitea: container running", containers.container_running(container),
                     f"container '{container}' should be up")]
     try:
         client = GiteaClient()
@@ -79,9 +79,9 @@ def check_woodpecker() -> list[Check]:
         return [Check("woodpecker: n/a in a sim context", True,
                       "the Mechanical Magistrate is erected in phase 2", warn=True)]
     checks = [
-        Check("woodpecker: server container running", podman.container_running("woodpecker-server"),
+        Check("woodpecker: server container running", containers.container_running("woodpecker-server"),
               "container 'woodpecker-server' should be up"),
-        Check("woodpecker: agent container running", podman.container_running("woodpecker-agent"),
+        Check("woodpecker: agent container running", containers.container_running("woodpecker-agent"),
               "container 'woodpecker-agent' should be up"),
     ]
     try:
@@ -115,38 +115,40 @@ def check_hosts() -> list[Check]:
 
 def check_postgres() -> list[Check]:
     name = config.POSTGRES_CONTAINER
-    checks = [Check("postgres: container running", podman.container_running(name),
+    checks = [Check("postgres: container running", containers.container_running(name),
                     f"container '{name}' should be up")]
     if not checks[0].ok:
         return checks
-    ready, out = podman.exec_ok(name, ["pg_isready", "-U", "gogs"])
+    ready, out = containers.exec_ok(name, ["pg_isready", "-U", "gogs"])
     checks.append(Check("postgres: pg_isready", ready, out))
     if config.PROVISIONED_SIM:
         databases = ("gitea",) if config.sim_platform() == "gitea" else ("gogs",)
     else:
         databases = ("gogs", "gitea")
     for db in databases:
-        ok, out = podman.exec_ok(name, ["psql", "-U", "gogs", "-d", db, "-tAc", "SELECT 1"])
+        ok, out = containers.exec_ok(name, ["psql", "-U", "gogs", "-d", db, "-tAc", "SELECT 1"])
         checks.append(Check(f"postgres: database '{db}' queryable", ok, out))
     return checks
 
 
-def check_podman() -> list[Check]:
+def check_runtime() -> list[Check]:
+    """The container runtime (podman or docker) and its network."""
     try:
-        state = podman.machine_state()
+        state = containers.runtime_state()
+        runtime = containers.runtime_name()
         machine_ok = state.lower() == "running"
         checks = [
-            Check("podman: machine running", machine_ok, f"state: {state}"),
-            Check("podman: network exists", podman.network_exists(config.PODMAN_NETWORK),
+            Check(f"{runtime}: running", machine_ok, f"state: {state}"),
+            Check(f"{runtime}: network exists", containers.network_exists(config.PODMAN_NETWORK),
                   f"network '{config.PODMAN_NETWORK}'"),
         ]
         if config.PROVISIONED_SIM:
             op = f"polis-operator-{config.PROVISIONED_SIM}"
             checks.append(Check("operator: container running",
-                                podman.container_running(op), f"container '{op}'"))
+                                containers.container_running(op), f"container '{op}'"))
         return checks
-    except podman.PodmanError as e:
-        return [Check("podman: CLI usable", False, str(e))]
+    except containers.ContainerError as e:
+        return [Check("runtime: CLI usable", False, str(e))]
 
 
 def check_citynodes() -> list[Check]:
@@ -158,7 +160,7 @@ def check_citynodes() -> list[Check]:
     for city in world.cities:
         name = f"{config.CITY_CONTAINER_PREFIX}{city.id}{suffix}"
         checks.append(Check(
-            f"citynode: {city.id} container", podman.container_running(name),
+            f"citynode: {city.id} container", containers.container_running(name),
             f"'{name}' not built yet", warn=True,
         ))
     return checks
@@ -170,7 +172,7 @@ SUITES: dict[str, Callable[[], list[Check]]] = {
     "gitea": check_gitea,
     "woodpecker": check_woodpecker,
     "postgres": check_postgres,
-    "podman": check_podman,
+    "runtime": check_runtime,
     "citynodes": check_citynodes,
 }
 
@@ -242,10 +244,16 @@ def postgres() -> None:
     _run_suite("postgres")
 
 
-@app.command(name="podman")
-def podman_command() -> None:
-    """Checks for the container runtime and network."""
-    _run_suite("podman")
+@app.command()
+def runtime() -> None:
+    """Checks for the container runtime (podman or docker) and its network."""
+    _run_suite("runtime")
+
+
+@app.command(name="podman", hidden=True)
+def podman_alias() -> None:
+    """Alias for `runtime` (the pre-0043 suite name)."""
+    _run_suite("runtime")
 
 
 @app.command()

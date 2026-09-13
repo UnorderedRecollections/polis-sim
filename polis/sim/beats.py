@@ -227,12 +227,12 @@ def b_corpus_contains(ctx: BeatContext, path: str) -> None:
 
 def b_ci_erected(ctx: BeatContext) -> None:
     from .. import provision
-    from ..clients import podman
+    from ..clients import containers
     from ..clients.woodpecker import WoodpeckerClient
     secrets = provision.load_secrets(ctx.sim)
     if not secrets.get("woodpecker_token"):
         raise BeatFailed("the sim's secrets carry no woodpecker token")
-    if not podman.container_running(f"{ctx.sim}-woodpecker-server"):
+    if not containers.container_running(f"{ctx.sim}-woodpecker-server"):
         raise BeatFailed("the woodpecker server is not running")
     base = secrets.get("woodpecker_url_external") or \
         f"http://localhost:{secrets['woodpecker_port']}/ci"
