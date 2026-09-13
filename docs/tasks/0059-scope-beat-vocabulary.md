@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T19:00:00Z
 - **type:** [refactoring]
 - **depends-on:** 0058
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -58,7 +58,5 @@ user vocabulary; `tests/all.sh` green.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-13T20:06:05Z
+- **commit:** 2d2a0e3
