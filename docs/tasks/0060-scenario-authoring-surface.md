@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T19:00:00Z
 - **type:** [simulation]
 - **depends-on:** 0059
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -63,7 +63,5 @@ verification; the authoring guide is written.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-13T20:14:55Z
+- **commit:** 32a0d9e
