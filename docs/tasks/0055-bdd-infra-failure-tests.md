@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T17:12:46Z
 - **type:** [tests]
 - **depends-on:** 0053
-- **status:** open
+- **status:** in-progress
 
 ## Description
 
@@ -43,6 +43,19 @@ Deliverables: the failure-mode decision note; failure scenarios/tags in
 behave; any fixes the expected behaviors imply (or separate `[bugfix]`
 tasks when they are not small); docs updates where behavior is
 user-visible.
+
+## Progress log
+
+- **2026-09-13 — decision gate prepared; tests not started (by design).**
+  `docs/design/failure-modes.md` drafted: principles (record integrity,
+  fail-fast-with-remedy, idempotent recovery, no silent half-state), 15
+  candidate failures with proposed behavior and injection points, and
+  seven decisions requested in §5 (recommended defaults marked). The
+  suite will be written once those are agreed; implementation notes:
+  a `tests/failures.sh` matrix reusing the mock forge (0047)/runner
+  (0048) when they land, asserting non-zero exits with remedies, record
+  integrity and idempotent recovery. Any behavior fixes the decided
+  tests require become separate `[bugfix]` tasks.
 
 ## Completion
 
