@@ -14,7 +14,8 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --frozen
-      # the container-free command-surface scenarios; @containers (sims,
-      # transition, CI) joins when those suites are runner-ready (0067+)
+      # the container-free command surface; the sim-backed component
+      # suites (gogs, gitea, citynode, health, woodpecker) are
+      # @slow @containers and stay opt-in (task 0069)
       - name: functional domain
-        run: uv run behave features/ --tags "@functional and not @containers"
+        run: uv run behave features/ --tags "@functional and not @slow"

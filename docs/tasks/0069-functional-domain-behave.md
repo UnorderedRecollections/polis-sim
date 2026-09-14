@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T10:01:36Z
 - **type:** [tests]
 - **depends-on:** 0066
-- **status:** open
+- **status:** in-progress
 
 ## Description
 
@@ -29,6 +29,28 @@ container-free skeleton).
 
 Acceptance: every subcommand has a feature, the fast ones green in
 `@functional and not @slow`, the slow ones opt-in and documented.
+
+## Progress log
+
+- **2026-09-14 — built out. Fast (container-free, CI) features:**
+  `world`, `city`, `person`, `office`, `assign`, `docket`, `bill`
+  (isomorphism renders, nothing executes), `archive` (plans + the
+  `--yes` guard), `sim` (runs/journal, clean failures), `provision`
+  (fail-fast contracts), `formal-check` (all four checks against a
+  throwaway corpus, steps in `formal_check_steps.py`) and `health`
+  (`health hosts`). Harness: `cli_steps` now shlex-splits arguments,
+  substitutes `{data_dir}`/`{repo_dir}` and runs with a wide `COLUMNS`
+  so Rich does not truncate identifiers.
+  **Slow (opt-in, `@slow @containers`):** `gogs`, `gitea`, `citynode`,
+  `health` in a sim context, and `woodpecker` (full transition — the CI
+  is erected only then); `sim_functional_steps.py` runs the CLI against
+  the scenario's sim. The functional workflow now selects
+  `@functional and not @slow`; the slow set is in `tests/all.sh`.
+  First full runs: 59 fast scenarios green (~45 s); the sim-backed
+  scenarios green (gogs, gitea, citynode, health); the woodpecker
+  scenario exposed task 0075 (the sim's `woodpecker_token` was never
+  resolved in a sim context) and passes with it. `nuke` is deliberately
+  not covered (dev-rig-only DB surgery, dangerous to exercise).
 
 ## Completion
 

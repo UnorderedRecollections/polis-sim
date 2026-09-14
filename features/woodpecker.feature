@@ -11,4 +11,4 @@ Feature: The woodpecker command group
     Then the Mechanical Magistrate's CI is erected
     When I run polis against the sim with "woodpecker whoami"
     Then the command succeeds
-    And the output contains "operator"
+    And the output contains "mechanical-magistrate"
