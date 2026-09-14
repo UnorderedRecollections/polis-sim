@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T10:01:36Z
 - **type:** [tests]
 - **depends-on:** 0066
-- **status:** review
+- **status:** done
 
 ## Description
 
@@ -45,7 +45,5 @@ the domain-model workflow runs it like every other domain.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T12:50:39Z
+- **commit:** 0cb6794 (PR #22)
