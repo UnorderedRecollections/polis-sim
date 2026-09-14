@@ -11,6 +11,7 @@ domains, so those workflows run anywhere `uv` does.
 from __future__ import annotations
 
 import os
+import shlex
 import shutil
 import subprocess
 import tempfile
@@ -43,6 +44,9 @@ def _run(context, *args: str) -> subprocess.CompletedProcess:
     env = dict(os.environ)
     env.pop("POLIS_PROVISIONED_SIM", None)
     env["POLIS_DATA_DIR"] = str(_isolated_dir(context))
+    # wide terminal so Rich does not wrap/truncate table cells: assertions
+    # on full identifiers stay meaningful
+    env["COLUMNS"] = "200"
     return subprocess.run(["uv", "run", "polis", *args], cwd=ROOT, env=env,
                           capture_output=True, text=True)
 
@@ -61,7 +65,17 @@ def isolated_without_world(context):
 
 @when('I run polis with "{args}"')
 def run_polis(context, args):
-    context.last = _run(context, *args.split())
+    # `{data_dir}` stands for the scenario's isolated world (e.g. a
+    # `--repo-dir` that must exist), `{repo_dir}` for a fixture git repo
+    # a step set up; shlex keeps quoted titles together
+    args = (args.replace("{data_dir}", str(_isolated_dir(context)))
+                .replace("{repo_dir}", str(getattr(context, "repo_dir", ""))))
+    context.last = _run(context, *shlex.split(args))
+
+
+def _flat(text: str) -> str:
+    # Rich wraps output at the terminal width; assertions ignore the wrap
+    return " ".join(text.split())
 
 
 @then("the command succeeds")
@@ -78,14 +92,14 @@ def command_fails(context):
 
 @then('the output contains "{text}"')
 def output_contains(context, text):
-    out = context.last.stdout + context.last.stderr
-    assert text in out, f"'{text}' not in the command output: {out[-300:]}"
+    out = _flat(context.last.stdout + context.last.stderr)
+    assert _flat(text) in out, f"'{text}' not in the command output: {out[-300:]}"
 
 
 @then('the output does not contain "{text}"')
 def output_does_not_contain(context, text):
-    out = context.last.stdout + context.last.stderr
-    assert text not in out, f"'{text}' unexpectedly in the command output: {out[-300:]}"
+    out = _flat(context.last.stdout + context.last.stderr)
+    assert _flat(text) not in out, f"'{text}' unexpectedly in the command output: {out[-300:]}"
 
 
 @then("every jurisdiction accepts a generated situation")
