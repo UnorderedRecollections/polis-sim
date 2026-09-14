@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T10:01:36Z
 - **type:** [infrastructure]
 - **depends-on:** 0066
-- **status:** review
+- **status:** in-progress
 
 ## Description
 
@@ -54,6 +54,16 @@ other domain (the agreed behaviors are in `docs/design/failure-modes.md`
   chmod not chown, no privileges needed; harmless for throwaway data).
   Diagnostics: failing shared-sim provisioning dumps the sim containers'
   logs from `features/environment.py`.
+
+- **2026-09-14 — CI blocked; issue re-created as #38.** PR #37 was closed
+  (the issue had been deleted with it) while the docker-backed suite still
+  fails on GitHub runners. The remaining runner failures (shared-sim
+  assertions after the fixes above) are handed back for investigation; the
+  infrastructure workflow is now **manual-only** (`workflow_dispatch`)
+  until they are understood. The implementation stays on
+  `task/0067-infrastructure-behave`; this task is back to in-progress.
+  (Note: the GitHub repository was reported **disabled** right after —
+  pushes return 403; local work continues until it is available again.)
 
 ## Completion
 
