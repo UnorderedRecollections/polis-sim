@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T17:12:46Z
 - **type:** [tests]
 - **depends-on:** 0053
-- **status:** review
+- **status:** done
 
 ## Description
 
@@ -68,7 +68,5 @@ user-visible.
 
 ## Completion
 
-<!-- filled in when the task is done (after the PR is approved and merged):
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T09:49:09Z
+- **commit:** 9687742 (merge of PR #30)
