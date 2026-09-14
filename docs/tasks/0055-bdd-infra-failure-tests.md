@@ -69,4 +69,4 @@ user-visible.
 ## Completion
 
 - **finished:** 2026-09-14T09:49:09Z
-- **commit:** 23546b4 (merge of PR #30)
+- **commit:** 774f79a (merge of PR #30)

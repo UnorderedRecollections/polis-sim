@@ -43,4 +43,4 @@ exists; the two chore tasks (0064, 0065) themselves land through PRs.
 ## Completion
 
 - **finished:** 2026-09-14T07:58:30Z
-- **commit:** 0619f53 (merge of PR #29)
+- **commit:** 33b5c5c (merge of PR #29)
