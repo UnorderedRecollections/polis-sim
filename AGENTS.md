@@ -153,8 +153,9 @@ Cities") whose legislative life runs on real local infrastructure.
   committing/pushing: `git config --show-origin user.email` must say
   `file:.git/config` (not `~/.gitconfig`). A personal address leaking into
   commit metadata is public the moment it is pushed and cannot be fixed by
-  review — it needs a history rewrite (see below) plus a GitHub purge
-  request.
+  review — it needs a history rewrite plus a **GitHub Support purge
+  request** (hidden `refs/pull/*` keep the old commits even after a
+  force-push).
 
 ## The three stores (ontology — settled)
 
