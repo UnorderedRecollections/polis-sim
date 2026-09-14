@@ -157,7 +157,9 @@ Cities") whose legislative life runs on real local infrastructure.
   refuses any author or committer not listed in `.contributor-whitelist`
   (fail closed);   activate it once per clone with
   `git config core.hooksPath .githooks` — `--no-verify` bypasses the hook,
-  but using another identity is forbidden regardless. **Never write
+  but using another identity is forbidden regardless. The same hook scans
+  the staged changes with `gitleaks protect --staged` and refuses secrets
+  (fail closed when `gitleaks` is not installed). **Never write
   personal addresses into task files, issues, PRs, docs or commit
   messages** — refer to identities by role or a placeholder;
   `.contributor-whitelist` is the only place an address belongs. A

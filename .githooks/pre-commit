@@ -37,3 +37,16 @@ check() { # label ident
 
 check author "$(git var GIT_AUTHOR_IDENT)"
 check committer "$(git var GIT_COMMITTER_IDENT)"
+
+# Secret scanning (task 0072): refuse staged secrets; fail closed when the
+# tool is missing so the guard can't be silently bypassed by environment.
+if ! command -v gitleaks >/dev/null 2>&1; then
+    echo "pre-commit: gitleaks not found — refusing the commit (fail closed)." >&2
+    echo "pre-commit: install it (brew install gitleaks) or bypass deliberately with --no-verify." >&2
+    exit 1
+fi
+if ! gitleaks protect --staged --redact --no-banner --exit-code 1; then
+    echo "pre-commit: gitleaks found staged secrets — commit refused." >&2
+    echo "pre-commit: inspect with 'gitleaks protect --staged -v' (or allow a false positive in .gitleaks.toml)." >&2
+    exit 1
+fi
