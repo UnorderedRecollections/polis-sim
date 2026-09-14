@@ -43,6 +43,7 @@ run "queue driver semantics (stub execute_beat)" uv run python tests/queue_drive
 run "fast behave (phase I)" uv run behave features/
 run "slow gitea suites (phase I -> transition -> phase II)" bash tests/bdd-phase2.sh
 run "cross-jurisdiction suite (15 stories)" bash tests/jurisdictions.sh
+run "deployment failure suite (provisioning)" bash tests/failures.sh
 run "provisioning demo (gogs)" bash tests/provision-demo.sh
 run "provisioning demo (gitea)" bash tests/provision-demo-gitea.sh
 run "director demo" bash tests/director-demo.sh
