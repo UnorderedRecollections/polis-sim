@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T11:49:31Z
 - **type:** [infrastructure]
 - **depends-on:** 0071
-- **status:** review
+- **status:** done
 
 ## Description
 
@@ -34,7 +34,6 @@ commit is created; a clean commit passes with the scan active.
 
 ## Completion
 
-<!-- filled in when the task is done (after the PR is approved and merged):
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T11:50:41Z (landed directly on `main` while the
+  remote repository was deleted; no PR — recorded in the issue mirror)
+- **commit:** 1730bb9

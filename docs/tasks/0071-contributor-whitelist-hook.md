@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T11:34:52Z
 - **type:** [infrastructure]
 - **depends-on:** none
-- **status:** review
+- **status:** done
 
 ## Description
 
@@ -37,7 +37,6 @@ identity commits normally.
 
 ## Completion
 
-<!-- filled in when the task is done (after the PR is approved and merged):
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T11:50:41Z (landed directly on `main` while the
+  remote repository was deleted; no PR — recorded in the issue mirror)
+- **commit:** d2f29cd
