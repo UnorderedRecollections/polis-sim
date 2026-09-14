@@ -3,7 +3,7 @@
 - **created:** 2026-01-01T00:00:00Z
 - **type:** [simulation] | [infrastructure] | [tests] | [refactoring] | [bugfix]
 - **depends-on:** (task numbers, if any — e.g. 0003, 0007)
-- **status:** open | in-progress | done
+- **status:** open | in-progress | review | done
 
 ## Description
 
