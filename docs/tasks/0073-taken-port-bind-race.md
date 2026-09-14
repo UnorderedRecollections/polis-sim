@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T12:17:56Z
 - **type:** [bugfix]
 - **depends-on:** 0067
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -25,7 +25,5 @@ scenario's bind does not race the port forwarder's teardown).
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T12:26:02Z
+- **commit:** 3161c3e (PR #24)
