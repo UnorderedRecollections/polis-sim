@@ -44,6 +44,17 @@ other domain (the agreed behaviors are in `docs/design/failure-modes.md`
   (the workflow now runs `--tags @infrastructure`, so CI exercises the
   port on the runner's docker — the live docker verification).
 
+- **2026-09-14 — the CI docker run surfaced two real portability bugs**
+  (both fixed here): (1) readiness polled `/gogs` without the trailing
+  slash, which caddy's catch-all answered with a 302 before gogs was up —
+  the readiness check now uses `/gogs/`; (2) bind-mounted sim data dirs
+  belong to the host uid (1001 on CI runners) while the images run as
+  their own user (gogs/gitea: 1000), so `mkdir /data/git` failed —
+  provisioning now `chmod 0777`s the sim data directories (`_relax_dir`,
+  chmod not chown, no privileges needed; harmless for throwaway data).
+  Diagnostics: failing shared-sim provisioning dumps the sim containers'
+  logs from `features/environment.py`.
+
 ## Completion
 
 <!-- filled in when the task is done (after the PR is approved and merged):

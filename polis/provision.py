@@ -186,6 +186,22 @@ def sim_platform_client(sim: str):
     return spec.client(token=secrets["admin_token"], base_url=base)
 
 
+def _relax_dir(path: Path) -> None:
+    """Make a bind-mounted sim data directory writable by the image's
+    internal user, whatever the host uid is.
+
+    Images run as their own user (gogs/gitea: uid 1000) while the host
+    directory belongs to whoever ran provisioning (e.g. uid 1001 on CI
+    runners): `chmod`, not `chown`, so no privileges are needed. This is
+    throwaway simulation data — permissions do not matter (task 0067,
+    docker CI; the podman-on-macOS VM mounts are permissive already)."""
+    for p in [path, *path.rglob("*")]:
+        try:
+            p.chmod(0o777)
+        except OSError:
+            pass
+
+
 def _free_port(base: int = 11880) -> int:
     import socket
     for port in range(base, base + 200):
@@ -328,6 +344,7 @@ def _up_postgres(sim: str, inv: Inventory, password: str) -> str:
     pg = f"{sim}-postgres"
     plat = platform_dir(sim)
     (plat / "postgres").mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "postgres")
     containers._run(["network", "create", net], check=False)
     if not containers.container_running(pg):
         containers._run(["rm", "-f", pg], check=False)
@@ -381,6 +398,7 @@ def _up_gogs(sim: str, inv: Inventory, pg: str, password: str,
     plat = platform_dir(sim)
     conf = plat / "gogs" / "gogs" / "conf"
     conf.mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "gogs")
     (conf / "app.ini").write_text(f"""[database]
 TYPE     = postgres
 HOST     = {pg}:5432
@@ -475,6 +493,7 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
     gt = f"{sim}-gitea"
     plat = platform_dir(sim)
     (plat / "gitea").mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "gitea")
     _ensure_postgres_db(pg, "gitea")
 
     env = {
@@ -973,6 +992,7 @@ def up_woodpecker(sim: str) -> None:
     # 3. the server
     plat = platform_dir(sim)
     (plat / "woodpecker" / "server").mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "woodpecker" / "server")
     server_env = {
         "WOODPECKER_OPEN": "true",
         # the canonical URL: browser-friendly links AND the forge webhook
@@ -1000,6 +1020,7 @@ def up_woodpecker(sim: str) -> None:
 
     # 4. the agent (the macOS VM quirks: root, SELinux, the VM socket)
     (plat / "woodpecker" / "agent").mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "woodpecker" / "agent")
     containers._run(["rm", "-f", agent], check=False)
     # the agent's runtime quirks (macOS VM socket, root mapping, SELinux
     # label) come from the runtime boundary — see clients/containers.py
