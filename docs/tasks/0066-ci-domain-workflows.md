@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T10:01:36Z
 - **type:** [infrastructure]
 - **depends-on:** none
-- **status:** review
+- **status:** done
 
 ## Description
 
@@ -42,7 +42,5 @@ those tag expressions; `uv run behave features/` stays green.
 
 ## Completion
 
-<!-- filled in when the task is done (after the PR is approved and merged):
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T10:12:05Z
+- **commit:** ba81af7 (merge of PR #36)
