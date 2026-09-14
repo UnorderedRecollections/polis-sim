@@ -62,5 +62,5 @@ assumes podman (`polis/clients/podman.py`, `scripts/infra/*`,
 ## Completion
 
 - **finished:** 2026-09-13T20:30:49Z
-- **commit:** 8c4c69f (Python boundary) + 90ca376 (scripts, compose, checks,
+- **commit:** eb32ed7 (Python boundary) + 7bccbd6 (scripts, compose, checks,
   docs)
