@@ -14,5 +14,7 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --frozen
+      # container-free for now; @containers joins when the ported failure
+      # suite is runner-ready (task 0067)
       - name: infrastructure domain
-        run: uv run behave features/ --tags @infrastructure
+        run: uv run behave features/ --tags "@infrastructure and not @containers"

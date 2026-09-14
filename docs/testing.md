@@ -14,16 +14,21 @@ no bespoke runners:
 
 | domain | tag | workflow | what it covers |
 |---|---|---|---|
-| domain-model | `@domain` | `domain-model.yml` | the legal seed, the fifteen jurisdictions, situation generation (`features/domain-model.feature`); container-free |
-| infrastructure | `@infrastructure` | `infrastructure.yml` | the container-runtime boundary (`features/infrastructure.feature`), and the local deployment failure suite as it is ported (task 0067) |
-| functional | `@functional` | `functional.yml` | the `polis` command surface (`features/functional.feature`, per-subcommand suites in task 0069); CI runs `not @slow` until the container suites are runner-ready |
+| domain-model | `@domain` | `domain-model.yml` | the legal seed, the fifteen jurisdictions, situation generation (`features/domain-model.feature`); container-free in CI (`and not @containers`) |
+| infrastructure | `@infrastructure` | `infrastructure.yml` | the container-runtime boundary (`features/infrastructure.feature`), and the local deployment failure suite as it is ported (task 0067); container-free in CI |
+| functional | `@functional` | `functional.yml` | the `polis` command surface (`features/functional.feature`, per-subcommand suites in task 0069); CI runs `and not @containers` until the container suites are runner-ready |
+
+Two capability tags refine the selection: **`@containers`** (the scenario
+provisions/controls containers — CI excludes these for now) and
+**`@slow`** (the heaviest suites; `behave.ini` excludes them from the
+default `uv run behave features/`).
 
 Run a domain exactly as its workflow does:
 
 ```bash
-uv run behave features/ --tags @domain
-uv run behave features/ --tags @infrastructure
-uv run behave features/ --tags "@functional and not @slow"
+uv run behave features/ --tags "@domain and not @containers"
+uv run behave features/ --tags "@infrastructure and not @containers"
+uv run behave features/ --tags "@functional and not @containers"
 ```
 
 `uv run behave features/` (no tags) runs every non-`@slow` scenario;
