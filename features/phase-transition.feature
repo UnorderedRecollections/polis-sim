@@ -2,7 +2,7 @@
 #   uv run behave features/phase-transition.feature --tags @slow
 # behave.ini excludes @slow by default, so a bare `behave features/` skips
 # this feature (all steps report as skipped).
-@phase1 @phase2 @gitea @slow
+@functional @phase1 @phase2 @gitea @slow
 Feature: The codification of the machinery
   The federation lives by custom until the three acts codify the
   machinery; afterwards the platform itself carries the proceedings.

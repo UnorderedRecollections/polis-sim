@@ -1,0 +1,20 @@
+name: functional tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  behave:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      # container-free functional scenarios; @slow (sims, transition, CI)
+      # joins CI when the container suites are runner-ready (task 0067+)
+      - name: functional domain
+        run: uv run behave features/ --tags "@functional and not @slow"
