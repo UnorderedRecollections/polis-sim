@@ -20,8 +20,15 @@ jobs:
       - name: container diagnostics (on failure)
         if: failure()
         run: |
-          docker ps -a
-          for c in $(docker ps -a --format '{{.Names}}' | grep -E '^(bdd-|fail-|polis-operator-bdd)' || true); do
-            echo "===== logs: $c"
-            docker logs --tail 80 "$c" 2>&1 || true
+          uv run python -c "from polis.clients import containers; print('runtime:', containers.runtime_name())" || true
+          uv run polis provision status bdd-infra || true
+          ss -ltnp | grep -E ':(11880)\b' || true
+          for rt in docker podman; do
+            command -v "$rt" >/dev/null 2>&1 || continue
+            echo "===== $rt ps -a"
+            "$rt" ps -a || true
+            for c in $("$rt" ps -a --format '{{.Names}}' | grep -E '^(bdd-|fail-|polis-operator-bdd)' || true); do
+              echo "===== logs ($rt): $c"
+              "$rt" logs --tail 80 "$c" 2>&1 || true
+            done
           done
