@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T10:01:36Z
 - **type:** [infrastructure]
 - **depends-on:** 0066
-- **status:** in-progress
+- **status:** review
 
 ## Description
 
@@ -30,6 +30,31 @@ other domain (the agreed behaviors are in `docs/design/failure-modes.md`
   the infrastructure workflow runs it with no extra runner, no custom
   scripts.
 
+## Progress log
+
+- **2026-09-14 — ported to Behave.** `features/infrastructure.feature`
+  gained the container-free missing-world fail-fast scenario;
+  `features/infrastructure-failures.feature` (@infrastructure
+  @containers @shared-sim) ports the rest — baseline/status, stopped
+  platform, taken proxy port, deleted repository, missing operator —
+  with `features/steps/failure_steps.py` and a shared-sim mode in
+  `features/environment.py` (provisioned once, destroyed in `after_all`).
+  `tests/failures_test.py`/`failures.sh` retired; `tests/all.sh`,
+  `docs/testing.md`, AGENTS.md and the infrastructure workflow updated
+  (the workflow now runs `--tags @infrastructure`, so CI exercises the
+  port on the runner's docker — the live docker verification).
+
+- **2026-09-14 — the CI docker run surfaced two real portability bugs**
+  (both fixed here): (1) readiness polled `/gogs` without the trailing
+  slash, which caddy's catch-all answered with a 302 before gogs was up —
+  the readiness check now uses `/gogs/`; (2) bind-mounted sim data dirs
+  belong to the host uid (1001 on CI runners) while the images run as
+  their own user (gogs/gitea: 1000), so `mkdir /data/git` failed —
+  provisioning now `chmod 0777`s the sim data directories (`_relax_dir`,
+  chmod not chown, no privileges needed; harmless for throwaway data).
+  Diagnostics: failing shared-sim provisioning dumps the sim containers'
+  logs from `features/environment.py`.
+
 - **2026-09-14 — CI blocked; issue rebuilt as #15 after the repository
   recreation.** PR #37 and the original issue were lost when the old
   repository was deleted over the leaked personal email in commit
@@ -41,6 +66,17 @@ other domain (the agreed behaviors are in `docs/design/failure-modes.md`
   workflow is **manual-only** (`workflow_dispatch`) until the runner
   issue is understood. The implementation stays on
   `task/0067-infrastructure-behave`; this task is in-progress.
+
+- **2026-09-14 — leftover docker-CI flakiness fixed; workflow re-enabled.**
+  Root cause of the remaining failures: "container up" was treated as
+  "platform usable". `provision.start` now waits for the platform through
+  the proxy (`_wait_platform`, non-5xx, 90s) before returning; the failure
+  steps wait for readiness before touching the API (`_platform_ready`),
+  retry the repository delete (transient 502s/refusals) and poll
+  `provision status` green for up to 60s; the shared sim is kept on
+  failure so the workflow's diagnostics step can dump its logs. The
+  infrastructure workflow's `pull_request`/`push` triggers are back
+  (plus `workflow_dispatch` for debugging).
 
 ## Completion
 

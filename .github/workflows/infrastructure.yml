@@ -1,12 +1,9 @@
 name: infrastructure tests
 
-# DISABLED (2026-09-14, task 0067 / issue #38): the docker-backed
-# shared-sim failure scenarios fail on GitHub runners. The suite is green
-# on podman locally; the runner issues are being investigated. Until then
-# this workflow is manual-only — trigger it from the Actions tab when
-# debugging. Re-add the pull_request/push triggers once it is green on CI.
-
 on:
+  pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -24,7 +21,7 @@ jobs:
         if: failure()
         run: |
           docker ps -a
-          for c in $(docker ps -a --format '{{.Names}}' | grep -E '^(bdd-|fail-)' || true); do
+          for c in $(docker ps -a --format '{{.Names}}' | grep -E '^(bdd-|fail-|polis-operator-bdd)' || true); do
             echo "===== logs: $c"
             docker logs --tail 80 "$c" 2>&1 || true
           done

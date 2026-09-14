@@ -54,6 +54,11 @@ def isolated_federation(context):
         (context.last.stdout + context.last.stderr)[-500:]
 
 
+@given("an isolated federation directory without a world")
+def isolated_without_world(context):
+    _isolated_dir(context)
+
+
 @when('I run polis with "{args}"')
 def run_polis(context, args):
     context.last = _run(context, *args.split())
@@ -65,10 +70,22 @@ def command_succeeds(context):
         (context.last.stdout + context.last.stderr)[-500:]
 
 
+@then("the command fails")
+def command_fails(context):
+    assert context.last.returncode != 0, \
+        f"expected failure, got exit=0: {(context.last.stdout + context.last.stderr)[-300:]}"
+
+
 @then('the output contains "{text}"')
 def output_contains(context, text):
     out = context.last.stdout + context.last.stderr
     assert text in out, f"'{text}' not in the command output: {out[-300:]}"
+
+
+@then('the output does not contain "{text}"')
+def output_does_not_contain(context, text):
+    out = context.last.stdout + context.last.stderr
+    assert text not in out, f"'{text}' unexpectedly in the command output: {out[-300:]}"
 
 
 @then("every jurisdiction accepts a generated situation")

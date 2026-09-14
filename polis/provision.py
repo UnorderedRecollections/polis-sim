@@ -186,6 +186,22 @@ def sim_platform_client(sim: str):
     return spec.client(token=secrets["admin_token"], base_url=base)
 
 
+def _relax_dir(path: Path) -> None:
+    """Make a bind-mounted sim data directory writable by the image's
+    internal user, whatever the host uid is.
+
+    Images run as their own user (gogs/gitea: uid 1000) while the host
+    directory belongs to whoever ran provisioning (e.g. uid 1001 on CI
+    runners): `chmod`, not `chown`, so no privileges are needed. This is
+    throwaway simulation data — permissions do not matter (task 0067,
+    docker CI; the podman-on-macOS VM mounts are permissive already)."""
+    for p in [path, *path.rglob("*")]:
+        try:
+            p.chmod(0o777)
+        except OSError:
+            pass
+
+
 def _free_port(base: int = 11880) -> int:
     import socket
     for port in range(base, base + 200):
@@ -328,6 +344,7 @@ def _up_postgres(sim: str, inv: Inventory, password: str) -> str:
     pg = f"{sim}-postgres"
     plat = platform_dir(sim)
     (plat / "postgres").mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "postgres")
     containers._run(["network", "create", net], check=False)
     if not containers.container_running(pg):
         containers._run(["rm", "-f", pg], check=False)
@@ -381,6 +398,7 @@ def _up_gogs(sim: str, inv: Inventory, pg: str, password: str,
     plat = platform_dir(sim)
     conf = plat / "gogs" / "gogs" / "conf"
     conf.mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "gogs")
     (conf / "app.ini").write_text(f"""[database]
 TYPE     = postgres
 HOST     = {pg}:5432
@@ -425,10 +443,13 @@ ENABLED = false
 
     # wait for the web layer (first start runs migrations — can take a while)
     url = platform_host_url(port, "gogs")
-    print(f"[provision] waiting for gogs at {url} …", file=sys.stderr, flush=True)
+    # the trailing slash matters: bare "/gogs" falls through to caddy's
+    # catch-all redirect, which would satisfy the readiness check before the
+    # service is actually up
+    print(f"[provision] waiting for gogs at {url}/ …", file=sys.stderr, flush=True)
     for _ in range(90):
         try:
-            if httpx.get(url, timeout=2.0).status_code < 500:
+            if httpx.get(f"{url}/", timeout=2.0).status_code < 500:
                 break
         except Exception:
             pass
@@ -472,6 +493,7 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
     gt = f"{sim}-gitea"
     plat = platform_dir(sim)
     (plat / "gitea").mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "gitea")
     _ensure_postgres_db(pg, "gitea")
 
     env = {
@@ -517,7 +539,7 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
     print(f"[provision] waiting for gitea at {url} …", file=sys.stderr, flush=True)
     for _ in range(90):
         try:
-            if httpx.get(url, timeout=2.0).status_code < 500:
+            if httpx.get(f"{url}/", timeout=2.0).status_code < 500:
                 break
         except Exception:
             pass
@@ -970,6 +992,7 @@ def up_woodpecker(sim: str) -> None:
     # 3. the server
     plat = platform_dir(sim)
     (plat / "woodpecker" / "server").mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "woodpecker" / "server")
     server_env = {
         "WOODPECKER_OPEN": "true",
         # the canonical URL: browser-friendly links AND the forge webhook
@@ -997,6 +1020,7 @@ def up_woodpecker(sim: str) -> None:
 
     # 4. the agent (the macOS VM quirks: root, SELinux, the VM socket)
     (plat / "woodpecker" / "agent").mkdir(parents=True, exist_ok=True)
+    _relax_dir(plat / "woodpecker" / "agent")
     containers._run(["rm", "-f", agent], check=False)
     # the agent's runtime quirks (macOS VM socket, root mapping, SELinux
     # label) come from the runtime boundary — see clients/containers.py
@@ -1174,6 +1198,38 @@ def status(sim: str) -> dict:
     return report
 
 
+def _wait_platform(sim: str, timeout: float = 90.0) -> None:
+    """Wait until the sim's platform answers through its front proxy (or
+    its own published port for pre-0042 sims).
+
+    "Container started" is not "API ready": a resumed gogs/gitea reports a
+    running container before its HTTP layer is back, and callers (the
+    shared-sim failure scenarios, task 0067) use the API immediately
+    afterwards. Raises ProvisionError when the platform stays unusable."""
+    import time
+    import httpx
+    platform = sim_platform(sim)
+    secrets = load_secrets(sim)
+    port = secrets.get("proxy_port") or secrets.get(f"{platform}_port")
+    if not port:
+        return
+    if secrets.get("proxy_port"):
+        url = platform_host_url(port, platform)
+    else:
+        url = f"http://localhost:{port}"
+    last: Exception | None = None
+    for _ in range(int(timeout)):
+        try:
+            if httpx.get(f"{url}/", timeout=2.0).status_code < 500:
+                return
+        except Exception as e:
+            last = e
+        time.sleep(1)
+    raise ProvisionError(
+        f"the {platform} platform at {url}/ did not become usable within "
+        f"{timeout:.0f}s (last error: {last})")
+
+
 def stop(sim: str) -> dict:
     """Pause the sim: stop its containers, keep volumes/slices/journal."""
     inv = Inventory.load(sim)
@@ -1187,7 +1243,9 @@ def stop(sim: str) -> dict:
 
 def start(sim: str) -> dict:
     """Resume a stopped sim, in dependency order (postgres must be ready
-    before gogs, or gogs crash-loops on connect refusal)."""
+    before gogs, or gogs crash-loops on connect refusal), then wait for
+    the platform to be usable again through the proxy — callers use the
+    API right after returning (task 0067)."""
     import time
     inv = Inventory.load(sim)
     pg = f"{sim}-postgres"
@@ -1204,6 +1262,7 @@ def start(sim: str) -> dict:
                                check=False).returncode == 0:
                     break
                 time.sleep(1)
+    _wait_platform(sim)
     return {"started": started}
 
 
