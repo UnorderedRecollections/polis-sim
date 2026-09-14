@@ -59,12 +59,14 @@ def stop_proxy(context):
 @given("the proxy port is occupied by another process")
 def occupy_port(context):
     port = provision.load_secrets(context.sim)["proxy_port"]
-    # the runtime's port forwarder is not always gone when `rm -f` returns
-    # (docker-proxy teardown on the CI runners) — retry the bind; a real
-    # conflict still fails (task 0073)
+    # SO_REUSEADDR: after the proxy is force-removed its port mapping can
+    # leave TIME_WAIT sockets on 11880 (docker-proxy teardown on the CI
+    # runners), which plain bind rejects for ~60s; a *live* listener still
+    # refuses the bind. Retry bounded to be safe (tasks 0073/0074).
     deadline = time.time() + 30
     while True:
         hog = socket.socket()
+        hog.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             hog.bind(("0.0.0.0", port))
             break
