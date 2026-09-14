@@ -43,4 +43,4 @@ those tag expressions; `uv run behave features/` stays green.
 ## Completion
 
 - **finished:** 2026-09-14T10:12:05Z
-- **commit:** ba81af7 (merge of PR #36)
+- **commit:** 3e7f2e6 (merge of PR #36)

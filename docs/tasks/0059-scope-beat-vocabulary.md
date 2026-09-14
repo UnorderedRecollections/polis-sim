@@ -59,4 +59,4 @@ user vocabulary; `tests/all.sh` green.
 ## Completion
 
 - **finished:** 2026-09-13T20:06:05Z
-- **commit:** 2d2a0e3
+- **commit:** 9d53d51
