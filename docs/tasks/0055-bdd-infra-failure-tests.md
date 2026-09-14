@@ -3,7 +3,7 @@
 - **created:** 2026-09-13T17:12:46Z
 - **type:** [tests]
 - **depends-on:** 0053
-- **status:** in-progress
+- **status:** review
 
 ## Description
 
@@ -57,9 +57,18 @@ user-visible.
   integrity and idempotent recovery. Any behavior fixes the decided
   tests require become separate `[bugfix]` tasks.
 
+- **2026-09-14 — decisions approved; implemented and verified.**
+  `tests/failures.sh` (+ `tests/failures_test.py`, 15 checks) implements
+  the agreed provisioning/deployment cases; three behavior fixes folded
+  in: `provision.up` fails fast on an empty world (no half-provisioned
+  sim), `_up_proxy` refuses a taken persisted port naming it, and
+  `provision.status` reports an unreachable platform instead of
+  tracebacking. Verified 15/15; docs updated (`failure-modes.md` §5
+  decisions + §7 implementation, `docs/testing.md`). PR for review.
+
 ## Completion
 
-<!-- filled in when the task is done:
+<!-- filled in when the task is done (after the PR is approved and merged):
 - **finished:**
 - **commit:**
 -->

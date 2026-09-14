@@ -98,6 +98,18 @@ prints a metrics table (provisioning/drive times, record and git-pack
 sizes). The canonical world is restored afterwards; take minutes and
 opt-in. Baseline and conclusions: `docs/design/performance.md`.
 
+### Deployment failure suite (task 0055)
+
+```bash
+tests/failures.sh
+```
+
+Provisions one sim and injects local deployment failures (unknown
+runtime, missing world, platform down, taken proxy port, deleted
+resources, missing operator), asserting fail-fast-with-remedy, no bare
+traceback, inspectable state and idempotent recovery (~2 min). The
+agreed taxonomy and behaviors: `docs/design/failure-modes.md`.
+
 The transition scenario flips `federation.phase` in `world.json` (the
 civil registry); `features/environment.py` snapshots and restores it
 around every scenario, so a normal run leaves the world in phase 1. If a
