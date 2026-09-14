@@ -145,17 +145,19 @@ Cities") whose legislative life runs on real local infrastructure.
   both paths (docker via a stub CLI). Known gap for 0050: woodpecker's
   docker backend has no per-step `extra_hosts`, so pipeline step
   containers on docker need the canonical-host problem solved there.
-- **Credentials are repository-local, never host-global.** For this repo,
-  commits MUST use the repository-local identity (`git config user.name` /
-  `user.email` in `.git/config`) and `gh` MUST use the project's account
-  only — never `gh auth switch` to a personal account, never rely on
-  `~/.gitconfig`, never push with another identity's token. Verify before
+- **Credentials are local-only, always.** NEVER use any credentials other
+  than the ones in this repository's local `./.git/config` — its
+  `user.name`/`user.email` and `remote.origin.url`. No `~/.gitconfig`,
+  no other GitHub accounts, no `gh auth switch`, no tokens from other
+  repositories or hosts, and **no HTTPS/token fallback when the configured
+  remote fails** — fix the local credential instead. Verify before
   committing/pushing: `git config --show-origin user.email` must say
-  `file:.git/config` (not `~/.gitconfig`). A personal address leaking into
-  commit metadata is public the moment it is pushed and cannot be fixed by
-  review — it needs a history rewrite plus a **GitHub Support purge
-  request** (hidden `refs/pull/*` keep the old commits even after a
-  force-push).
+  `file:.git/config` (not `~/.gitconfig`) and `git remote -v` must be the
+  intended URL. A personal address leaking into commit metadata is public
+  the moment it is pushed and cannot be fixed by review — it needs a
+  history rewrite plus a **GitHub Support purge request** (hidden
+  `refs/pull/*` keep the old commits even after a force-push; deleting the
+  repository is the only guaranteed purge).
 
 ## The three stores (ontology — settled)
 
