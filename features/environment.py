@@ -27,6 +27,7 @@ from pathlib import Path
 SHARED_SIMS = {"infrastructure": "bdd-infra", "domain": "bdd-domain"}
 DEFAULT_SHARED_SIM = "bdd-infra"
 _shared: dict[str, bool] = {}
+_failed = {"any": False}     # behave has no context.failed (task 0074)
 
 
 def _sim_id(name: str) -> str:
@@ -135,6 +136,9 @@ def before_scenario(context, scenario):
 
 
 def after_scenario(context, scenario):
+    from behave.model_core import Status
+    if getattr(scenario, "status", None) is Status.failed:
+        _failed["any"] = True
     if "shared-sim" in _tags(scenario):
         return          # the shared sim lives until after_all
     from polis import provision
@@ -158,7 +162,7 @@ def after_all(context):
     if not provisioned:
         return
     from polis import provision
-    if getattr(context, "failed", False):
+    if _failed["any"]:
         print("[cleanup] keeping the shared sims "
               f"{', '.join(provisioned)} for diagnostics — remove them with: "
               "uv run polis provision destroy <sim> --yes")
