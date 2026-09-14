@@ -425,10 +425,13 @@ ENABLED = false
 
     # wait for the web layer (first start runs migrations — can take a while)
     url = platform_host_url(port, "gogs")
-    print(f"[provision] waiting for gogs at {url} …", file=sys.stderr, flush=True)
+    # the trailing slash matters: bare "/gogs" falls through to caddy's
+    # catch-all redirect, which would satisfy the readiness check before the
+    # service is actually up
+    print(f"[provision] waiting for gogs at {url}/ …", file=sys.stderr, flush=True)
     for _ in range(90):
         try:
-            if httpx.get(url, timeout=2.0).status_code < 500:
+            if httpx.get(f"{url}/", timeout=2.0).status_code < 500:
                 break
         except Exception:
             pass
@@ -517,7 +520,7 @@ def _up_gitea(sim: str, inv: Inventory, pg: str, password: str,
     print(f"[provision] waiting for gitea at {url} …", file=sys.stderr, flush=True)
     for _ in range(90):
         try:
-            if httpx.get(url, timeout=2.0).status_code < 500:
+            if httpx.get(f"{url}/", timeout=2.0).status_code < 500:
                 break
         except Exception:
             pass

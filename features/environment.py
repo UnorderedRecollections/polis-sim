@@ -78,12 +78,23 @@ def _before_shared(context) -> None:
     importlib.reload(polis.config)
     if not _shared["provisioned"]:
         from polis import provision
+        from polis.clients import containers
         try:
             provision.destroy(SHARED_SIM)
         except Exception:
             pass
         shutil.rmtree(Path("data/sims") / SHARED_SIM, ignore_errors=True)
-        provision.up(SHARED_SIM)
+        try:
+            provision.up(SHARED_SIM)
+        except Exception:
+            # surface why the sim did not come up (CI has no shell to poke)
+            print("===== container diagnostics (provisioning failed)")
+            print(containers._run(["ps", "-a"], check=False).stdout)
+            for name in containers.container_names():
+                if name.startswith(SHARED_SIM) or name.startswith("polis-operator-"):
+                    logs = containers._run(["logs", "--tail", "80", name], check=False)
+                    print(f"----- logs: {name}\n{logs.stdout}\n{logs.stderr}")
+            raise
         _shared["provisioned"] = True
         importlib.reload(polis.config)
 
