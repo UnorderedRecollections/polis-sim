@@ -30,16 +30,17 @@ other domain (the agreed behaviors are in `docs/design/failure-modes.md`
   the infrastructure workflow runs it with no extra runner, no custom
   scripts.
 
-- **2026-09-14 — CI blocked; issue re-created as #38.** PR #37 was closed
-  (the issue had been deleted with it) while the docker-backed suite still
-  fails on GitHub runners. Diagnosed and fixed on the branch so far: gogs
-  crashed because GitHub's data dirs belong to uid 1001 while the image
-  runs as 1000 (`_relax_dir` now chmods the sim data dirs) and readiness
-  was satisfied by caddy's catch-all redirect (`/gogs` → `/gogs/`). Later
-  shared-sim assertions still go red on CI; the infrastructure workflow is
-  now **manual-only** (`workflow_dispatch`) until the runner issue is
-  understood. The implementation stays on
-  `task/0067-infrastructure-behave`; this task is back to in-progress.
+- **2026-09-14 — CI blocked; issue rebuilt as #15 after the repository
+  recreation.** PR #37 and the original issue were lost when the old
+  repository was deleted over the leaked personal email in commit
+  metadata; `polis-sim` was recreated from the rewritten local history
+  (clean contributors) and the issue mirror rebuilt there (issues
+  #1–#18). The docker-backed suite still fails the shared-sim scenarios
+  on GitHub runners after the fixes above (gogs uid permissions →
+  `_relax_dir`; `/gogs` readiness false positive): the infrastructure
+  workflow is **manual-only** (`workflow_dispatch`) until the runner
+  issue is understood. The implementation stays on
+  `task/0067-infrastructure-behave`; this task is in-progress.
 
 ## Completion
 
