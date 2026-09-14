@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T10:01:36Z
 - **type:** [infrastructure]
 - **depends-on:** 0066
-- **status:** review
+- **status:** done
 
 ## Description
 
@@ -80,7 +80,5 @@ other domain (the agreed behaviors are in `docs/design/failure-modes.md`
 
 ## Completion
 
-<!-- filled in when the task is done (after the PR is approved and merged):
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T12:04:27Z
+- **commit:** 247911d (PR #21)
