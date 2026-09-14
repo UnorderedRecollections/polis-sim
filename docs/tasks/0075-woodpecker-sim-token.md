@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T13:07:22Z
 - **type:** [bugfix]
 - **depends-on:** 0041
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -26,7 +26,5 @@ woodpecker whoami` answers as the sim's Magistrate.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T13:21:24Z
+- **commit:** 0f89657 (PR #28)
