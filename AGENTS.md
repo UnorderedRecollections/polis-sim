@@ -378,7 +378,9 @@ journal provenance, MCP later).
 ## Task workflow (mandatory)
 
 Every task is tracked twice: the local description file is the **source of
-truth**, the GitHub issue is its **public mirror** (`gh issue …`).
+truth**, the GitHub issue is its **public mirror** (`gh issue …`). Work is
+**reviewed before it lands**: implementation goes on a feature branch and
+reaches `main` only through a pull request.
 
 **Local file (before work starts):**
 `docs/tasks/NNNN-snake-case-task-title.md` (NNNN = next sequential number,
@@ -388,7 +390,8 @@ zero-padded; template: `docs/tasks/0000-task-template.md`). Metadata:
 - **type:** one of `[simulation]`, `[infrastructure]`, `[tests]`,
   `[refactoring]`, `[bugfix]`
 - **depends-on:** task numbers of prerequisites, if any
-- **status:** open → in-progress → done
+- **status:** open → in-progress → **review** → done (`review` = the PR is
+  open and awaiting approval)
 
 **GitHub issue (the same moment the file lands):** `gh issue create`:
 
@@ -399,19 +402,33 @@ zero-padded; template: `docs/tasks/0000-task-template.md`). Metadata:
 - **label:** `bug` for `[bugfix]`, `documentation` for doc-only tasks,
   `enhancement` otherwise.
 
-**Keep both in sync** — a `done` file never outlives its closed issue (and
-vice versa). No back-fill for tasks already closed:
+**Implementation — feature branch + PR:**
 
-1. Move the file's `status:` and the issue's state together (comment on
-  the issue when work starts).
-2. When the task is complete: commit the changes (this workflow is the
-  standing authorization for task-scoped commits; one task = one commit,
-  message referencing the task number, e.g. `task 0007: scaffold treaty
-  template`); fill the task file's **Completion** section
-  (`**finished:**` timestamp, `**commit:**` treeish) and set status to
-  `done`; commit that update too (may be amended into the task commit).
-3. Close the GitHub issue referencing the completion commit:
-  `gh issue close <n> --comment "done in <treeish>"`.
+1. Branch from `main`: `task/NNNN-slug` (one task per branch). Commit
+   there; this workflow is the standing authorization for task-scoped
+   commits; one task = one PR.
+2. Open the PR when the work is ready for review:
+   `gh pr create --base main` — title `NNNN: <task title>`, body
+   summarizing what/why/verification and closing the issue
+   (`Closes #<n>`).
+3. Move the issue `in-progress` → `review` and comment the PR link:
+   `gh issue edit <n> --remove-label in-progress --add-label review`.
+   Set the local file's `status:` to `review` (in the branch).
+
+**Review → done:**
+
+4. Only an **approval on GitHub** allows the merge. Merging closes the
+   issue (`Closes #<n>`); never mark a task done before that.
+5. After the merge: set the local `status: done`, fill the **Completion**
+   section (`**finished:**` timestamp, `**commit:**` the merge) and commit
+   the bookkeeping directly on `main` — metadata alone needs no review.
+6. **Label hygiene:** a closed issue carries **neither `in-progress` nor
+   `review`**. `Closes` does not remove labels, so clean them after the
+   auto-close (or when closing manually):
+   `gh issue edit <n> --remove-label in-progress --remove-label review`.
+   Verification: `gh issue list --state closed --label in-progress` and
+   `… --label review` are empty. A `done` file never outlives its closed
+   issue (and vice versa). No back-fill for tasks already closed.
 
 ## Dev
 
