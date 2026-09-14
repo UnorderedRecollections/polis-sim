@@ -64,4 +64,4 @@ verification; the authoring guide is written.
 ## Completion
 
 - **finished:** 2026-09-13T20:14:55Z
-- **commit:** f3aeb0e
+- **commit:** 383a65a

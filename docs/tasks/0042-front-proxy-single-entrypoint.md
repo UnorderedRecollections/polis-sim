@@ -180,8 +180,8 @@ fetches (local only); `/etc/hosts` needs one-time sudo.
 ## Completion
 
 - **finished:** 2026-09-13T16:25:49Z
-- **commit:** c99fd51 (series: ba52df9 design note → a969658 per-sim proxy
-  → c99fd51 dev rig + docs; completion metadata in this commit)
+- **commit:** fd2e744 (series: 4a98cdc design note → d32ab37 per-sim proxy
+  → fd2e744 dev rig + docs; completion metadata in this commit)
 
 Final state: one caddy proxy per deployment is the only host-published
 HTTP entrypoint; canonical base `http://host.containers.internal:<P>`

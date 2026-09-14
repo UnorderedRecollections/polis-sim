@@ -56,4 +56,4 @@ slow-suite invocation from the docs actually runs the scenario.
 ## Completion
 
 - **finished:** 2026-09-13T18:18:39Z
-- **commit:** 25c541c
+- **commit:** 8cdc890

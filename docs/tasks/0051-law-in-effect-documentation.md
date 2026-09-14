@@ -27,7 +27,7 @@ Deliverables:
 ## Completion
 
 - **finished:** 2026-09-10T22:15:00Z
-- **commit:** 525916d (renumbered to 0051 on 2026-09-13 — the 0040 slot
+- **commit:** 64a9d20 (renumbered to 0051 on 2026-09-13 — the 0040 slot
   collided with the headless dev-rig gitea bootstrap task)
 
 Delivered: `docs/isomorphism/law-in-effect.md` (the delivery pipeline —
