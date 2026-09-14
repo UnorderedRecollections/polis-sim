@@ -55,15 +55,17 @@ other domain (the agreed behaviors are in `docs/design/failure-modes.md`
   Diagnostics: failing shared-sim provisioning dumps the sim containers'
   logs from `features/environment.py`.
 
-- **2026-09-14 — CI blocked; issue re-created as #38.** PR #37 was closed
-  (the issue had been deleted with it) while the docker-backed suite still
-  fails on GitHub runners. The remaining runner failures (shared-sim
-  assertions after the fixes above) are handed back for investigation; the
-  infrastructure workflow is now **manual-only** (`workflow_dispatch`)
-  until they are understood. The implementation stays on
-  `task/0067-infrastructure-behave`; this task is back to in-progress.
-  (Note: the GitHub repository was reported **disabled** right after —
-  pushes return 403; local work continues until it is available again.)
+- **2026-09-14 — CI blocked; issue rebuilt as #15 after the repository
+  recreation.** PR #37 and the original issue were lost when the old
+  repository was deleted over the leaked personal email in commit
+  metadata; `polis-sim` was recreated from the rewritten local history
+  (clean contributors) and the issue mirror rebuilt there (issues
+  #1–#18). The docker-backed suite still fails the shared-sim scenarios
+  on GitHub runners after the fixes above (gogs uid permissions →
+  `_relax_dir`; `/gogs` readiness false positive): the infrastructure
+  workflow is **manual-only** (`workflow_dispatch`) until the runner
+  issue is understood. The implementation stays on
+  `task/0067-infrastructure-behave`; this task is in-progress.
 
 ## Completion
 
