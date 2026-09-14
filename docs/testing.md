@@ -16,21 +16,21 @@ no bespoke runners:
 |---|---|---|---|
 | domain-model | `@domain` | `domain-model.yml` | the legal seed, the fifteen jurisdictions, situation generation (`features/domain-model.feature`) and the cross-jurisdiction story suite on a shared sim (`features/jurisdictions.feature`, `@slow @containers`); CI runs `@domain` on the runner's docker (task 0068) |
 | infrastructure | `@infrastructure` | `infrastructure.yml` | the container-runtime boundary (`features/infrastructure.feature`, container-free) and the local deployment failures on a shared sim (`features/infrastructure-failures.feature`); CI runs it on the runner's docker (task 0067) |
-| functional | `@functional` | `functional.yml` | the `polis` command surface (`features/functional.feature`, per-subcommand suites in task 0069); CI runs `and not @containers` until the container suites are runner-ready |
+| functional | `@functional` | `functional.yml` | the whole `polis` command surface: `features/functional.feature` plus one feature per command group (`world`, `city`, `person`, `office`, `assign`, `docket`, `bill`, `archive`, `sim`, `provision`, `formal-check`, `health`, task 0069); CI runs `@functional and not @slow`, the sim-backed component suites (gogs, gitea, citynode, health, woodpecker) are `@slow @containers` |
 
 Two capability tags refine the selection: **`@containers`** (the scenario
 provisions/controls containers; the container domains — infrastructure
-(0067) and domain-model (0068) — run theirs in CI on the runner's docker,
-while the functional workflow filters them out until its container suites
-are runner-ready) and **`@slow`** (the heaviest suites; `behave.ini`
-excludes them from the default `uv run behave features/`).
+(0067), domain-model (0068) and the sim-backed functional suites (0069)
+— run theirs in CI on the runner's docker where they are not `@slow`)
+and **`@slow`** (the heaviest suites; `behave.ini` excludes them from
+the default `uv run behave features/`).
 
 Run a domain exactly as its workflow does:
 
 ```bash
 uv run behave features/ --tags @domain
 uv run behave features/ --tags @infrastructure
-uv run behave features/ --tags "@functional and not @containers"
+uv run behave features/ --tags "@functional and not @slow"
 ```
 
 `uv run behave features/` (no tags) runs every non-`@slow` scenario;
@@ -57,7 +57,7 @@ uv run behave features/ --tags "@functional and not @containers"
 ## 1. The fast behave suite
 
 ```bash
-uv run behave features/                      # ~10 s
+uv run behave features/                      # ~1 min (59 scenarios)
 uv run behave features/northern-banks.feature
 ```
 
@@ -136,6 +136,19 @@ opt-in. Baseline and conclusions: `docs/design/performance.md`.
 ```bash
 uv run behave features/ --tags @infrastructure
 ```
+
+### Sim-backed command suites (task 0069)
+
+```bash
+uv run behave features/ --tags "@functional and @slow"
+```
+
+One throwaway sim per scenario, the real CLI against it: `gogs.feature` /
+`gitea.feature` (administrative surface), `citynode.feature`,
+`health.feature` (in a sim context) and `woodpecker.feature` (the full
+transition, since the CI is erected only then — the heaviest, ~4 min).
+Container-free command contracts run in CI; these are opt-in and also
+run by `tests/all.sh`.
 
 `features/infrastructure.feature` is container-free (runtime boundary,
 missing-world fail-fast); `features/infrastructure-failures.feature`

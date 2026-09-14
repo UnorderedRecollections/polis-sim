@@ -470,6 +470,9 @@ zero-padded; template: `docs/tasks/0000-task-template.md`). Metadata:
   suites: phase I on gitea + phase I → transition → phase II, task 0053),
   `uv run behave features/ --tags "@domain and @slow"` (one whole story
   per jurisdiction, task 0068),
+  `uv run behave features/ --tags "@functional and not @slow"` (the CLI
+  surface, task 0069; the sim-backed component suites are
+  `--tags "@functional and @slow"`),
   `uv run behave features/ --tags @infrastructure` (local deployment
   failures: fail-fast, inspectable state, idempotent recovery, task 0067).
   **All passing.** One shot: `tests/all.sh` (`--dev-rig` includes the
