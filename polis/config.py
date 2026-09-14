@@ -102,4 +102,9 @@ def sim_platform() -> str:
 
 
 def woodpecker_token() -> str:
+    # sim context: the sim's own token outranks the dev rig's .env key
+    # (the sim's CI exists only after the phase transition; task 0075)
+    if PROVISIONED_SIM and not os.environ.get("POLIS_WOODPECKER_TOKEN"):
+        if _SECRETS.get("woodpecker_token"):
+            return _SECRETS["woodpecker_token"]
     return _secret("POLIS_WOODPECKER_TOKEN", "WOODPECKER_API_KEY")
