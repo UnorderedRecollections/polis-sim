@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T10:01:36Z
 - **type:** [infrastructure]
 - **depends-on:** 0066
-- **status:** open
+- **status:** review
 
 ## Description
 
@@ -30,9 +30,23 @@ other domain (the agreed behaviors are in `docs/design/failure-modes.md`
   the infrastructure workflow runs it with no extra runner, no custom
   scripts.
 
+## Progress log
+
+- **2026-09-14 — ported to Behave.** `features/infrastructure.feature`
+  gained the container-free missing-world fail-fast scenario;
+  `features/infrastructure-failures.feature` (@infrastructure
+  @containers @shared-sim) ports the rest — baseline/status, stopped
+  platform, taken proxy port, deleted repository, missing operator —
+  with `features/steps/failure_steps.py` and a shared-sim mode in
+  `features/environment.py` (provisioned once, destroyed in `after_all`).
+  `tests/failures_test.py`/`failures.sh` retired; `tests/all.sh`,
+  `docs/testing.md`, AGENTS.md and the infrastructure workflow updated
+  (the workflow now runs `--tags @infrastructure`, so CI exercises the
+  port on the runner's docker — the live docker verification).
+
 ## Completion
 
-<!-- filled in when the task is done:
+<!-- filled in when the task is done (after the PR is approved and merged):
 - **finished:**
 - **commit:**
 -->

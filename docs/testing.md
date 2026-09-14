@@ -15,7 +15,7 @@ no bespoke runners:
 | domain | tag | workflow | what it covers |
 |---|---|---|---|
 | domain-model | `@domain` | `domain-model.yml` | the legal seed, the fifteen jurisdictions, situation generation (`features/domain-model.feature`); container-free in CI (`and not @containers`) |
-| infrastructure | `@infrastructure` | `infrastructure.yml` | the container-runtime boundary (`features/infrastructure.feature`), and the local deployment failure suite as it is ported (task 0067); container-free in CI |
+| infrastructure | `@infrastructure` | `infrastructure.yml` | the container-runtime boundary (`features/infrastructure.feature`, container-free) and the local deployment failures on a shared sim (`features/infrastructure-failures.feature`); CI runs it on the runner's docker (task 0067) |
 | functional | `@functional` | `functional.yml` | the `polis` command surface (`features/functional.feature`, per-subcommand suites in task 0069); CI runs `and not @containers` until the container suites are runner-ready |
 
 Two capability tags refine the selection: **`@containers`** (the scenario
@@ -127,17 +127,19 @@ prints a metrics table (provisioning/drive times, record and git-pack
 sizes). The canonical world is restored afterwards; take minutes and
 opt-in. Baseline and conclusions: `docs/design/performance.md`.
 
-### Deployment failure suite (task 0055)
+### Deployment failure suite (task 0055; ported to Behave in 0067)
 
 ```bash
-tests/failures.sh
+uv run behave features/ --tags @infrastructure
 ```
 
-Provisions one sim and injects local deployment failures (unknown
-runtime, missing world, platform down, taken proxy port, deleted
-resources, missing operator), asserting fail-fast-with-remedy, no bare
-traceback, inspectable state and idempotent recovery (~2 min). The
-agreed taxonomy and behaviors: `docs/design/failure-modes.md`.
+`features/infrastructure.feature` is container-free (runtime boundary,
+missing-world fail-fast); `features/infrastructure-failures.feature`
+shares one provisioned sim and injects local deployment failures
+(platform down, taken proxy port, deleted repository, missing operator),
+asserting fail-fast-with-remedy, no bare traceback, inspectable state
+and idempotent recovery (~2 min). The agreed taxonomy and behaviors:
+`docs/design/failure-modes.md`.
 
 The transition scenario flips `federation.phase` in `world.json` (the
 civil registry); `features/environment.py` snapshots and restores it

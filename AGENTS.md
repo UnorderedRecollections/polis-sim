@@ -446,8 +446,8 @@ zero-padded; template: `docs/tasks/0000-task-template.md`). Metadata:
   tests and the live-sim queue), `tests/bdd-phase2.sh` (the slow gitea
   suites: phase I on gitea + phase I → transition → phase II, task 0053),
   `tests/jurisdictions.sh` (one whole story per jurisdiction, task 0054),
-  `tests/failures.sh` (local deployment failures: fail-fast, inspectable
-  state, idempotent recovery, task 0055).
+  `uv run behave features/ --tags @infrastructure` (local deployment
+  failures: fail-fast, inspectable state, idempotent recovery, task 0067).
   **All passing.** One shot: `tests/all.sh` (`--dev-rig` includes the
   shared-rig checks). Runbook: `docs/testing.md` (tags, prerequisites,
   direct invocations, troubleshooting).
