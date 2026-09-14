@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T07:47:45Z
 - **type:** [infrastructure]
 - **depends-on:** none
-- **status:** review
+- **status:** done
 
 ## Description
 
@@ -42,7 +42,5 @@ exists; the two chore tasks (0064, 0065) themselves land through PRs.
 
 ## Completion
 
-<!-- filled in when the task is done (after the PR is approved and merged):
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T07:58:30Z
+- **commit:** 0b2b7c9 (merge of PR #29)

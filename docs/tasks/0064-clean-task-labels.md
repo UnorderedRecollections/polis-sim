@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T07:47:45Z
 - **type:** [infrastructure]
 - **depends-on:** none
-- **status:** review
+- **status:** done
 
 ## Description
 
@@ -29,7 +29,5 @@ Deliverables:
 
 ## Completion
 
-<!-- filled in when the task is done (after the PR is approved and merged):
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T07:57:49Z
+- **commit:** 29a0c92 (merge of PR #28)
