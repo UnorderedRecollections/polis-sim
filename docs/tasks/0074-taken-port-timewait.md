@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T12:35:00Z
 - **type:** [bugfix]
 - **depends-on:** 0073
-- **status:** in-progress
+- **status:** done
 
 ## Description
 
@@ -32,7 +32,5 @@ job output.
 
 ## Completion
 
-<!-- filled in when the task is done:
-- **finished:**
-- **commit:**
--->
+- **finished:** 2026-09-14T12:45:54Z
+- **commit:** aba9c41 (PR #26)
