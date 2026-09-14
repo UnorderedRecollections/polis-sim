@@ -153,11 +153,19 @@ Cities") whose legislative life runs on real local infrastructure.
   remote fails** — fix the local credential instead. Verify before
   committing/pushing: `git config --show-origin user.email` must say
   `file:.git/config` (not `~/.gitconfig`) and `git remote -v` must be the
-  intended URL. A personal address leaking into commit metadata is public
-  the moment it is pushed and cannot be fixed by review — it needs a
-  history rewrite plus a **GitHub Support purge request** (hidden
-  `refs/pull/*` keep the old commits even after a force-push; deleting the
-  repository is the only guaranteed purge).
+  intended URL. A pre-commit hook enforces this: `.githooks/pre-commit`
+  refuses any author or committer not listed in `.contributor-whitelist`
+  (fail closed);   activate it once per clone with
+  `git config core.hooksPath .githooks` — `--no-verify` bypasses the hook,
+  but using another identity is forbidden regardless. **Never write
+  personal addresses into task files, issues, PRs, docs or commit
+  messages** — refer to identities by role or a placeholder;
+  `.contributor-whitelist` is the only place an address belongs. A
+  personal address leaking into commit metadata is public the moment it
+  is pushed and cannot be fixed by review — it needs a history rewrite
+  plus a **GitHub Support purge request** (hidden `refs/pull/*` keep the
+  old commits even after a force-push; deleting the repository is the only
+  guaranteed purge).
 
 ## The three stores (ontology — settled)
 

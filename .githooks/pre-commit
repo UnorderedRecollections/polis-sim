@@ -1,0 +1,39 @@
+#!/usr/bin/env sh
+# Pre-commit guard (task 0071): only whitelisted identities may author or
+# commit in this repository. The whitelist is .contributor-whitelist at the
+# repository root (one email per line; '#' comments and blanks ignored).
+#
+# Fails closed: a missing whitelist refuses the commit. Bypass is possible
+# with `git commit --no-verify`, but AGENTS.md forbids using another
+# identity, bypassed or not.
+#
+# Activate once per clone:  git config core.hooksPath .githooks
+set -eu
+
+root=$(git rev-parse --show-toplevel)
+whitelist="$root/.contributor-whitelist"
+
+if [ ! -f "$whitelist" ]; then
+    echo "pre-commit: $whitelist is missing — refusing the commit (fail closed)." >&2
+    echo "pre-commit: add your identity to .contributor-whitelist if it belongs." >&2
+    exit 1
+fi
+
+allowed=$(grep -v '^[[:space:]]*#' "$whitelist" | grep -v '^[[:space:]]*$' \
+          | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
+
+check() { # label ident
+    label=$1
+    ident=$2
+    email=$(printf '%s\n' "$ident" | sed -n 's/.*<\(.*\)>.*/\1/p' \
+            | tr '[:upper:]' '[:lower:]')
+    if ! printf '%s\n' "$allowed" | grep -qx "$email"; then
+        echo "pre-commit: the $label identity <$email> is not whitelisted — commit refused." >&2
+        printf 'pre-commit: allowed identities: %s\n' "$(printf '%s' "$allowed" | tr '\n' ' ')" >&2
+        echo "pre-commit: fix the repository-local identity or add the address to .contributor-whitelist." >&2
+        exit 1
+    fi
+}
+
+check author "$(git var GIT_AUTHOR_IDENT)"
+check committer "$(git var GIT_COMMITTER_IDENT)"

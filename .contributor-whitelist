@@ -1,0 +1,7 @@
+# Emails allowed to author or commit in this repository.
+#
+# One address per line; blank lines and lines starting with '#' are
+# ignored. The pre-commit hook (.githooks/pre-commit) refuses any commit
+# whose author or committer is not listed here. Keep it in sync with the
+# repository-local git identity (AGENTS.md: credentials are local-only).
+unordered.recollections@letterboxes.org
