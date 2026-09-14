@@ -170,7 +170,7 @@ Cities") whose legislative life runs on real local infrastructure.
   enforcing a procedure** — the constitution is enforced by people; jurisdiction
   checks run in the archivists' own tooling, never in the archive host.
 
-## Recovered design decisions (from docs/notes/session-ses_f88c.md)
+## Recovered design decisions (founding session notes, since removed)
 
 - **No database, deliberately**: world JSON = civil registry, git history = legal
   archive, matters JSON = political state. A DB of legal events would break the
