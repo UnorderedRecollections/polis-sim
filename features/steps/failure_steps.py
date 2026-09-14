@@ -59,8 +59,21 @@ def stop_proxy(context):
 @given("the proxy port is occupied by another process")
 def occupy_port(context):
     port = provision.load_secrets(context.sim)["proxy_port"]
-    hog = socket.socket()
-    hog.bind(("0.0.0.0", port))
+    # the runtime's port forwarder is not always gone when `rm -f` returns
+    # (docker-proxy teardown on the CI runners) — retry the bind; a real
+    # conflict still fails (task 0073)
+    deadline = time.time() + 30
+    while True:
+        hog = socket.socket()
+        try:
+            hog.bind(("0.0.0.0", port))
+            break
+        except OSError as e:
+            hog.close()
+            if time.time() >= deadline:
+                raise AssertionError(
+                    f"could not occupy port {port} within 30s: {e}")
+            time.sleep(1)
     hog.listen(16)
 
     def _serve() -> None:
