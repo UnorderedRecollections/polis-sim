@@ -466,9 +466,10 @@ zero-padded; template: `docs/tasks/0000-task-template.md`). Metadata:
   (subsystem checks), `tests/e2e-gogs.sh` (full live flow), `uv run behave
   features/` (BDD stories — the fast suite; `behave.ini` excludes `@slow`;
   `polis/sim/scenario.py` is the Gherkin→beats model, one binding for
-  tests and the live-sim queue), `tests/bdd-phase2.sh` (the slow gitea
+  tests and the live-sim queue),   `tests/bdd-phase2.sh` (the slow gitea
   suites: phase I on gitea + phase I → transition → phase II, task 0053),
-  `tests/jurisdictions.sh` (one whole story per jurisdiction, task 0054),
+  `uv run behave features/ --tags "@domain and @slow"` (one whole story
+  per jurisdiction, task 0068),
   `uv run behave features/ --tags @infrastructure` (local deployment
   failures: fail-fast, inspectable state, idempotent recovery, task 0067).
   **All passing.** One shot: `tests/all.sh` (`--dev-rig` includes the

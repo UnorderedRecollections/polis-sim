@@ -14,20 +14,22 @@ no bespoke runners:
 
 | domain | tag | workflow | what it covers |
 |---|---|---|---|
-| domain-model | `@domain` | `domain-model.yml` | the legal seed, the fifteen jurisdictions, situation generation (`features/domain-model.feature`); container-free in CI (`and not @containers`) |
+| domain-model | `@domain` | `domain-model.yml` | the legal seed, the fifteen jurisdictions, situation generation (`features/domain-model.feature`) and the cross-jurisdiction story suite on a shared sim (`features/jurisdictions.feature`, `@slow @containers`); CI runs `@domain` on the runner's docker (task 0068) |
 | infrastructure | `@infrastructure` | `infrastructure.yml` | the container-runtime boundary (`features/infrastructure.feature`, container-free) and the local deployment failures on a shared sim (`features/infrastructure-failures.feature`); CI runs it on the runner's docker (task 0067) |
 | functional | `@functional` | `functional.yml` | the `polis` command surface (`features/functional.feature`, per-subcommand suites in task 0069); CI runs `and not @containers` until the container suites are runner-ready |
 
 Two capability tags refine the selection: **`@containers`** (the scenario
-provisions/controls containers — CI excludes these for now) and
-**`@slow`** (the heaviest suites; `behave.ini` excludes them from the
-default `uv run behave features/`).
+provisions/controls containers; the container domains — infrastructure
+(0067) and domain-model (0068) — run theirs in CI on the runner's docker,
+while the functional workflow filters them out until its container suites
+are runner-ready) and **`@slow`** (the heaviest suites; `behave.ini`
+excludes them from the default `uv run behave features/`).
 
 Run a domain exactly as its workflow does:
 
 ```bash
-uv run behave features/ --tags "@domain and not @containers"
-uv run behave features/ --tags "@infrastructure and not @containers"
+uv run behave features/ --tags @domain
+uv run behave features/ --tags @infrastructure
 uv run behave features/ --tags "@functional and not @containers"
 ```
 
@@ -98,20 +100,22 @@ uv run behave features/phase-transition.feature --tags @slow
 > is the `behave.ini` default excluding the slow suite, not a broken
 > scenario.
 
-### Cross-jurisdiction suite (task 0054)
+### Cross-jurisdiction suite (task 0054; behave port task 0068)
 
 ```bash
-tests/jurisdictions.sh              # seed 41
-tests/jurisdictions.sh --seed 7
+uv run behave features/ --tags "@domain and @slow"          # seed 41
+uv run behave features/ --tags "@domain and @slow" -D seed=7
 ```
 
-One provisioned sim, one whole director story per jurisdiction (15):
-each situation is generated from the jurisdiction's own data
+One shared sim (`bdd-domain`), one whole director story per jurisdiction
+(15) as a `features/jurisdictions.feature` scenario outline: each
+situation is generated from the jurisdiction's own data
 (`polis/sim/situations.py`), validated, seeded into a fresh run, and
-driven to enactment; the summary lists per-jurisdiction pass/fail with
-the story's error. Takes minutes (drives 15 stories); seeds 41 and 7
-both pass 15/15. Cross-jurisdiction cases (e.g. river-water ↔ fisheries)
-are not reachable by a single-jurisdiction run — see
+driven to enactment; behave's per-scenario rows give the per-jurisdiction
+pass/fail (the seed is fixed via `-D seed=`, default 41, so failures
+reproduce). Takes minutes (drives 15 stories); seeds 41 and 7 both pass
+15/15. Cross-jurisdiction cases (e.g. river-water ↔ fisheries) are not
+reachable by a single-jurisdiction run — see
 `docs/todo/runtime-and-cross-jurisdiction-resources.md`.
 
 ### Performance / scale harness (task 0056)
