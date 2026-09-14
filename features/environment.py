@@ -136,10 +136,16 @@ def after_scenario(context, scenario):
 
 
 def after_all(context):
-    """Destroy the shared sim once, at the end of the run."""
+    """Destroy the shared sim once at the end of the run — unless something
+    failed, in which case it is kept so the CI diagnostics step (and a
+    local re-run) can inspect the containers."""
     if not _shared["provisioned"]:
         return
     from polis import provision
+    if getattr(context, "failed", False):
+        print(f"[cleanup] keeping the shared sim '{SHARED_SIM}' for diagnostics — "
+              f"remove it with: uv run polis provision destroy {SHARED_SIM} --yes")
+        return
     try:
         provision.destroy(SHARED_SIM)
     except Exception as e:

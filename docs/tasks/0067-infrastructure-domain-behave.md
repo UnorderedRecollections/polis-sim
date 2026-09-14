@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T10:01:36Z
 - **type:** [infrastructure]
 - **depends-on:** 0066
-- **status:** in-progress
+- **status:** review
 
 ## Description
 
@@ -66,6 +66,17 @@ other domain (the agreed behaviors are in `docs/design/failure-modes.md`
   workflow is **manual-only** (`workflow_dispatch`) until the runner
   issue is understood. The implementation stays on
   `task/0067-infrastructure-behave`; this task is in-progress.
+
+- **2026-09-14 — leftover docker-CI flakiness fixed; workflow re-enabled.**
+  Root cause of the remaining failures: "container up" was treated as
+  "platform usable". `provision.start` now waits for the platform through
+  the proxy (`_wait_platform`, non-5xx, 90s) before returning; the failure
+  steps wait for readiness before touching the API (`_platform_ready`),
+  retry the repository delete (transient 502s/refusals) and poll
+  `provision status` green for up to 60s; the shared sim is kept on
+  failure so the workflow's diagnostics step can dump its logs. The
+  infrastructure workflow's `pull_request`/`push` triggers are back
+  (plus `workflow_dispatch` for debugging).
 
 ## Completion
 

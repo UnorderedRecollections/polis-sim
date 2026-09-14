@@ -12,6 +12,7 @@ import os
 import socket
 import subprocess
 import threading
+import time
 from pathlib import Path
 
 from behave import given, then, when
@@ -31,6 +32,13 @@ def _run(context, *args: str) -> subprocess.CompletedProcess:
 
 def _out(context) -> str:
     return (context.last.stdout or "") + (context.last.stderr or "")
+
+
+def _platform_ready(context) -> None:
+    """Wait until the sim's platform answers before a step touches it: on a
+    slow runner a resumed/re-provisioned platform can lag behind the
+    container state (task 0067)."""
+    provision._wait_platform(context.sim)
 
 
 @given("the shared sim is provisioned")
@@ -73,7 +81,17 @@ def delete_archive(context):
     archive = next(r for r in inv.repos
                    if r.endswith("/common-law") and "-archive/" in r)
     owner, name = archive.split("/", 1)
-    provision.sim_platform_client(context.sim).delete_repo(owner, name)
+    _platform_ready(context)
+    client = provision.sim_platform_client(context.sim)
+    last: Exception | None = None
+    for _ in range(6):
+        try:
+            client.delete_repo(owner, name)
+            return
+        except provision.API_ERRORS as e:
+            last = e
+            time.sleep(5)
+    raise AssertionError(f"deleting {archive} kept failing: {last}")
 
 
 @given("the operator container is removed")
@@ -110,12 +128,19 @@ def ask_status(context):
 
 @when("I drive the sim one step")
 def drive_one(context):
+    _platform_ready(context)
     context.last = _run(context, "sim", "drive", "--steps", "1")
 
 
 @then("provision status is green")
 def status_green(context):
-    assert context.last.returncode == 0, _out(context)[-300:]
+    deadline = time.time() + 60
+    while time.time() < deadline:
+        if context.last.returncode == 0:
+            return
+        time.sleep(5)
+        context.last = _run(context, "provision", "status", context.sim)
+    assert False, _out(context)[-300:]
 
 
 @then("provision status fails")
