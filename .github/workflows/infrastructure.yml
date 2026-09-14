@@ -1,0 +1,20 @@
+name: infrastructure tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  behave:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      # container-free for now; @containers joins when the ported failure
+      # suite is runner-ready (task 0067)
+      - name: infrastructure domain
+        run: uv run behave features/ --tags "@infrastructure and not @containers"

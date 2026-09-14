@@ -1,0 +1,20 @@
+name: domain-model tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  behave:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+      # container-free for now; @containers joins when the jurisdiction
+      # suite is runner-ready (task 0068)
+      - name: domain-model domain
+        run: uv run behave features/ --tags "@domain and not @containers"

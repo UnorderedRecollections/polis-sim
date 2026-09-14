@@ -71,7 +71,9 @@ Cities") whose legislative life runs on real local infrastructure.
   `notes/` (background docs), `tasks/` (task files, see Task workflow),
   `todo/` (design debts).
 - `tests/e2e-gogs.sh` — full live legislative flow against gogs (see below).
-- `features/` — the developer BDD tests (behave, `@slow`; docs/testing.md).
+- `features/` — the developer BDD tests (behave, `@slow`; docs/testing.md),
+  tagged by domain: `@domain`, `@infrastructure`, `@functional` — one CI
+  workflow each in `.github/workflows/` (task 0066).
   `scenarios/` — user-authored scenarios for a *running* sim
   (`polis sim submit`; the driving side of the split in
   `docs/design/scenarios-vs-tests.md`; author guide

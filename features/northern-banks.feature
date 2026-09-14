@@ -1,4 +1,4 @@
-@phase1
+@functional @phase1 @containers
 Feature: The northern banks dispute
   The fishers of Brasshaven watch Cogswich boats empty the northern
   banks; a petition, a bill, and the Keeper's enactment bring a quota.
