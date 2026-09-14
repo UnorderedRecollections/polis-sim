@@ -1,9 +1,9 @@
 # Failure modes and expected behavior (task 0055)
 
-Status: **proposal awaiting decisions** (2026-09-13). The failure tests
-are deliberately not written yet: the taxonomy and the expected behavior
-below (especially §5) must be agreed first — behavior is a product
-decision, not an implementation detail. Nothing here is implemented.
+Status: **approved** (2026-09-14); the implemented subset is §7.
+Deliberately **non-exhaustive**: its purpose is to help developers and
+technical users debug a *local deployment* — provisioning and the
+apparatus around it — not to enumerate every conceivable failure.
 
 ## 1. Why this exists
 
@@ -61,25 +61,23 @@ behavior still.
 - coordinate with task 0049 (comprehensive integration tests) which
   covers the happy-path matrix and idempotency.
 
-## 5. Decisions requested (recommended defaults marked)
+## 5. Decisions (accepted 2026-09-14)
+
+The recommended defaults below were accepted; tests are written against
+them:
 
 1. **CI erection after a successful transition:** keep the phase flip,
-   repair the CI with a retry (`up_woodpecker`) — *recommended* — or roll
-   the transition back?
+   repair the CI with a retry (`up_woodpecker`).
 2. **Partial plan execution:** failed legal acts leave no journal entry;
-   they appear as `failed` in `stories.json` / the scenario scoreboard —
-   *recommended* — or should a "failed attempt" observation enter the
-   journal?
-3. **`proxy_port` conflict on re-up:** fail with the remedy —
-   *recommended* — or transparently re-allocate and persist the new port?
-4. **Invalid token mid-life:** fail and require `up --force` —
-   *recommended* — or auto-mint a fresh token and continue?
-5. **Auto-restart policy:** rely on `--restart unless-stopped` —
-   *recommended* — or add CLI-level supervision/retry loops?
-6. **Diagnosis surface:** extend `polis health` with proxy + webhook
-   reachability checks — *recommended* — or keep health as-is?
-7. **Where the tests live:** a `tests/failures.sh` matrix keyed by the
-   cases above — *recommended* — or behave scenarios tagged `@failure`?
+   they appear as `failed` in `stories.json` / the scenario scoreboard.
+3. **`proxy_port` conflict on re-up:** fail with the remedy — do not
+   silently re-allocate.
+4. **Invalid token mid-life:** fail and require `up --force`.
+5. **Auto-restart policy:** rely on `--restart unless-stopped`.
+6. **Diagnosis surface:** extend `polis health`/`provision status` rather
+   than ad-hoc checks.
+7. **Where the tests live:** a `tests/failures.sh` matrix keyed by these
+   cases (behave tags only if a case needs scenario semantics).
 
 ## 6. What the suite will assert (once decided)
 
@@ -89,3 +87,31 @@ behavior still.
   completed acts remain;
 - the state is inspectable (`provision status`, `polis health`,
   `stories.json`) and recovery is idempotent (re-run the failed step).
+
+## 7. Implementation status (task 0055)
+
+`tests/failures.sh` (15 checks) implements, against one provisioned sim:
+
+| case | asserted behavior |
+|---|---|
+| unknown runtime (`POLIS_RUNTIME=bogus`) | clear `ContainerError`, no traceback |
+| missing `world.json` | `provision up` fails **before any container work** with the genesis remedy; nothing left behind |
+| platform container stopped | `provision status` reports the container and exits non-zero (no traceback); `provision start` recovers |
+| persisted `proxy_port` taken | `up --force` fails naming the port; freeing it and re-running recovers |
+| repository deleted | `provision status` names the missing repo and fails; `up --force` reconciles |
+| operator container removed | `sim drive` degrades to local execution with a warning, still enacts; `up --force` restores the operator |
+
+Behavior fixes folded in while making the suite pass:
+
+- `provision.up` fails fast on an empty world instead of starting a
+  half-provisioned sim;
+- `_up_proxy` refuses a taken persisted port (naming it) instead of
+  starting a silently unreachable proxy;
+- `provision.status` reports an unreachable platform instead of letting
+  the client's API error traceback.
+
+Deferred until the mock forge (0047)/runner (0048) or bounded CI polling
+exist: webhook delivery failure, broken OAuth application, invalid token
+mid-life, mid-story git/API failure inside a plan, corrupted record
+files, disk exhaustion. This document stays the agreed reference for
+them.

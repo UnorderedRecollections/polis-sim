@@ -268,11 +268,30 @@ def _write_caddyfile(sim: str, platform: str, port: int) -> Path:
     return path
 
 
+def _port_in_use(port: int) -> bool:
+    import socket
+    with socket.socket() as s:
+        return s.connect_ex(("127.0.0.1", port)) == 0
+
+
 def _up_proxy(sim: str, inv: Inventory, platform: str, port: int) -> str:
     """The sim's caddy: the only container publishing a host port."""
     name = f"{sim}-proxy"
     caddyfile = _write_caddyfile(sim, platform, port)
     containers._run(["rm", "-f", name], check=False)
+    # after removing our own proxy the port must be free: a persisted port is
+    # reused by `up --force`, and shadowing another process would leave a
+    # silently unreachable proxy — fail naming the port instead (task 0055)
+    import time
+    for _ in range(10):
+        if not _port_in_use(port):
+            break
+        time.sleep(0.5)
+    else:
+        raise ProvisionError(
+            f"proxy port {port} is already in use on this host — free it "
+            f"(another process or sim), or destroy this sim and re-provision "
+            f"to allocate a fresh port")
     proc = containers._run([
         "run", "-d", "--name", name, "--network", f"{sim}-net",
         "--restart", "unless-stopped",
@@ -704,6 +723,11 @@ def up(sim: str, platform: str = "gogs", with_city_containers: bool = False,
                              f"(choose from: {', '.join(PLATFORMS)})")
     _validate_sim_id(sim)
     world = store.load_world()
+    if not world.cities:
+        # fail before any container work: an empty world means genesis never
+        # ran (or world.json was lost) — the remedy is explicit
+        raise ProvisionError("no world yet — run `polis world genesis` first "
+                             "(or restore data/world/world.json)")
     fed = world.federation
     inv = Inventory(sim=sim, created_at=_utcnow(), platform=platform)
     workdir = SIMS_DIR / sim / "work"
@@ -1127,16 +1151,22 @@ def status(sim: str) -> dict:
         if not exists:
             report["ok"] = False
 
-    for u in inv.users:
-        item("user", u, client.user_exists(u))
-    for r in inv.repos:
-        owner, name = r.split("/", 1)
-        item("repo", r, client.repo_exists(owner, name))
-    for o in inv.orgs:
-        if inv.platform == "gitea":
-            item("org", o, client.org_exists(o))
-        else:
-            item("org", o, True, "existence not checked (no org-delete/list-by-name route)")
+    try:
+        for u in inv.users:
+            item("user", u, client.user_exists(u))
+        for r in inv.repos:
+            owner, name = r.split("/", 1)
+            item("repo", r, client.repo_exists(owner, name))
+        for o in inv.orgs:
+            if inv.platform == "gitea":
+                item("org", o, client.org_exists(o))
+            else:
+                item("org", o, True, "existence not checked (no org-delete/list-by-name route)")
+    except API_ERRORS as e:
+        # the platform is down (or its token is invalid): the container checks
+        # below still run, and this reports the cause instead of a traceback
+        item("platform", inv.platform, False,
+             f"unreachable: {str(e).strip()[:120]}")
     for c in inv.containers:
         item("container", c, containers.container_running(c),
              containers.container(c).get("State") if containers.container(c) else "absent")
