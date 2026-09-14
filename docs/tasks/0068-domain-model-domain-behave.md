@@ -3,7 +3,7 @@
 - **created:** 2026-09-14T10:01:36Z
 - **type:** [tests]
 - **depends-on:** 0066
-- **status:** open
+- **status:** review
 
 ## Description
 
@@ -27,6 +27,21 @@ the domain-model workflow runs it like every other domain.
 - Acceptance: the ported suite is green via behave (same 15/15, seeds
   41/7), reproducible, and wired into the domain-model workflow when the
   runner can take it.
+
+## Progress log
+
+- **2026-09-14 — ported to Behave.** `features/jurisdictions.feature`
+  (@domain @containers @slow @shared-sim) is a 15-row scenario outline —
+  one whole director story per jurisdiction with behave's per-row
+  pass/fail; `features/steps/jurisdiction_steps.py` generates/validates
+  the situation, seeds the run (`-D seed=`, default 41) and asserts
+  enactment + a recorded ratification. The shared-sim machinery in
+  `features/environment.py` became per-domain (`bdd-infra`,
+  `bdd-domain`), so domain and infrastructure suites can share one behave
+  invocation. `tests/jurisdictions_test.py`/`jurisdictions.sh` retired;
+  `tests/all.sh`, `docs/testing.md` and AGENTS.md updated; the
+  domain-model workflow now runs `--tags @domain` (containers included —
+  the docker run is the runner verification).
 
 ## Completion
 

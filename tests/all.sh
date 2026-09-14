@@ -42,7 +42,7 @@ run "beat vocabulary scopes (user/test)" bash tests/beat-scopes.sh
 run "queue driver semantics (stub execute_beat)" uv run python tests/queue_driver_test.py
 run "fast behave (phase I)" uv run behave features/
 run "slow gitea suites (phase I -> transition -> phase II)" bash tests/bdd-phase2.sh
-run "cross-jurisdiction suite (15 stories)" bash tests/jurisdictions.sh
+run "cross-jurisdiction suite (15 stories, behave)" uv run behave features/ --tags "@domain and @slow"
 run "infrastructure domain (behave)" uv run behave features/ --tags @infrastructure
 run "provisioning demo (gogs)" bash tests/provision-demo.sh
 run "provisioning demo (gitea)" bash tests/provision-demo-gitea.sh
